@@ -2,3 +2,11 @@ name = "HVPobs"
 uuid = "765434cc-3d34-4a5b-bc44-f747129dc1a5"
 authors = ["Alessandro Conigli <alessandroconigli@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+ADerrors = "5e92007d-7bf1-471c-8ceb-4591b8b567a9"
+BDIO = "375f315e-f2c4-11e9-2ef9-134f02f79e27"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+TimerOutputs = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
