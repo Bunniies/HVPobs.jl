@@ -1,6 +1,6 @@
 module Data
 
-using DelimitedFiles, ADerrors
+using DelimitedFiles, ADerrors, Statistics
 
 struct CData
     id::String
@@ -21,29 +21,22 @@ function Base.show(io::IO, cd::CData)
 end
 export CData
 
-struct Corr
-    obs::Vector{uwreal}
-    id::String
-    gamma::String
 
-    function Corr(a::Vector{uwreal}, cd::CData)
-       
-        return new(a, cd.id, cd.gamma)
-    end
+struct YData
+    vtr::Vector{Int32}
+    t::Vector{Float64}
+    obs::Array{Float64, 3}
+    id::String
+    YData(vtr, t, obs, id) = new(vtr, t, obs, id)
 end
-function Base.show(io::IO, corr::Corr)
-    println(io, "Correlator")
-    println(io, " - Ensemble ID: ", corr.id)
-    println(io, " - Gamma:       ", corr.gamma)
-end
-export Corr
+export YData
+
+
 
 
 include("DataReader.jl")
-export read_hvp_data
+export read_hvp_data, read_ms, read_ms1
 
-include("DataObs.jl")
-export corr_obs
 
 include("DataConst.jl")
 export GAMMA

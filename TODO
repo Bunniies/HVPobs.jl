@@ -1,0 +1,12 @@
+READING ROUTINES
+
+    - read_hvp_data  (tested)
+    - read_ms        (tested)
+    - read_ms1       (tested) missing implementation for rwf from openQCD 2.0
+    - 
+
+PRIMARY OBSERVABLES ROUTINES
+
+    - corr_obs         (tested)
+        - without rwf  (tested)
+        - with rwf     (tested for a single replica)    
