@@ -1,24 +1,22 @@
-function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
+function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
     
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
-
-    cnfg = size(data, 1)
     tvals = size(data, 2)
     nms = isnothing(nms) ?  sum(cd.rep_len) : nms
-
+    
+    idm = copy(cd.idm)
+    if length(cd.rep_len) != 1
+        idm_sum = [fill((k-1)*sum(cd.rep_len[1:k-1]), cd.rep_len[k]) for k in eachindex(cd.rep_len)]
+        idm .+= vcat(idm_sum...)
+    end
 
     if isnothing(rw)
-        obs = [uwreal(data[:,t], cd.id, cd.rep_len, cd.idm, nms) for t in 1:tvals]
+        obs = [uwreal(data[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
     else
-        rep_len = cd.rep_len
-        if length(rep_len)==1
-            data_r, W = apply_rw(data, rw, cd.idm)
-            ow = [uwreal(data_r[:,t], cd.id, cd.rep_len, cd.idm, nms) for t in 1:tvals]
-            W_obs = uwreal(W, cd.id, cd.rep_len, cd.idm, nms)
-            obs = [ow[t] / W_obs for t in 1:tvals]
-        else
-            
-        end
+        data_r, W = apply_rw(data, rw, cd.idm)
+        ow = [uwreal(data_r[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
+        W_obs = uwreal(W, cd.id, cd.rep_len, idm, nms)
+        obs = [ow[t] / W_obs for t in 1:tvals]
     end
 
     return Corr(obs, cd)
@@ -111,11 +109,12 @@ function comp_t0(Y::YData, plat::Vector{Int64}; L::Int64, pl::Bool=false,
         end
     end
     x = t[nt0-dt0:nt0+dt0]
-    t2E = [plat_av(Y_aux[:, j], plat, wpm) for j=1:2*dt0+1] .* x.^2 / L^3
+    t2E = [plat_av(Y_aux[:, j], plat, wpm=wpm) for j=1:2*dt0+1] .* x.^2 / L^3
     
     model(x, p) = get_model(x, p, npol)
 
-    par, chi  = fit_routine(model, x, t2E, npol)
+    fit  = fit_routine(model, x, t2E, npol)
+    par = fit.param
     fmin(x, p) = model(x, p) .- 0.3
     t0 = root_error(fmin, t[nt0], par)
     if pl
@@ -189,7 +188,7 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
                 error("Different number of replicas")
             end
 
-            for k = 1:length(replica)
+            for k in eachindex(replica)
                 if replica[k] > ivrep_ws[k]
                     println("Automatic truncation in Ysl ", ivrep_ws[k], " / ", replica[k], ". R = ", k)
                     Ysl[k] = Ysl[k][1:ivrep_ws[k], :, :]
@@ -235,7 +234,8 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
     
     model(x, p) = get_model(x, p, npol)
 
-    par, chi = fit_routine(model, x, t2E, npol)
+    fit = fit_routine(model, x, t2E, npol)
+    par = fit.param
     fmin(x, p) = model(x, p) .- 0.3
     t0 = root_error(fmin, t[nt0], par)
     if pl

@@ -9,4 +9,14 @@ PRIMARY OBSERVABLES ROUTINES
 
     - corr_obs         (tested)
         - without rwf  (tested)
-        - with rwf     (tested for a single replica)    
+        - with rwf     (tested)
+    - compt_t0
+        - with single replica (to be tested)
+        - with multiple replicas (tested)
+
+FIT ROUTINES
+    - fit_routine
+        - uncorrelated, single fit (tested)
+        - correlated, single fit (to be implemented)    
+        - uncorrelated global fit (to be implemented)
+        - correlated global fit (to be implemented)

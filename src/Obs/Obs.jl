@@ -1,6 +1,6 @@
 module Obs
     
-using ..Data
+using ..Data, ..Fits
 using ADerrors, LaTeXStrings, PyPlot
 using Statistics
 

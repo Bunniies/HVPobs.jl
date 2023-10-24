@@ -7,30 +7,14 @@ function apply_rw(data::Array{Float64}, W::Matrix{Float64}, vcfg::Union{Nothing,
     return (data_r, W1 .* W2)
 end
 
-# function apply_rw(data::Vector{<:Array{Float64}}, W::Vector{Matrix{Float64}})
-    # if length(W) != length(data)
-        # error("Lenghts must match")
-    # end
-    # nc = size.(data, 1)
-# 
-    # rw1 = [W[k][1, 1:nc[k]] for k=1:length(W)]
-    # rw2 = [W[k][2, 1:nc[k]] for k=1:length(W)]
-    # rw = [rw1[k] .* rw2[k] for k=1:length(W)]
-    # data_r = [data[k] .* rw[k] for k=1:length(data)]
-    # return (data_r, rw)
-# end
-# rw with gaps
 function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, vcfg::Vector{Int64})
-    idm = reshape(vcfg, :, length(W))
-    nc = size.(W, 2)
-    Wcat = hcat(W...)
 
-    W1 = Wcat[1, vcfg]
-    W2 = Wcat[2, vcfg]
-    rw1 = [W[k][1, 1:nc[k]] for k=1:length(W)]
-    rw2 = [W[k][2, 1:nc[k]] for k=1:length(W)]
-    rw = [rw1[k] .* rw2[k] for k =1:length(W)]
-    data_r = [data[k] .* rw[k][vcfg[k]] for k=1:length(data)]
+    idm = reshape(vcfg, :, length(W))
+    rw1 = [W[k][1, idm[:, k]] for k=1:length(W)]
+    rw2 = [W[k][2, idm[:, k]] for k=1:length(W)]
+
+    rw = vcat([rw1[k] .* rw2[k] for k =1:length(W)]...)
+    data_r = data .* rw 
     return (data_r, rw)
 end
 
