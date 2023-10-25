@@ -31,15 +31,12 @@ struct YData
 end
 export YData
 
-
-
-
 include("DataReader.jl")
 export read_hvp_data, read_ms, read_ms1
 
 
 include("DataConst.jl")
-export GAMMA
+export GAMMA, CLS_db, hc, t0, t0sqrt_ph
 
 
 end

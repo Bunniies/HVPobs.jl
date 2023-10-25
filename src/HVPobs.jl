@@ -1,10 +1,14 @@
 module HVPobs
 
+include("LinAlg/LinAlg.jl")
+
+using .LinAlg
+
 include("Data/Data.jl")
 
 using .Data 
 export CData, Corr, YData
-export GAMMA
+export GAMMA, CLS_db, hc, t0, t0sqrt_ph
 export read_hvp_data, read_ms, read_ms1
 
 include("Fits/Fits.jl")
@@ -19,6 +23,12 @@ include("Obs/Obs.jl")
 using .Obs
 export meff 
 export corr_obs, comp_t0
+export improve_corr_vkvk!, ZV, cv_loc
+
+include("Automation/Automation.jl")
+
+using .Automation
+export get_data, get_rw, get_t0, get_corr
 
 
 end # module

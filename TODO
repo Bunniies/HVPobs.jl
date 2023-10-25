@@ -13,6 +13,8 @@ PRIMARY OBSERVABLES ROUTINES
     - compt_t0
         - with single replica (to be tested)
         - with multiple replicas (tested)
+    - improvement routines
+        - vkvk improvement (to be tested)
 
 FIT ROUTINES
     - fit_routine

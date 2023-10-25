@@ -53,3 +53,20 @@ ydata1 = read_ms(path_ms1)
 
 
 t0 = comp_t0([ydata,ydata1], [20,50], L=32)
+
+
+# test rwf deflated
+path = "/Users/alessandroconigli/Lattice/data/HVP/rwf_deflated/J303r003.ms1.dat"
+read_ms1(path)
+
+
+#########################
+# TEST DATA AUTOMATION
+#########################
+path = "/Users/alessandroconigli/Lattice/data/HVP/2ptdata"
+path_rw = "/Users/alessandroconigli/Lattice/data/aux_obs_data/rwf"
+"/Users/alessandroconigli/Lattice/data/aux_obs_data/wilson/H101/H101r000.ms.dat"
+
+cdata = get_data(path, "H101", "light", "V1V1c")
+rw = get_rw(path_rw, "H101")
+corr = get_corr(path, "H101", "light", "V1V1c")

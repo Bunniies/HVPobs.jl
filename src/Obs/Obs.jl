@@ -31,4 +31,7 @@ export plat_av
 include("ObsSpectrum.jl")
 export meff
 
+include("ObsImprovement.jl")
+export improve_corr_vkvk!, ZV, cv_loc
+
 end

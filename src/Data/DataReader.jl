@@ -36,10 +36,6 @@ function read_hvp_data(path::String, id::Union{String,Nothing}=nothing)
         im_data[k,:] = f[idx+1:idx+tvals, 3]
     end
 
-    # if length(rep_len) != 1
-        # idm_sum = [fill((k-1)*sum(rep_len[1:k-1]), rep_len[k]) for k in eachindex(rep_len)]
-        # idm .+= vcat(idm_sum...)
-    # end
     
     return CData(id, rep_len, re_data, im_data, idm, gamma)    
 end
