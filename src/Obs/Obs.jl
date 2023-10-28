@@ -13,6 +13,7 @@ struct Corr
        
         return new(a, cd.id, cd.gamma)
     end
+    Corr(a::Vector{uwreal}, id::String, gamma::String) = new(a, id, gamma) 
 end
 function Base.show(io::IO, corr::Corr)
     println(io, "Correlator")

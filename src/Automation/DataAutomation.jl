@@ -18,7 +18,7 @@ function get_data(path::String, ens::String, fl::String, g::String)
     return read_hvp_data(data[1], ens)
 end
 
-function get_rw(path::String, ens::String)
+function get_rw(path::String, ens::String; v::String="1.2")
     p = joinpath(path, ens)
     rep = filter(x->occursin("ms1.dat", x), readdir(p, join=true))
     if ens == "J500"
@@ -32,7 +32,7 @@ function get_rw(path::String, ens::String)
     end
     if length(rep)!=0
         try
-            length(rep) == 1 ? (return read_ms1(rep[1])) : (return read_ms1.(rep)) 
+            length(rep) == 1 ? (return read_ms1(rep[1], v=v)) : (return read_ms1.(rep, v=v)) 
         catch
             length(rep) == 1 && length(rep)!=0 ? (return read_ms1(rep[1], v="1.4")) : (return read_ms1.(rep, v="1.4")) 
         end
@@ -41,7 +41,25 @@ function get_rw(path::String, ens::String)
     end
 end
 
-function get_t0(path::String, ens::String, dtr::Int64)
+function get_corr(path::String, ens::String, fl::String, g::String, path_rw::Union{String, Nothing}=nothing; L::Int64=1)
+
+    cdata = get_data(path, ens, fl, g)
+    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens)
+    return corr_obs(cdata, real=true, rw=rw, L=L)
+end
+
+function get_t0(path::String, ens::String; pl::Bool=false, path_rw::Union{String, Nothing}=nothing)
+
+    db = CLS_db[ens]
+    data = read_t0(path, ens, db["dtr"])
+    plat = db["plat_t0"]
+    isnothing(path_rw) ? rw = nothing : rw = get_rw(path_rw, ens)
+    t0 = comp_t0(data, plat, L=db["L"], pl=pl, rw=rw, info=false)
+    return t0
+end
+
+
+function read_t0(path::String, ens::String, dtr::Int64)
     p = joinpath(path, ens)
     rep = filter(x->occursin("ms.dat", x), readdir(p, join=true))
     if length(rep)!=0
@@ -51,9 +69,3 @@ function get_t0(path::String, ens::String, dtr::Int64)
     end
 end
 
-function get_corr(path::String, ens::String, fl::String, g::String, path_rw::Union{String, Nothing}=nothing)
-
-    cdata = get_data(path, ens, fl, g)
-    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens)
-    return corr_obs(cdata, real=true, rw=rw)
-end

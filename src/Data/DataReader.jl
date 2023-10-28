@@ -175,6 +175,111 @@ function read_rw(path::String; v::String="1.2")
 end
 
 @doc raw"""
+read_rw_openQCD2(path::String; print_info::Bool=false)
+
+This function reads the reweighting factors generated with openQCD version 2.#.
+The flag print_info if set to true print additional information for debugging
+"""
+function read_rw_openQCD2(path::String; print_info::Bool=false)
+    
+    data = open(path, "r")
+    nrw = read(data, Int32) 
+    nrw = Int32(nrw / 2)
+    
+    nfct = Array{Int32}(undef, nrw)
+    read!(data, nfct)       
+    
+    nsrc = Array{Int32}(undef, nrw)
+    read!(data, nsrc)        
+    null = read(data, Int32)  
+    if null !== Int32(0)   
+        error("In openQCD 2.0 this Int32 should be a zero.")
+    end
+
+    data_array = Array{Array{Float64}}(undef, nrw)
+    [data_array[k] = Array{Float64}(undef, 0) for k in 1:nrw]
+    vcfg = Vector{Int32}(undef, 0) 
+    while !eof(data)
+
+        push!(vcfg, read(data, Int32)) 
+        if print_info
+            println("\n ######## cnfg: ", vcfg[end])
+        end
+
+        for k in 1:nrw
+            read_array_rwf_dat_openQCD2(data)
+            tmp_rw, n = read_array_rwf_dat_openQCD2(data)
+
+            tmp_nfct=1.0
+            for j in 1:n[1]
+                tmp_nfct *= mean((exp.(.-tmp_rw[j])))
+            end
+            push!(data_array[k], tmp_nfct)
+        end
+    end
+
+    # return data_array
+    return permutedims(hcat(data_array...), (2,1))
+end
+
+
+function read_array_rwf_dat_openQCD2(data::IOStream; print_info::Bool=false)
+    
+    d = read(data, Int32) 
+    n = Array{Int32}(undef, d)
+    read!(data, n)   
+    size = read(data, Int32) 
+    m = prod(n)
+    
+    if print_info
+        println("d: ", d)
+        println("n: ", n)
+        println("size: ", size)
+        println("m: ", m)
+    end
+
+    if size == 4
+        types = Int32
+    elseif size == 8
+        types = Float64
+    elseif size == 16
+        types = Float64x2
+    else
+        error("No type with size=$(size) supported")
+    end
+
+    tmp_data = Array{types}(undef, m)
+    read!(data, tmp_data)
+
+    res = parse_array_openQCD2(d, n, tmp_data, quadprec=true) 
+
+    return res, n
+end
+
+function parse_array_openQCD2(d, n, dat; quadprec=true)
+    
+    if d != 2
+        error("dat must be a two-dimensional array")
+    end
+    res = Vector{Vector{Float64}}(undef, 0)
+    
+    for k in range(1,n[1])
+        tmp = dat[(k-1)*n[2]+1:k*n[2]]
+        if quadprec
+            tmp2 = Vector{Float64}(undef, 0)
+            for j in range(start=1,step=2,stop=length(tmp))
+                push!(tmp2, tmp[j])
+            end
+            push!(res, tmp2)
+        else
+            push!(res, tmp)
+        end
+    end
+
+    return res
+end
+
+@doc raw"""
     read_ms1(path::String; v::String="1.2")
 
 Reads openQCD ms1 dat files at a given path. This method returns a matrix `W[irw, icfg]` that contains the reweighting factors, where
@@ -189,6 +294,10 @@ read_ms1(path, v="1.6")
 ```
 """
 function read_ms1(path::String; v::String="1.2")
+
+    if v == "2.0"
+        return read_rw_openQCD2(path)
+    end
     r_data = read_rw(path, v=v)
     nrw = length(r_data)
     ncnfg = size(r_data[1])[3]

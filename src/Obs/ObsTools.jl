@@ -18,6 +18,29 @@ function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, vcfg::Vector
     return (data_r, rw)
 end
 
+function apply_rw_t0(data::Array{Float64}, W::Matrix{Float64}; vcfg::Union{Nothing, Vector{Int32}}=nothing)
+    nc =  isnothing(vcfg) ? collect(1:size(data, 1)) : vcfg
+    W1 = W[1, nc]
+    W2 = W[2, nc]
+
+    data_r = data .* W1 .* W2
+    return (data_r, W1 .* W2)
+end
+
+function apply_rw_t0(data::Vector{<:Array{Float64}}, W::Vector{Matrix{Float64}})
+    if length(W) != length(data)
+        error("Lenghts must match")
+    end
+    nc = size.(data, 1)
+
+    rw1 = [W[k][1, 1:nc[k]] for k=1:length(W)]
+    rw2 = [W[k][2, 1:nc[k]] for k=1:length(W)]
+    rw = [rw1[k] .* rw2[k] for k=1:length(W)]
+    data_r = [data[k] .* rw[k] for k=1:length(data)]
+    return (data_r, rw)
+end
+
+
 
 function plat_av(obs::Vector{uwreal}, plat::Vector{Int64}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
     isnothing(wpm) ? uwerr.(obs) : [uwerr(obs[k], wpm) for k in eachindex(obs)]

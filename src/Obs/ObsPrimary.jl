@@ -91,7 +91,7 @@ function comp_t0(Y::YData, plat::Vector{Int64}; L::Int64, pl::Bool=false,
     Y_aux = Matrix{uwreal}(undef, xmax, 2*dt0+1)
     
     if !isnothing(rw)
-        Ysl_r, W = apply_rw(Ysl, rw)
+        Ysl_r, W = apply_rw_t0(Ysl, rw)
         W_obs = uwreal(W, id)
         WY_aux = Matrix{uwreal}(undef, xmax, 2*dt0+1)
     end
@@ -209,7 +209,7 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
     Y_aux = Matrix{uwreal}(undef, xmax, 2*dt0+1)
 
     if !isnothing(rw)
-        Ysl_r, W = apply_rw(Ysl, rw)
+        Ysl_r, W = apply_rw_t0(Ysl, rw)
         tmp_r = Ysl_r[1]
         tmp_W = W[1]
         [tmp_r = cat(tmp_r, Ysl_r[k], dims=1) for k = 2:nr]

@@ -1,6 +1,6 @@
 module Data
 
-using DelimitedFiles, ADerrors, Statistics
+using DelimitedFiles, ADerrors, Statistics, MultiFloats
 
 struct CData
     id::String
