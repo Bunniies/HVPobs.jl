@@ -41,7 +41,7 @@ function get_rw(path::String, ens::String; v::String="1.2")
     end
 end
 
-function get_corr(path::String, ens::String, fl::String, g::String, path_rw::Union{String, Nothing}=nothing; L::Int64=1)
+function get_corr(path::String, ens::String, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1)
 
     cdata = get_data(path, ens, fl, g)
     rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens)

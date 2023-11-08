@@ -36,7 +36,7 @@ export read_hvp_data, read_ms, read_ms1
 
 
 include("DataConst.jl")
-export GAMMA, CLS_db, hc, t0, t0sqrt_ph
+export GAMMA, CLS_db, hc, t0, t0sqrt_ph, CLS_kappa_crit
 
 
 end

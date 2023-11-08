@@ -8,7 +8,7 @@ include("Data/Data.jl")
 
 using .Data 
 export CData, Corr, YData
-export GAMMA, CLS_db, hc, t0, t0sqrt_ph
+export GAMMA, CLS_db, hc, t0, t0sqrt_ph, CLS_kappa_crit
 export read_hvp_data, read_ms, read_ms1
 
 include("Fits/Fits.jl")
@@ -23,7 +23,7 @@ include("Obs/Obs.jl")
 using .Obs
 export meff 
 export corr_obs, comp_t0
-export improve_corr_vkvk!, ZV, cv_loc
+export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar
 
 include("Automation/Automation.jl")
 
