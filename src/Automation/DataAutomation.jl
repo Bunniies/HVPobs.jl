@@ -41,20 +41,23 @@ function get_rw(path::String, ens::String; v::String="1.2")
     end
 end
 
-function get_corr(path::String, ens::String, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1)
+function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
 
-    cdata = get_data(path, ens, fl, g)
-    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens)
-    return corr_obs(cdata, real=true, rw=rw, L=L)
+    cdata = get_data(path, ens.id, fl, g)
+    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
+    corr = corr_obs(cdata, real=true, rw=rw, L=L)
+    if frw_bcwd
+        frwd_bckwrd_symm!(corr)
+    end
+
+    return corr 
 end
 
-function get_t0(path::String, ens::String; pl::Bool=false, path_rw::Union{String, Nothing}=nothing)
+function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{String, Nothing}=nothing)
 
-    db = CLS_db[ens]
-    data = read_t0(path, ens, db["dtr"])
-    plat = db["plat_t0"]
-    isnothing(path_rw) ? rw = nothing : rw = get_rw(path_rw, ens)
-    t0 = comp_t0(data, plat, L=db["L"], pl=pl, rw=rw, info=false)
+    data = read_t0(path, ens.id, ens.dtr)
+    isnothing(path_rw) ? rw = nothing : rw = get_rw(path_rw, ens.id)
+    t0 = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false)
     return t0
 end
 

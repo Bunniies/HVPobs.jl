@@ -266,6 +266,7 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
         xlabel(L"$x_0/a$")
         title(string(L"$t/a^2 = $", t[nt0]))
         display(gcf())
+        close("all")
     end
     if info && !isnothing(rw)
         return (t0, WY_aux, W_obs)

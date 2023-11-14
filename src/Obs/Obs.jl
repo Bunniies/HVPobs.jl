@@ -27,7 +27,7 @@ include("ObsPrimary.jl")
 export corr_obs, comp_t0
 
 include("ObsTools.jl")
-export plat_av
+export plat_av, frwd_bckwrd_symm!
 
 include("ObsSpectrum.jl")
 export meff

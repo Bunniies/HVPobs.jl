@@ -24,10 +24,12 @@ using .Obs
 export meff 
 export corr_obs, comp_t0
 export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar
+export frwd_bckwrd_symm!
 
 include("Automation/Automation.jl")
 
 using .Automation
+export EnsInfo
 export get_data, get_rw, get_t0, get_corr
 
 

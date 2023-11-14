@@ -10,7 +10,8 @@ this function improves the the vkvk correlators by overwriting the old vkvk.
 function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal})
     der_t0tk = (vkt0k[3:end] - vkt0k[1:end-2]) / 2
     der_t0tk[1] = vkt0k[3] - vkt0k[2]
-    vkvk[2:end-1] = vkvk[2:end-1] .+ 2 .* cv .* der_t0tk
+    push!(der_t0tk, vkt0k[end] - vkt0k[end-1] )
+    vkvk[2:end] = vkvk[2:end] .+ 2 .* cv .* der_t0tk
 end
 improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv)
 

@@ -67,3 +67,9 @@ function get_model(x, p, n)
     end
     return s
 end
+
+function frwd_bckwrd_symm!(obs::Vector{uwreal})
+    obs[2:end] = (obs[2:end] .+ reverse(obs[2:end]))  ./ 2.
+    return nothing
+end
+frwd_bckwrd_symm!(corr::Corr) = frwd_bckwrd_symm!(corr.obs)
