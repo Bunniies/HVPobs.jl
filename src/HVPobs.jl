@@ -23,7 +23,7 @@ include("Obs/Obs.jl")
 using .Obs
 export meff 
 export corr_obs, comp_t0
-export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar
+export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!
 export frwd_bckwrd_symm!
 
 include("Automation/Automation.jl")

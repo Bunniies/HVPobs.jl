@@ -33,6 +33,6 @@ include("ObsSpectrum.jl")
 export meff
 
 include("ObsImprovement.jl")
-export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar
+export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!
 
 end

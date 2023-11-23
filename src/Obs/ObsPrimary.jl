@@ -13,7 +13,11 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
     else
-        data_r, W = apply_rw(data, rw, cd.idm)
+        if length(cd.rep_len)  == 1
+            data_r, W = apply_rw(data, rw, cd.idm)
+        else
+            data_r, W = apply_rw(data, rw, cd.idm, cd.rep_len)
+        end
         ow = [uwreal(data_r[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
         W_obs = uwreal(W, cd.id, cd.rep_len, idm, nms)
         obs = [ow[t] / W_obs for t in 1:tvals]

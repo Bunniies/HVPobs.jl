@@ -1,6 +1,6 @@
 module Fits
 
-using LsqFit, LinearAlgebra, ForwardDiff, Statistics
+using LsqFit, LinearAlgebra, ForwardDiff, Statistics, Optim
 using ADerrors, LaTeXStrings
 
 struct FitRes

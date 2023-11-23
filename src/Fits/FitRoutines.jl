@@ -42,3 +42,64 @@ function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}
     end
 
 end
+
+function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} where N, ydata::Vector{Array{uwreal, N}} where N, param::Int64; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing,
+    correlated_fit::Bool=false, pval::Bool=false)
+
+    if !(length(model) == length(xdata) == length(ydata))
+        error("Dimension mismatch")
+    end
+    N = length(model)
+
+    dat = ydata[1]
+    idx = Vector{Vector{Int64}}(undef, N)
+    e = Vector{Vector{Float64}}(undef, N)
+    j = 1
+    for i = 1:N
+        if isnothing(wpm)
+            uwerr.(ydata[i])
+        else
+            for yaux in ydata[i]
+                [uwerr(yaux[k], wpm) for k in eachindex(yaux)]
+            end
+        end
+        
+        e[i] = err.(ydata[i])
+        if i > 1 
+            dat = vcat(dat, ydata[i])
+        end
+        stp = j + length(ydata[i]) - 1
+        idx[i] = collect(j:stp)
+        j = stp + 1
+    end
+    if !correlated_fit
+        chisq = (par, dat) -> sum([sum((dat[idx[i]] .- model[i](xdata[i], par)).^2 ./e[i].^2) for i=1:N])
+    else 
+        error("correlated fit not implemented")
+    end
+
+    min_fun(t) = chisq(t, value.(dat))
+    p = fill(0.5, param)
+    #println(chisq(p,dat))
+    sol = optimize(min_fun, p, LBFGS()) 
+    #println(chisq(sol.minimizer,dat))
+    
+    if !correlated_fit
+        @info("Uncorrelated fit ")
+        (upar, chi2_exp) = isnothing(wpm) ? fit_error(chisq, sol.minimizer, dat) : fit_error(chisq, sol.minimizer, dat, wpm)
+    else
+        @info("Correlated fit ")
+
+        (upar, chi2_exp) = isnothing(wpm) ? fit_error(chisq, sol.minimizer, dat, W=inv_cov_tot) : fit_error(chisq, sol.minimizer, dat, wpm, W=inv_cov_tot)
+    end
+
+    println("χ2/χ2exp: ", min_fun(sol.minimizer), " / ", chi2_exp, " (dof: ", length(dat) - param,")")
+    
+    if !pval
+        return FitRes(length(dat) - param, upar, min_fun(sol.minimizer), chi2_exp, nothing)
+    else
+        pvalue = get_pvalue(chisq, chi2_fit_res, value.(upar), dat, wpm=wpm, W= 1 ./ err.(dat).^2, nmc=10000)
+        println("p-value: ", pvalue)
+        return FitRes(length(yval) - data, upar, min_fun(sol.minimizer), chi2_exp, pvalue)        
+    end
+end

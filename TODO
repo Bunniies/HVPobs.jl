@@ -2,7 +2,7 @@ READING ROUTINES
 
     - read_hvp_data  (tested)
     - read_ms        (tested)
-    - read_ms1       (tested) missing implementation for rwf from openQCD 2.0
+    - read_ms1       (tested) support for openQCD v1.2 v1.4 v1.6 v2.0
     
 AUTOMATION ROUTINES
     - get_data       (tested)
@@ -19,7 +19,7 @@ PRIMARY OBSERVABLES ROUTINES
         - with single replica (to be tested)
         - with multiple replicas (tested)
     - improvement routines
-        - vkvk improvement (tested but not checked with other implementations)
+        - vkvk improvement (tested)
 
 FIT ROUTINES
     - fit_routine

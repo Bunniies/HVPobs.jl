@@ -7,11 +7,15 @@ function apply_rw(data::Array{Float64}, W::Matrix{Float64}, vcfg::Union{Nothing,
     return (data_r, W1 .* W2)
 end
 
-function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, vcfg::Vector{Int64})
+function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, vcfg::Vector{Int64}, rep_len::Vector{Int64})
 
-    idm = reshape(vcfg, :, length(W))
-    rw1 = [W[k][1, idm[:, k]] for k=1:length(W)]
-    rw2 = [W[k][2, idm[:, k]] for k=1:length(W)]
+    chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
+    idm = chunk(vcfg, rep_len)
+    rw1 = [W[k][1, idm[k]] for k=1:length(W)]
+    rw2 = [W[k][2, idm[k]] for k=1:length(W)]
+    # idm = reshape(vcfg, :, length(W))
+    # rw1 = [W[k][1, idm[:, k]] for k=1:length(W)]
+    # rw2 = [W[k][2, idm[:, k]] for k=1:length(W)]
 
     rw = vcat([rw1[k] .* rw2[k] for k =1:length(W)]...)
     data_r = data .* rw 

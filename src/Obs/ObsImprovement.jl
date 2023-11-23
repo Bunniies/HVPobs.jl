@@ -1,19 +1,47 @@
 @doc raw"""
     improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0tk::Vector{uwreal}, cv::Float64)
+    improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal})
 
-Given vkvk and t0kt0k correlators as input, together with cv improvement coefficient,
-this function improves the the vkvk correlators by overwriting the old vkvk.
+Given vkvk and vkt0k correlators as input, together with cv improvement coefficient,
+this function permorfs the improvement  of the vkvk correlator. The bare vkvk is ovrewritten.
+If  vkt0k_l, vkt0k_c, cv_l and cv_c are passed, this function improves the conserved-local vector current.  
+
     To improve a0a0:
     If you use a0p -> a0a0 - 2ca a0p
-    If you use pa0 -> a0a0 + 2ca a0p
+    If you use pa0 -> a0a0 + 2ca pa0
 """
-function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal})
-    der_t0tk = (vkt0k[3:end] - vkt0k[1:end-2]) / 2
-    der_t0tk[1] = vkt0k[3] - vkt0k[2]
-    push!(der_t0tk, vkt0k[end] - vkt0k[end-1] )
-    vkvk[2:end] = vkvk[2:end] .+ 2 .* cv .* der_t0tk
+function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal}; std::Bool=false)
+    
+    der_t0tk = improve_derivative(vkt0k, std=std)
+    vkvk[2:end] = vkvk[2:end] .+ cv .* der_t0tk
 end
-improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv)
+improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}; std::Bool=false) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv, std=std)
+
+function improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
+    
+    der_t0tk_l = improve_derivative(vkt0k_l, std=std)
+    der_t0tk_c = improve_derivative(vkt0k_c, std=std)
+
+    vkvk[2:end] = vkvk[2:end] .+ cv_l .* der_t0tk_c .+ cv_c .* der_t0tk_l
+end
+improve_corr_vkvk_cons!(vkvk::Corr, t0tk_l::Corr, t0tk_c::Corr, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false) = improve_corr_vkvk_cons!(vkvk.obs, t0tk_l.obs, t0tk_c.obs, cv_l, cv_c, std=std)
+
+function improve_derivative(corr::Vector{uwreal}; std::Bool=false)
+    if std
+        dcorr = (corr[3:end] - corr[1:end-2]) / 2 
+        dcorr[1] = corr[3] - corr[2]
+        push!(dcorr, corr[end] - corr[end-1])
+        return dcorr
+    else
+        tvals = Float64.(collect(0:length(corr)-1))
+        corr_aux = corr .* tvals.^2
+        dcorr_aux = (corr_aux[3:end] - corr_aux[1:end-2]) / 2
+        dcorr_aux[1] = corr_aux[3] - corr_aux[2]
+        push!(dcorr_aux, corr[end] - corr[end-1])
+        dcorr = 1 ./ tvals[2:end].^2 .* (dcorr_aux .- 2 .* tvals[2:end] .* corr[2:end])
+        return dcorr
+    end
+end
 
 @doc raw"""
 ZV(beta::Float64)
