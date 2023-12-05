@@ -281,3 +281,38 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
     end
 end
 
+@doc raw"""
+    comp_fvc(path::String)
+
+Computes the finite volume corrections from the jackknife samples and returns the uwreal object as an Array{uwreal}(n2_max, Thalf), 
+where n2_max is the number (squared) of pion wrapping around the torus and Thalf is half of the lattice temporal extent. 
+The data file to be passed are typically named fv_corr_blat_gslrng0000_err3_ensID_win0.dat 
+
+```@example
+path = /path/to/fv_corr_blat_gslrng0000_err3_ensID.dat
+data = comp_fvc(path)
+```
+"""
+function comp_fvc(path::String)
+
+    fvcstruct = read_FVC(path)
+    fvcdata = getfield(fvcstruct, :data)
+    n2_max = size(fvcdata, 1)
+    Thalf  = size(fvcdata, 2)
+    bin    = size(fvcdata, 3)
+
+    id     = getfield(fvcstruct, :id)
+
+    fvcuw = Array{uwreal}(undef, n2_max, Thalf)
+
+    for n in 1:n2_max
+        for t in 1:Thalf
+            #fvcuw[n,t] = uwreal(fvcdata[n, t, :], id*"_FVC" )
+            ave = mean(fvcdata[n,t,:])
+            sdv = (bin-1) / bin * sum((fvcdata[n,t,:] .- ave).^2)
+            fvcuw[n,t] = uwreal([ave, sqrt(sdv)], id*"_FVC1" )
+        end
+    end
+
+    return fvcuw
+end

@@ -60,8 +60,8 @@ function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{Strin
 
     data = read_t0(path, ens.id, ens.dtr)
     isnothing(path_rw) ? rw = nothing : rw = get_rw(path_rw, ens.id)
-    t0 = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false)
-    return t0
+    t0_res = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false)
+    return t0_res
 end
 
 
@@ -73,5 +73,10 @@ function read_t0(path::String, ens::String, dtr::Int64)
     else
         error("ms.dat file not found for ensemble ", ens, " in path ", p)
     end
+end
+
+function get_fvc(path::String, ens::String)
+    rep = filter(x-> occursin("corr_blat_gsl", x) && occursin(ens, x), readdir(path, join=true))[1]
+    return comp_fvc(rep)
 end
 

@@ -31,8 +31,23 @@ struct YData
 end
 export YData
 
+struct FVCData
+    id::String
+    n2_max::Int64
+    bin::Int64
+    data::Array{Float64, 3}
+    FVCData(id, n2_max, bin, data) = new(id, n2_max, bin, data)
+end
+function Base.show(io::IO, cd::FVCData)
+    println(io, "FVCata")
+    println(io, " - Ensemble ID:  ", cd.id)
+    println(io, " - n2_max:       ", cd.n2_max)
+    println(io, " - bin:          ", cd.bin)
+end
+export FVCData
+
 include("DataReader.jl")
-export read_hvp_data, read_ms, read_ms1
+export read_hvp_data, read_ms, read_ms1, read_FVC
 
 
 include("DataConst.jl")

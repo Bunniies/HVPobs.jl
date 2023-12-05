@@ -305,3 +305,31 @@ function read_ms1(path::String; v::String="1.2")
     [W[k, :] = prod(mean(exp.(.-r_data[k]), dims=2), dims=1) for k = 1:nrw]
     return W
 end
+
+function read_FVC(path::String)
+    
+    id = match(r"[A-Z]+[0-9]{3}", basename(path)).match
+    f = readdlm(path, '\t', '\n' )
+    header = filter(x->  typeof(x)<:AbstractString &&occursin("#", x), f )
+
+    n2_max = parse(Int64, last(split(filter(x->occursin("n2_max",x), header)[1])))
+    info = split(filter(x->occursin("n_t_lat",x), header)[1])
+    Thalf = Int64(parse(Int64, info[end-2])/2)
+    bin = parse(Int64, info[end-3])
+   
+    # data = setdiff(f, header)
+    data = filter(x -> typeof(x)==Float64, f)
+
+    jkdata = Array{Float64}(undef, n2_max, Thalf, bin )
+
+    for n2 in 1:n2_max
+        for t in 1:Thalf
+            for b in 1:bin
+               jkdata[n2, t, b] = data[b + bin*(t-1) + bin*Thalf*(n2-1)]
+            end
+        end
+    end
+
+    return FVCData(id, n2_max, bin, jkdata)
+
+end

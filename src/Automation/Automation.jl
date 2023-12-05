@@ -24,6 +24,6 @@ module Automation
     export EnsInfo
 
     include("DataAutomation.jl")
-    export get_data, get_rw, get_t0, get_corr
+    export get_data, get_rw, get_t0, get_corr, get_fvc
 
 end
