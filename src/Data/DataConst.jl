@@ -38,13 +38,26 @@ const CLS_kappa_crit = Dict( # taken from 2211.03744
     3.85 => 0.1369767
 )
 
-const CLS = Dict(
+const CLS_CNFG = Dict(
     "H101" => Dict("repLen" => [1007, 1009], "nms" => 2016),
-    "B450" => Dict("repLen" => [1600],       "nms" => 1600),
-    "N202" => Dict("repLen" => [899, 1003],  "nms" => 1902),
-    "N300" => Dict("repLen" => [1540],       "nms" => 1540),
-    "N300" => Dict("repLen" => [1540],       "nms" => 1540),
-    "J500" => Dict("repLen" => [789, 655, 431],    "nms" => 1875)
+    "H102" => Dict("repLen" => [1029, 1008], "nms" => 2037),
+    "H105" => Dict("repLen" => [1027, 1042], "nms" => 2069),
+
+    "B450" => Dict("repLen" => [1600], "nms" => 1600),
+
+    "N202" => Dict("repLen" => [899], "nms" => 899),
+    "N203" => Dict("repLen" => [756, 787],  "nms" => 1543),
+    "N200" => Dict("repLen" => [856, 856],  "nms" => 1712),
+    "D200" => Dict("repLen" => [2001],      "nms" => 2001),
+    "E250" => Dict("repLen" => [151, 1009], "nms" => 1160),
+
+    "N300" => Dict("repLen" => [507, 1540], "nms" => 2047),
+    "N302" => Dict("repLen" => [2201],      "nms" => 2201),
+    "J303" => Dict("repLen" => [1073],      "nms" => 1073),
+    "E300" => Dict("repLen" => [1139],      "nms" => 1139),
+    
+    "J500" => Dict("repLen" => [789, 655],    "nms" => 1444),
+    "J501" => Dict("repLen" => [1635, 1142, 1150], "nms" => 3927)
 )
 
 const b_values = [3.40, 3.46, 3.55, 3.70, 3.85]

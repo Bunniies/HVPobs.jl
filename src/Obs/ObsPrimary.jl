@@ -2,24 +2,27 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
     tvals = size(data, 2)
-    nms = isnothing(nms) ?  sum(cd.rep_len) : nms
+    replen = cd.rep_len
+    vcfg = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
+    replica = Int64.(maximum.(vcfg))
+    nms = isnothing(nms) ?  sum(replica) : nms
     
-    idm = copy(cd.idm)
-    if length(cd.rep_len) != 1
-        idm_sum = [fill((k-1)*sum(cd.rep_len[1:k-1]), cd.rep_len[k]) for k in eachindex(cd.rep_len)]
+    idm = cd.idm[:]
+    if length(replen) != 1
+        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.replicatot)]
         idm .+= vcat(idm_sum...)
     end
 
     if isnothing(rw)
-        obs = [uwreal(data[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
+        obs = [uwreal(data[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
     else
-        if length(cd.rep_len)  == 1
+        if length(replen)  == 1
             data_r, W = apply_rw(data, rw, cd.idm)
         else
-            data_r, W = apply_rw(data, rw, cd.idm, cd.rep_len)
+            data_r, W = apply_rw(data, rw, cd.idm, replen)
         end
-        ow = [uwreal(data_r[:,t], cd.id, cd.rep_len, idm, nms) for t in 1:tvals]
-        W_obs = uwreal(W, cd.id, cd.rep_len, idm, nms)
+        ow = [uwreal(data_r[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
+        W_obs = uwreal(W, cd.id, cd.replicatot, idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]
     end
 
@@ -310,7 +313,7 @@ function comp_fvc(path::String)
             #fvcuw[n,t] = uwreal(fvcdata[n, t, :], id*"_FVC" )
             ave = mean(fvcdata[n,t,:])
             sdv = (bin-1) / bin * sum((fvcdata[n,t,:] .- ave).^2)
-            fvcuw[n,t] = uwreal([ave, sqrt(sdv)], id*"_FVC1" )
+            fvcuw[n,t] = uwreal([ave, sqrt(sdv)], id*"_FVC" )
         end
     end
 

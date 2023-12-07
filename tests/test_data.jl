@@ -69,8 +69,8 @@ path_rw = "/Users/alessandroconigli/Lattice/data/aux_obs_data/rwf"
 path_ms = "/Users/alessandroconigli/Lattice/data/aux_obs_data/wilson/"
 
 cdata = get_data(path, "H101", "light", "V1V1c")
-rw = get_rw(path_rw, "H101")
-corr = get_corr(path, "H101", "light", "V1V1c", path_rw)
+rw = get_rw(path_rw, "H101", v="")
+corr = get_corr(path, EnsInfo("H101"), "light", "V1V1c", path_rw=path_rw)
 t0_ens = get_t0(path_ms, "H101")
 
 
@@ -85,3 +85,45 @@ path_rw_new = "/Users/alessandroconigli/Lattice/data/aux_obs_data/rwf/J500/r006/
 
 tmp_data = HVPobs.Data.read_rw_openQCD2(path_rw_new)
 ##
+
+############
+# test reading E250 (gaps in measurements) 
+#########
+
+path_data = "/Users/alessandroconigli/Lattice/data/HVP/2ptdata"
+cdat = get_data(path_data, "H101", "light", "V1V1")
+
+path_rw   = "/Users/alessandroconigli/Lattice/data/HVP/rwf_deflated"
+rw = get_rw(path_rw, "H101")
+
+## reproduce corr_obs
+data = cdat.re_data
+rep_len = cdat.rep_len 
+vcfg = [cdat.idm[1+sum(rep_len[1:k-1]):sum(rep_len[1:k])] for k in eachindex(rep_len)]
+replica = Int64.(maximum.(vcfg))
+
+nms = sum(replica)
+
+idm = cdat.idm[:]
+if length(cdat.rep_len) != 1
+    idm_sum = [fill((k-1)*sum(replica[1:k-1]), rep_len[k]) for k in eachindex(replica)]
+    idm .+= vcat(idm_sum...)
+end
+
+tvals = size(data, 2)
+obs = [uwreal(data[:,t], cdat.id, replica, idm, nms ) for t in 1:tvals];
+
+data_r, W = HVPobs.Obs.apply_rw(data, rw, cdat.idm, rep_len )
+ow = [uwreal(data_r[:,t], cdat.id, replica, idm, nms ) for t in 1:tvals];
+W_obs = uwreal(W, cdat.id, replica, idm, nms )
+
+##
+
+
+
+
+
+
+corr = corr_obs(cdat, rw=rw)
+uwerr.(corr.obs)
+mchist(corr.obs[10], "H101")[2000:end]

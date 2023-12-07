@@ -1,7 +1,7 @@
 
 function get_data(path::String, ens::String, fl::String, g::String)
 
-    if !(fl in ["light", "pion", "strange", "charm", "charm_plus"])
+    if !(fl in ["light", "light_LMA", "pion", "strange", "charm", "charm_plus"])
         error("Flavour fl not found. \n Choose fl from: light, pion, strange, charm, charm_plus ")
     end
     if !(g in GAMMA)
@@ -19,17 +19,17 @@ function get_data(path::String, ens::String, fl::String, g::String)
 end
 
 function get_rw(path::String, ens::String; v::String="1.2")
-    p = joinpath(path, ens)
-    rep = filter(x->occursin("ms1.dat", x), readdir(p, join=true))
+    # p = joinpath(path, ens)
+    rep = filter(x->occursin(ens, x), readdir(path, join=true))
     if ens == "J500"
         return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
     end
     if ens == "J501"
         return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4") ]
     end
-    if ens == "E250"
-        return read_ms1(rep[1], v="1.6")
-    end
+    #if ens == "E250"
+    #    return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0")]
+    #end
     # if ens == "N202"
         # return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
     # end
@@ -37,7 +37,11 @@ function get_rw(path::String, ens::String; v::String="1.2")
         try
             length(rep) == 1 ? (return read_ms1(rep[1], v=v)) : (return read_ms1.(rep, v=v)) 
         catch
-            length(rep) == 1 && length(rep)!=0 ? (return read_ms1(rep[1], v="1.4")) : (return read_ms1.(rep, v="1.4")) 
+            try
+                length(rep) == 1 && length(rep)!=0 ? (return read_ms1(rep[1], v="1.4")) : (return read_ms1.(rep, v="1.4")) 
+            catch
+                length(rep) == 1 && length(rep)!=0 ? (return read_ms1(rep[1], v="2.0")) : (return read_ms1.(rep, v="2.0")) 
+            end
         end
     else
         error("ms1.dat file not found for ensemble ", ens, " in path ", p)
@@ -66,8 +70,8 @@ end
 
 
 function read_t0(path::String, ens::String, dtr::Int64)
-    p = joinpath(path, ens)
-    rep = filter(x->occursin("ms.dat", x), readdir(p, join=true))
+    # p = joinpath(path, ens)
+    rep = filter(x->occursin(ens, x), readdir(path, join=true))
     if length(rep)!=0
         length(rep) == 1 ? (return read_ms(rep[1], dtr=dtr, id=ens)) : (return read_ms.(rep, dtr=dtr, id=ens)) 
     else

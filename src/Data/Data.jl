@@ -9,8 +9,10 @@ struct CData
     im_data::Array{Float64}
     idm::Vector{Int64}
     gamma::String
+    nms::Int64
+    replicatot::Vector{Int64}
 
-    CData(id, rep_len, re_data, im_data, idm, gamma) = new(id, rep_len, re_data, im_data, idm, gamma)
+    CData(id, rep_len, re_data, im_data, idm, gamma) = new(id, rep_len, re_data, im_data, idm, gamma, CLS_CNFG[id]["nms"], CLS_CNFG[id]["repLen"] )
 end
 function Base.show(io::IO, cd::CData)
     println(io, "CData")
