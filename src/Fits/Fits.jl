@@ -1,6 +1,6 @@
 module Fits
 
-using LsqFit, LinearAlgebra, ForwardDiff, Statistics, Optim
+using LsqFit, LinearAlgebra, ForwardDiff, Statistics, Optim, PyPlot
 using ADerrors, LaTeXStrings
 
 struct FitRes
@@ -29,6 +29,10 @@ export get_pvalue
 include("FitRoutines.jl")
 export fit_routine
 
+include("FitsBMA.jl")
+export  bayesian_av
+
 include("FitChisq.jl")
+
 
 end

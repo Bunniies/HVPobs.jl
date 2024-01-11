@@ -40,6 +40,65 @@ function read_hvp_data(path::String, id::Union{String,Nothing}=nothing)
     return CData(id, rep_len, re_data, im_data, idm, gamma)    
 end
 
+function read_mesons_data(path::String, id::Union{String,Nothing}=nothing)
+
+    nn = basename(path)
+    idx = occursin.(GAMMA, nn)
+    gamma = GAMMA[idx][1]
+    if !(gamma in GAMMA)
+        error("Gamma structure $(gamma) not supported.")
+    end
+
+    f = readdlm(path, '\t',  skipstart=1)
+    #return f
+    header = filter(x-> typeof(x)<:AbstractString && occursin("nb", x), f)
+
+    rep_info = last.(split.(header))
+    rep_len = parse.(Int64, rep_info)
+    delim = findall(x-> typeof(x)<:AbstractString && occursin("#", x), f)
+    delim_line1 = delim[1:2:end]
+    delim_line2 = delim[2:2:end]
+    
+    tvals = Int64((size(f)[1] - size(header)[1] - size(delim)[1]) / sum(rep_len))
+    if tvals%2 != 0
+        error("Temporal dimension T has to be an even number \n T = $(tvals)" )
+    end
+  
+
+    re_data = Array{Float64}(undef, sum(rep_len), tvals)
+    im_data = similar(re_data)
+    
+    idm = Vector{Int64}(undef, sum(rep_len))
+    rep_id = Vector{Int64}(undef, sum(rep_len))
+
+    for k in eachindex(delim_line1)
+
+        rep_id[k], idm[k] = map(eachmatch(r"\d+", f[delim_line1[k]])) do m
+            parse(Float64, m.match)
+        end
+
+        idx = delim_line2[k].I[1]
+        try
+            data = split.(f[idx+1:idx+tvals])
+            re_data[k,:] = parse.(Float64, getindex.(data, 2))
+            im_data[k,:] = parse.(Float64, getindex.(data, 3))
+        catch
+            re_data[k,:] = f[idx+1:idx+tvals, 2]
+            im_data[k,:] = f[idx+1:idx+tvals, 3]
+        end
+
+    end
+    
+    if id == "E300"
+        re_data = re_data[1:1137, :]
+        im_data = im_data[1:1137, :]
+        idm = idm[1:1137]
+        rep_len = [1137]
+    end
+    
+    return CData(id, rep_len, re_data, im_data, idm, gamma)    
+end
+
 @doc raw"""
     read_ms(path::String; id::Union{String, Nothing}=nothing, dtr::Int64=1, obs::String="Y")  
 

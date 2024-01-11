@@ -13,7 +13,7 @@ corr = corr_obs(cdata, rw=nothing)
 plot(value.(corr.obs))
 display(gcf())
 close()
-m_av = meff(corr.obs, [20,50], pl=true)
+m_av = meff(corr.obs, [15,40], pl=true)
 
 # corr with rwf
 path_rwf = "/Users/alessandroconigli/Lattice/data/aux_obs_data/rwf/N202/N202r001.ms1.dat"
@@ -52,7 +52,7 @@ ydata = read_ms(path_ms)
 ydata1 = read_ms(path_ms1)
 
 
-t00 = comp_t0([ydata,ydata1], [20,80], L=32)
+t00 = comp_t0([ydata,ydata1], [20,80], L=32, pl=true)
 
 
 # test rwf deflated
@@ -65,12 +65,14 @@ get_rw(path,"J303", v="2.0")
 # TEST DATA AUTOMATION
 #########################
 path = "/Users/alessandroconigli/Lattice/data/HVP/2ptdata"
-path_rw = "/Users/alessandroconigli/Lattice/data/aux_obs_data/rwf"
+path_rw = "/Users/alessandroconigli/Lattice/data/HVP/rwf_deflated"
 path_ms = "/Users/alessandroconigli/Lattice/data/aux_obs_data/wilson/"
 
 cdata = get_data(path, "H101", "light", "V1V1c")
 rw = get_rw(path_rw, "H101", v="")
-corr = get_corr(path, EnsInfo("H101"), "light", "V1V1c", path_rw=path_rw)
+
+
+corr = get_corr(path, EnsInfo("N202"), "light", "V1V1c", path_rw=path_rw)
 t0_ens = get_t0(path_ms, "H101")
 
 

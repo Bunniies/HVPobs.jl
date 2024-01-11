@@ -1,3 +1,5 @@
+using ADerrors
+
 const GAMMA = ["V1T10", "V1V1c", "V2T20", "V2V2c", "V3T30", "V3V3c",
                "V1V1", "V1cT10", "V2V2", "V2cT20", "V3V3", "V3cT30",
                "A0P", "PP"  ]
@@ -28,6 +30,7 @@ const CLS_db = Dict(
     "E300" => Dict("L"=>96, "beta"=>3.7, "kappa_l"=>0.137163, "kappa_s"=>0.1366751636177327, "dtr"=>1, "plat_t0"=>[25,170]),
 
     "J500" => Dict("L"=>64, "beta"=>3.85, "kappa_l"=>0.136852, "kappa_s"=>0.136852, "dtr"=>2, "plat_t0"=>[25,170]),
+    "J501" => Dict("L"=>64, "beta"=>3.85, "kappa_l"=>0.1369032, "kappa_s"=>0.136749715, "dtr"=>1, "plat_t0"=>[25,170])
 
 )
 const CLS_kappa_crit = Dict( # taken from 2211.03744
@@ -54,16 +57,18 @@ const CLS_CNFG = Dict(
     "N300" => Dict("repLen" => [507, 1540], "nms" => 2047),
     "N302" => Dict("repLen" => [2201],      "nms" => 2201),
     "J303" => Dict("repLen" => [1073],      "nms" => 1073),
-    "E300" => Dict("repLen" => [1139],      "nms" => 1139),
+    "E300" => Dict("repLen" => [1137],      "nms" => 1137),
     
-    "J500" => Dict("repLen" => [789, 655],    "nms" => 1444),
+    "J500" => Dict("repLen" => [789, 655, 431],    "nms" => 1875),
     "J501" => Dict("repLen" => [1635, 1142, 1150], "nms" => 3927)
 )
 
 const b_values = [3.40, 3.46, 3.55, 3.70, 3.85]
 const hc = 197.3269804 #MeV fm
+const mpi_ph = uwreal([134.8, 0.3], "mpi phys")
+
 # Madrid scale setting
-const t0sqrt_ph = uwreal([0.1439, 0.006], "sqrt(t0) [fm]") 
+const t0_ph = uwreal([0.1439, 0.006], "sqrtt0 [fm]") 
 #1608.08900
 const t0_data = [2.86, 3.659, 5.164, 8.595, 14.040]
 const t0_error = [11, 16, 18, 29, 49] .* 1e-3
@@ -74,5 +79,9 @@ for i = 1:5
 end
 
 const t0_ = cobs(t0_data, Ct0, "t0sym/a2")
+const a_ = t0_ph ./ sqrt.( t0_)
+
 t0(beta::Float64) = t0_[b_values .== beta][1]
+a(beta::Float64)          = a_[b_values .== beta][1]
+
 

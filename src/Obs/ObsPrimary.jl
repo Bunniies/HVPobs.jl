@@ -9,7 +9,8 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     
     idm = cd.idm[:]
     if length(replen) != 1
-        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.replicatot)]
+        # idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.replicatot)]
+        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.rep_len)]
         idm .+= vcat(idm_sum...)
     end
 
@@ -21,6 +22,12 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
         else
             data_r, W = apply_rw(data, rw, cd.idm, replen)
         end
+        # println(cd.id)
+        # println(idm[end]," ", length(cd.idm))
+        # println(cd.nms)
+        # println(length(data[:,1]))
+        # println(length(data_r[:,1]))
+        # println(cd.replicatot)
         ow = [uwreal(data_r[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
         W_obs = uwreal(W, cd.id, cd.replicatot, idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]

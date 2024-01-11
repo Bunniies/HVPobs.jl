@@ -2,8 +2,9 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
 
     tvals = length(obs)
     m = 0.5 .* log.((obs[2:tvals-2] ./ obs[3:tvals-1]) .^2)
+    # m = log.((obs[2:tvals-2] ./ obs[3:tvals-1]) )
 
-    m_av = plat_av(m, plat)
+    m_av = plat_av(m, plat, wpm=wpm)
 
     if pl
         isnothing(wpm) ? uwerr(m_av) : uwerr(m_av, wpm)
@@ -12,6 +13,8 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
         fill_between(plat[1]:plat[2], value(m_av)-err(m_av), value(m_av)+err(m_av), alpha=0.6, color="royalblue")
         ylabel(L"$m_\mathrm{eff}$")
         xlabel(L"$x_0$")
+        ylim(value(m_av)-80*err(m_av), value(m_av)+80*err(m_av))
+
 
         display(gcf())
         close()
@@ -19,3 +22,4 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
 
     !data ? (return m_av) : (return m_av, m)
 end
+meff(corr::Corr, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing) = meff(corr.obs, plat; pl=pl, data=data, wpm=wpm)

@@ -49,11 +49,11 @@ end
 export FVCData
 
 include("DataReader.jl")
-export read_hvp_data, read_ms, read_ms1, read_FVC
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC
 
 
 include("DataConst.jl")
-export GAMMA, CLS_db, hc, t0, t0sqrt_ph, CLS_kappa_crit
+export GAMMA, CLS_db, hc, t0, a,  CLS_kappa_crit, mpi_ph
 
 
 end
