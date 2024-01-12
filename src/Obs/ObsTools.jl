@@ -42,7 +42,11 @@ function apply_rw_t0(data::Vector{<:Array{Float64}}, W::Vector{Matrix{Float64}})
 end
 
 
+"""@doc raw
+    plat_av(obs::Vector{uwreal}, plat::Vector{Int64}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
 
+This function performs the plateau average of `obs` over the plateau `plat`. The wpm flag can be used to control error analysis according to the `ADerrors` documentation.
+"""
 function plat_av(obs::Vector{uwreal}, plat::Vector{Int64}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
     isnothing(wpm) ? uwerr.(obs) : [uwerr(obs[k], wpm) for k in eachindex(obs)]
     w = 1 ./ err.(obs[plat[1]:plat[2]]).^2
@@ -69,6 +73,12 @@ function get_model(x, p, n)
     return s
 end
 
+"""@doc raw
+    frwd_bckwrd_symm!(obs::Vector{uwreal})
+    frwd_bckwrd_symm!(corr::Corr)
+
+This function performs the forward-backward symmetrization of a given `obs` passed as input.
+"""
 function frwd_bckwrd_symm!(obs::Vector{uwreal})
     obs[2:end] = (obs[2:end] .+ reverse(obs[2:end]))  ./ 2.
     return nothing

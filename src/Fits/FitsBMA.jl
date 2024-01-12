@@ -45,7 +45,7 @@ tmax_array = [80,81,82,83,84,85]
 """
 function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, tmax_array::Array{Int64}, k::Int64; pl::Bool=false, data::Bool=false,
     wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, path_plt::Union{String,Nothing}=nothing, 
-    plt_title::Union{Nothing,String}=nothing, label::Union{Nothing, LaTeXString}=nothing)
+    plt_title::Union{Nothing,String}=nothing, label::Union{Nothing, LaTeXString}=nothing, pbc::Bool=false)
     
     weight_model = Array{Float64,1}()
     AIC = Array{Float64,1}()
@@ -63,9 +63,17 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
     
     for INDEX in tmin_array ## vary tmin
         for j in tmax_array ## vary tmax
+            if pbc==true
+                #println("pbc is true, T= $(INDEX + j), y = $(length(y))")
+                if INDEX + j != length(y) 
+                    continue
+                else
+                 #   println("if you see me: $(INDEX + j)==$(length(y))")
+                end
+            end
             try
-                x = [i for i in INDEX+1:1:j]	
-	            yy = y[INDEX+1:1:j]
+                x = [i for i in INDEX:1:j]	
+	            yy = y[INDEX:1:j]
 	            Ncut = total - length(x)
                 dy = err.(yy)
                 W = 1 ./ dy .^2
@@ -87,9 +95,9 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
 
                 push!(chi2chi2exp, chi2 / chi_exp) 
                 push!(p1, up[1])
-                push!(mods,string("[", INDEX+1, ",", j, "]"))
+                push!(mods,string("[", INDEX, ",", j, "]"))
             catch 
-                @warn string(":/ Negative window for error propagation at tmin = ", INDEX, ", tmax = ", j, "; skipping that point")
+               @warn string(":/ Negative window for error propagation at tmin = ", INDEX, ", tmax = ", j, "; skipping that point")
             end
         end
     end

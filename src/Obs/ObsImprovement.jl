@@ -1,14 +1,24 @@
 @doc raw"""
-    improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0tk::Vector{uwreal}, cv::Float64)
-    improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal})
+    improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal}; std::Bool=false)
+    improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}; std::Bool=false)
 
-Given vkvk and vkt0k correlators as input, together with cv improvement coefficient,
-this function permorfs the improvement  of the vkvk correlator. The bare vkvk is ovrewritten.
-If  vkt0k_l, vkt0k_c, cv_l and cv_c are passed, this function improves the conserved-local vector current.  
+Given the vector-vector `vkvk`and vector-tensor `vkt0k` correlators as input, together with the cv improvement coefficient,
+this function overwrite the `vkvk` correlator  with the Symanzik improved version. 
+The flag `std` controls the derivative discretization of the `vkt0k` correlators. If false, it uses the improved version of the derivative,
+if true it uses the standard symmetric derivative.
 
-    To improve a0a0:
-    If you use a0p -> a0a0 - 2ca a0p
-    If you use pa0 -> a0a0 + 2ca pa0
+    ```@example
+    cdata_vv = read_hvp_data(path_to_vv, id)
+    cdata_vt = read_hvp_data(path_to_vt, id)
+
+    rw = read_ms1(path, v="1.4")
+
+    corr_vv = corr_obs(cdata_vv, rw=rw)
+    corr_vt = corr_obs(cdata_vt, rw=rw)
+
+    cv = cv_loc(beta)
+    improve_corr_vkvk!(corr_vv, corr_vt, cv )
+    ```
 """
 function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal}; std::Bool=false)
     
@@ -17,6 +27,32 @@ function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Uni
 end
 improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}; std::Bool=false) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv, std=std)
 
+@doc raw"""
+    improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
+    improve_corr_vkvk_cons!(vkvk::Corr, t0tk_l::Corr, t0tk_c::Corr, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
+
+Given the local-conserved vector-vector `vkvk`, the local-conserved vector-tensor `vkt0k` and the local-local vector-tensor `vkt0k` correlators as input, together with the cv_local and cv_cons improvement coefficient,
+this function overwrite the local-conserved `vkvk` correlator  with the Symanzik improved version. 
+The flag `std` controls the derivative discretization of the `vkt0k` correlators. If false, it uses the improved version of the derivative,
+if true it uses the standard symmetric derivative.
+
+    ```@example
+    cdata_vv = read_hvp_data(path_to_vv, id)
+    cdata_vt_loc = read_hvp_data(path_to_vt_loc, id)
+    cdata_vt_cons = read_hvp_data(path_to_vt_cons, id)
+
+    rw = read_ms1(path, v="1.4")
+
+    corr_vv = corr_obs(cdata_vv, rw=rw)
+    corr_vt_loc = corr_obs(cdata_vt_loc, rw=rw)
+    corr_vt_cons = corr_obs(cdata_vt_cons, rw=rw)
+
+    cv_loc  = cv_loc(beta)
+    cv_cons = cv_cons(beta)
+    
+    improve_corr_vkvk!(corr_vv, corr_vt_loc, corr_vt_cons, cv_loc, cv_cons)
+    ```
+"""
 function improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
     
     der_t0tk_l = improve_derivative(vkt0k_l, std=std)

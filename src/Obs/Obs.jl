@@ -4,6 +4,12 @@ using ..Data, ..Fits
 using ADerrors, LaTeXStrings, PyPlot
 using Statistics
 
+@doc raw"""
+    Corr(a::Vector{uwreal}, id::String, gamma::String)
+
+The struct Corr stores data, ensemble id and gamma structure for
+two and three-point correlation functions. 
+"""
 struct Corr
     obs::Vector{uwreal}
     id::String

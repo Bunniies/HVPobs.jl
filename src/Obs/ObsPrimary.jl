@@ -1,3 +1,21 @@
+@doc raw"""
+    corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
+
+Creates a `Corr` struct with the given `CData` struct `cdata`  (read from `read_hvp_data` or `read_mesons_data`) for a single or multiple replicas.
+The flag `real` select the real or imaginary part of the correlator.
+If `rw` is specified, the method applies reweighting. `rw` is passed as a matrix of Float64 (`read_ms1`)
+The correlator can be normalized with the volume factor if `L` is fixed.
+The flag `nms` can be used to specify the maximum number of existing configurations in a given ensemble.
+
+```@example
+
+data = read_hvp_data(path, id)
+rw = read_ms1(path_rw)
+
+corr = corr_obs(data)
+corr_r = corr_obs(data, rw=rw)
+```    
+"""
 function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
     
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3

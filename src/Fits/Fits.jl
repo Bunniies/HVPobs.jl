@@ -3,6 +3,16 @@ module Fits
 using LsqFit, LinearAlgebra, ForwardDiff, Statistics, Optim, PyPlot
 using ADerrors, LaTeXStrings
 
+"""@doc raw
+    FitRes structure.
+
+This structure is returned by the `fit_routine` function and it contains useful fit informations such as:  
+    - dof  
+    - param  
+    -chi2  
+    -chi2exp  
+    -pval  
+"""
 struct FitRes
     dof::Int64
     param::Vector{uwreal}

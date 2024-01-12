@@ -1,3 +1,18 @@
+@doc raw"""
+    meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+    meff(corr::Corr, plat::Vector{Int64}; pl::Bool=true, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+
+Computes effective mass for a given correlator corr at a given plateau `plat`.
+Correlator can be passed as an `Corr` struct or `Vector{uwreal}`.
+    
+The flags `pl` and `data` allow to show the plots and return data as an extra result.
+
+```@example
+data = read_mesons(path, "G5", "G5")
+corr_pp = corr_obs.(data)
+m = meff(corr_pp[1], [50, 60], pl=false)
+```
+"""
 function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
 
     tvals = length(obs)
@@ -17,7 +32,7 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
 
 
         display(gcf())
-        close()
+        close("all")
     end
 
     !data ? (return m_av) : (return m_av, m)

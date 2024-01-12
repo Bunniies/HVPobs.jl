@@ -82,6 +82,6 @@ const t0_ = cobs(t0_data, Ct0, "t0sym/a2")
 const a_ = t0_ph ./ sqrt.( t0_)
 
 t0(beta::Float64) = t0_[b_values .== beta][1]
-a(beta::Float64)          = a_[b_values .== beta][1]
+a(beta::Float64)  = a_[b_values .== beta][1]
 
 

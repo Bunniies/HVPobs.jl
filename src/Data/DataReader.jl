@@ -1,4 +1,14 @@
-function read_hvp_data(path::String, id::Union{String,Nothing}=nothing)
+"""@doc raw
+    read_hvp_data(path::String, id::String)
+
+This function reads the HVP data used in the g-2 analysis. It takes as input a `path` to the data and en ensemble `id` 
+and it returns a `CData` structure.
+
+```@example
+cdata = read_hvp_data(path, "H101")
+````
+"""
+function read_hvp_data(path::String, id::String)
 
     nn = basename(path)
     gamma = split(nn, "_")[end]
@@ -40,7 +50,17 @@ function read_hvp_data(path::String, id::Union{String,Nothing}=nothing)
     return CData(id, rep_len, re_data, im_data, idm, gamma)    
 end
 
-function read_mesons_data(path::String, id::Union{String,Nothing}=nothing)
+"""@doc raw
+    read_meson_data(path::String, id::String)
+
+This function reads the 2-point function data in the format used for spectrum computations. It takes as input a `path` to the data and en ensemble `id` 
+and it returns a `CData` structure.
+
+```@example
+cdata = read_mesons_data(path, "H101")
+````
+"""
+function read_mesons_data(path::String, id::String)
 
     nn = basename(path)
     idx = occursin.(GAMMA, nn)
@@ -350,6 +370,8 @@ Examples:
 read_ms1(path)
 read_ms1(path, v="1.4")
 read_ms1(path, v="1.6")
+read_ms1(path, v="2.0")
+
 ```
 """
 function read_ms1(path::String; v::String="1.2")
