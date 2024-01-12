@@ -14,7 +14,7 @@ jobs:
         with:
           version: '1.7.3'
       - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.add("Documenter"); using Documenter'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkd.add("https://gitlab.ift.uam-csic.es/alberto/bdio.jl"); Pkg.add("https://gitlab.ift.uam-csic.es/alberto/aderrors.jl"); Pkg.instantiate() '
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions token
