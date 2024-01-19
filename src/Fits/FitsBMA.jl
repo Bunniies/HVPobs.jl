@@ -68,11 +68,11 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
                 if INDEX + j != length(y) 
                     continue
                 else
-                 #   println("if you see me: $(INDEX + j)==$(length(y))")
+                   #println("if you see me: $(INDEX + j)==$(length(y))")
                 end
             end
             try
-                x = [i for i in INDEX:1:j]	
+                x = [i for i in INDEX:1:j] .-1	
 	            yy = y[INDEX:1:j]
 	            Ncut = total - length(x)
                 dy = err.(yy)
@@ -82,7 +82,7 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
                 chisq = gen_uncorrelated_chisq(fun, x, dy)
 
                 fit = curve_fit(fun, x, value.(yy), W, p00)
-
+                uwerr.(yy)
                 isnothing(wpm) ? (up, chi_exp) = fit_error(chisq,coef(fit),yy) : (up,chi_exp) = fit_error(chisq,coef(fit),yy,wpm)
                 isnothing(wpm) ? uwerr(up[1]) : uwerr(up[1],wpm)
                 chi2 = sum(fit.resid.^2) 

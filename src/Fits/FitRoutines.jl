@@ -45,6 +45,8 @@ function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}
     @info("Uncorrelated fit")
     chisq = gen_uncorrelated_chisq(model, xdata, yer)
     fit = curve_fit(model, xdata, yval, 1.0 ./ yer.^2, fill(0.5, param))
+    # println("chi2 ", sum(fit.resid.^2))
+    # println("coef ", coef(fit))
     (upar, chi_exp) = isnothing(wpm) ? fit_error(chisq, coef(fit), ydata) : fit_error(chisq, coef(fit), ydata, wpm)
     chi2_fit_res = sum(fit.resid.^2 )
     

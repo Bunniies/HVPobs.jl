@@ -218,9 +218,44 @@ Values from 1805.07401
 function bv_bar_set2(beta::Float64)
     g2 = 6/beta
     CC = [[4.9676, -4.8982, 3.0473, 3.2513] [-4.8982, 6.4514, -3.6515, -2.6826] [3.0473, -3.6515, 2.1830, 1.8785] [3.2513, -2.6826, 1.8785, 2.4558]] .*1e-5
-    p = cobs([-0.43101, 0.04109, -0.03911, -0.51771], CC, [15,16,16,18])
+    p = cobs([-0.43101, 0.04109, -0.03911, -0.51771], CC, [15,16,17,18])
     rvbar = (1 + p[1]*g2 + p[2]*g2^2 + p[3]*g2^3) / (1 + p[4]*g2)
     bvbar = (rvbar - bv_set2(beta)) / 3
     return bvbar
 
+end
+@doc raw"""
+    ca(beta::Float64)
+Given the coupling beta, this function returns the ca coefficient for the 
+improvement of the axial correlator. Taken from 1502.04999
+"""
+function ca(beta::Float64)
+    g2 = 6/beta
+    ca = -0.006033 * g2 * ( 1 + exp(9.2056 - 13.9847/g2))
+    return ca
+end
+
+@doc raw"""
+Za_l_sub(beta::Float64)
+Given the coupling beta, this function returns the renormalization factor Za^l sub from LCP-2 of 1808.09236  
+This formula is valid up to β=3.85
+"""
+function Za_l_sub(beta::Float64)
+    g2 = 6/beta
+    CC = [[0.229571866, -0.278151898, 0.084105454] [-0.278151898, 0.337131945, -0.101975449] [0.084105454, -0.101975449, 0.030856380]] .* 1e-1
+    p = cobs([1.35510, -0.501106, 0.091656], CC, [19,20,21])
+    Za = p[1] + p[2]*g2 + p[3]*g2^2
+    return Za 
+end
+
+@doc raw"""
+ZP(beta::Float64)
+Given the coupling beta, this function returns the renormalization factor ZP from 1802.05243.
+"""
+function ZP(beta::Float64)
+
+    C = [[0.375369e-6, 0.429197e-6, -0.186896e-5] [0.429197e-6, 0.268393e-4, 0.686776e-4] [-0.186896e-5, 0.686776e-4, 0.212386e-3]]
+    z = cobs([0.348629, 0.020921, 0.070613], C, [22,23,24])
+    zp = z[1] + z[2] * (beta - 3.79) + z[3] * (beta - 3.79)^2
+    return zp
 end

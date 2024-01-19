@@ -110,7 +110,7 @@ function read_t0(path::String, ens::String, dtr::Int64)
     if length(rep)!=0
         length(rep) == 1 ? (return read_ms(rep[1], dtr=dtr, id=ens)) : (return read_ms.(rep, dtr=dtr, id=ens)) 
     else
-        error("ms.dat file not found for ensemble ", ens, " in path ", p)
+        error("ms.dat file not found for ensemble ", ens, " in path ", path)
     end
 end
 

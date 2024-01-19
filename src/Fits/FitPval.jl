@@ -94,7 +94,11 @@ function get_pvalue(chisq::Function,
         for i in 1:m
             Px[i,i] = Ww[i] + Px[i,i]
         end
-        C = ADerrors.cov(data) 
+        if !isnothing(wpm)
+            C = ADerrors.cov(data, wpm)
+        else
+            C = ADerrors.cov(data)            
+        end
         
         nu = sqrt(C) * Px * sqrt(C)
         

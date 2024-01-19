@@ -17,7 +17,7 @@ function read_hvp_data(path::String, id::String)
     end
 
     f = readdlm(path, '\t', '\n', skipstart=1)
-    
+    #return f 
     header = filter(x-> typeof(x)<:AbstractString && occursin("nb", x), f)
 
     rep_info = last.(split.(header))
@@ -158,6 +158,11 @@ function read_ms(path::String; id::Union{String, Nothing}=nothing, dtr::Int64=1 
     datsize=4 + 3*8*(nn + 1) * tvals # measurement size of each cnfg
 
     ntr = Int32((fsize - 3*4 - 8) / datsize)
+    
+    if basename(path) == "N101r004.ms.dat"
+        println("N101r004: conf 24 got lost")
+        ntr = ntr -1
+    end
 
     if mod(ntr, dtr) != 0
         println("ntr = ", ntr)

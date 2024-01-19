@@ -35,8 +35,13 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
     else
-        if length(replen)  == 1
-            data_r, W = apply_rw(data, rw, cd.idm)
+        if length(replen)  == 1 
+            if cd.id == "D452" # 2 replicas on HVP data but 1 replica in meson data
+                data_r, W = apply_rw(data, rw[2], cd.idm)
+                idm = idm .+ 161
+            else
+                data_r, W = apply_rw(data, rw, cd.idm)
+            end
         else
             data_r, W = apply_rw(data, rw, cd.idm, replen)
         end
@@ -46,6 +51,7 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
         # println(length(data[:,1]))
         # println(length(data_r[:,1]))
         # println(cd.replicatot)
+        
         ow = [uwreal(data_r[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
         W_obs = uwreal(W, cd.id, cd.replicatot, idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]
