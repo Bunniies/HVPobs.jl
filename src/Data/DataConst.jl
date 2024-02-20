@@ -86,7 +86,7 @@ const b_values = [3.40, 3.46, 3.55, 3.70, 3.85]
 const hc = 197.3269804 #MeV fm
 
 # Madrid scale setting
-const t0_ph = uwreal([0.1439, 0.006], "sqrtt0 [fm]") 
+const t0_ph = uwreal([0.1439, 0.0006], "sqrtt0 [fm]") 
 #1608.08900
 const t0_data = [2.86, 3.659, 5.164, 8.595, 14.040]
 const t0_error = [11, 16, 18, 29, 49] .* 1e-3

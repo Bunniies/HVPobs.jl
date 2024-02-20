@@ -58,3 +58,17 @@ function Base.:+(x::uwreal, y::Vector{uwreal})
     N = size(y, 1)
     return fill(x, N) .+ y
 end
+
+# overloading uwreal * Rational
+function Base.:*(x::uwreal, y::Rational{T}) where {T<:Real}
+    num = y.num * x
+    return Rationaluw(num, uwreal(Float64(y.den)))
+end
+Base.:*(y::Rational{T}, x::uwreal) where {T<:Real}  = Base.:*(x,y)
+
+# overloading Rationaluw * Rationaluw
+function Base.:*(x::Rationaluw, y::Rationaluw)
+    num = x.num * y.num
+    den = x.den * y.den
+    return Rationaluw(num, den)
+end

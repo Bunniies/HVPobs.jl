@@ -419,3 +419,37 @@ function read_FVC(path::String)
     return FVCData(id, n2_max, bin, jkdata)
 
 end
+
+function read_tree_level_v33(path::String; cons=true)
+    fname = readdir(path, join=true)
+    fname_loc  = filter(x-> occursin("v33-", x), fname)[1]
+    if cons
+        fname_cons = filter(x-> occursin("v33CL-", x), fname)[1]
+    end
+    v33_loc = readdlm(fname_loc)[:,2]
+
+    if cons
+        v33_cons = readdlm(fname_cons)[:,2]
+    end
+    
+    !cons ? (return v33_loc) : (return v33_loc, v33_cons)
+end
+
+function read_tree_level_v3sig03(path::String; cons=true, massless=true)
+
+    fname = readdir(path, join=true)
+    if massless
+        fname_tot = filter(x->occursin("amq0p0c_l", x), fname)[1]
+    else
+        fname_tot = filter(x->occursin("amq0p036c_l", x), fname)[1]
+    end
+    f = readdlm(fname_tot, comments=true, comment_char='#')
+    Tvals = Int.(length(f[:,1]) / 2)
+
+    if cons
+        v3s03_cons = [uwreal([f[k,2], f[k,4]], "v3s30 cons") for k in 1:Tvals]
+    end
+    v3s03_loc  = [uwreal([f[k,2], f[k,4]], "v3s30 loc") for k in Tvals+1:2Tvals]
+
+    !cons ? (return v3s03_loc) : (return v3s03_loc, v3s03_cons)
+end

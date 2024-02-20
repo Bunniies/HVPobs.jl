@@ -1,3 +1,4 @@
+using Revise
 using HVPobs
 using DelimitedFiles
 using ADerrors, PyPlot
@@ -120,12 +121,22 @@ ow = [uwreal(data_r[:,t], cdat.id, replica, idm, nms ) for t in 1:tvals];
 W_obs = uwreal(W, cdat.id, replica, idm, nms )
 
 ##
-
-
-
-
-
-
 corr = corr_obs(cdat, rw=rw)
 uwerr.(corr.obs)
 mchist(corr.obs[10], "H101")[2000:end]
+
+
+
+################################
+## TEST THREE-LEVEL IMPROVEMENT
+################################
+path_3level = "/Users/alessandroconigli/Lattice/data/HVP/tree_level/"
+
+
+v33_loc, v33_cons = read_tree_level_v33(path_3level, cons=true)
+plot(v33_loc, label="v33 loc")
+plot(v33_cons, label="v33 cons")
+yscale("log")
+legend()
+display(gcf())
+close("all")

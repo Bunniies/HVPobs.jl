@@ -49,7 +49,7 @@ end
 export FVCData
 
 include("DataReader.jl")
-export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03
 
 
 include("DataConst.jl")
