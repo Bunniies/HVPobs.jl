@@ -8,14 +8,24 @@ function get_data(path::String, ens::String, fl::String, g::String)
         error("Gamma structure \"$(g)\" not found in $(GAMMA)")
     end
 
-    if fl == "pion"
+    
+    if fl == "light"
+        try
+            p = joinpath(path, ens, "light_LMA", "raw_data")
+            data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
+            return read_hvp_data(data[1], ens)
+        catch
+            p = joinpath(path, ens, fl, "raw_data")
+            data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
+            return read_hvp_data(data[1], ens)
+        end
+    elseif  fl == "pion"
         p = joinpath(path, ens, fl)        
-    else
+    else 
         p = joinpath(path, ens, fl, "raw_data")
     end
 
     data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
-    
     if isempty(data)
         error("No data found for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
     end
@@ -86,7 +96,12 @@ end
 function get_mesons_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
 
     cdata = get_mesons_data(path, ens.id, fl, g)
-    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
+    if ens.id == "A653"
+        println("Ensemble A653: rwf are taken from ens A654 as the correct rwf are not currently available")
+        rw = isnothing(path_rw) ? nothing : get_rw(path_rw, "A654")
+    else
+        rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
+    end
     corr = corr_obs(cdata, real=true, rw=rw, L=L)
     if frw_bcwd
         frwd_bckwrd_symm!(corr)
@@ -98,7 +113,12 @@ end
 function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{String, Nothing}=nothing)
 
     data = read_t0(path, ens.id, ens.dtr)
-    isnothing(path_rw) ? rw = nothing : rw = get_rw(path_rw, ens.id)
+    if ens.id == "A653"
+        println("Ensemble A653: rwf are taken from ens A654 as the correct rwf are not currently available")
+        rw = isnothing(path_rw) ? nothing : get_rw(path_rw, "A654")
+    else
+        rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
+    end
     t0_res = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false)
     return t0_res
 end

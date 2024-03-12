@@ -4,6 +4,7 @@ module HVPobs
 
 include("LinAlg/LinAlg.jl")
 export Rationaluw, uwerr
+export abs
 
 using .LinAlg
 
@@ -25,6 +26,7 @@ export bayesian_av
 include("Obs/Obs.jl")
 
 using .Obs
+export Corr, Window
 export meff, mpcac 
 export corr_obs, comp_t0, comp_fvc
 export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!, cv_loc_set2, cv_cons_set2, bv_set2, ZV_set2, bv_bar_set2, ca, Za_l_sub, ZP

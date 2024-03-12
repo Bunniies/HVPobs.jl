@@ -27,4 +27,7 @@ export Rationaluw, uwerr
 
 include("LinAlgBroadcast.jl")
 
+include("LinAlgBasics.jl")
+export abs
+
 end

@@ -6,6 +6,9 @@ const GAMMA = ["V1T10", "V1V1c", "V2T20", "V2V2c", "V3T30", "V3V3c",
 
 
 const CLS_db = Dict(
+    "A653" => Dict("L"=>24, "beta"=>3.34, "kappa_l"=>0.1365716, "kappa_s"=>0.1365716, "dtr"=>1, "plat_t0"=>[15,35]),
+    "A654" => Dict("L"=>24, "beta"=>3.34, "kappa_l"=>0.136750, "kappa_s"=>0.136216193, "dtr"=>1, "plat_t0"=>[15,35]),
+
     "H101" => Dict("L"=>32, "beta"=>3.4, "kappa_l"=>0.13675962, "kappa_s"=>0.13675962, "dtr"=>2, "plat_t0"=>[20,80]),
     "H102" => Dict("L"=>32, "beta"=>3.4, "kappa_l"=>0.136865, "kappa_s"=>0.136549339, "dtr"=>2, "plat_t0"=>[20,80]),
     "H105" => Dict("L"=>32, "beta"=>3.4, "kappa_l"=>0.136970, "kappa_s"=>0.13634079, "dtr"=>2, "plat_t0"=>[20,80]),
@@ -41,6 +44,7 @@ const CLS_db = Dict(
 
 )
 const CLS_kappa_crit = Dict( # taken from 2211.03744
+    3.34 => 0.1366938,
     3.4  => 0.1369153,
     3.46 => 0.1370613,
     3.55 => 0.1371715,
@@ -49,6 +53,9 @@ const CLS_kappa_crit = Dict( # taken from 2211.03744
 )
 
 const CLS_CNFG = Dict(
+    "A653" => Dict("repLen" => [5050], "nms" => 5050),
+    "A654" => Dict("repLen" => [5068], "nms" => 5068),
+
     "H101" => Dict("repLen" => [1007, 1009], "nms" => 2016),
     "H102" => Dict("repLen" => [1029, 1008], "nms" => 2037),
     "H105" => Dict("repLen" => [1027, 1042], "nms" => 2069),
@@ -82,17 +89,17 @@ const CLS_CNFG = Dict(
     "J501" => Dict("repLen" => [1635, 1142, 1150], "nms" => 3927)
 )
 
-const b_values = [3.40, 3.46, 3.55, 3.70, 3.85]
+const b_values = [3.34, 3.40, 3.46, 3.55, 3.70, 3.85]
 const hc = 197.3269804 #MeV fm
 
 # Madrid scale setting
 const t0_ph = uwreal([0.1439, 0.0006], "sqrtt0 [fm]") 
 #1608.08900
-const t0_data = [2.86, 3.659, 5.164, 8.595, 14.040]
-const t0_error = [11, 16, 18, 29, 49] .* 1e-3
+const t0_data = [2.173, 2.86, 3.659, 5.164, 8.595, 14.040]
+const t0_error = [7, 11, 16, 18, 29, 49] .* 1e-3
 
-const Ct0 = zeros(5, 5)
-for i = 1:5
+const Ct0 = zeros(6, 6)
+for i = 1:6
     Ct0[i,i] = t0_error[i] ^ 2    
 end
 
