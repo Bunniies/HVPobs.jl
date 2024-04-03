@@ -13,7 +13,7 @@ include("Data/Data.jl")
 using .Data 
 export CData, Corr, YData
 export GAMMA, CLS_db, hc, t0, a, CLS_kappa_crit, mpi_ph
-export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_data
 
 include("Fits/Fits.jl")
 
@@ -36,7 +36,7 @@ include("Automation/Automation.jl")
 
 using .Automation
 export EnsInfo
-export get_data, get_rw, get_t0, get_corr, get_fvc, get_mesons_data, get_mesons_corr
+export get_data, get_rw, get_t0, get_corr, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
 
 include("LMA/LMA.jl")
 

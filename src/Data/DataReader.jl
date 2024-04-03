@@ -12,12 +12,14 @@ function read_hvp_data(path::String, id::String)
 
     nn = basename(path)
     gamma = split(nn, "_")[end]
+    if occursin(".txt", gamma)
+        gamma = split(gamma, ".")[1]
+    end
     if !(gamma in GAMMA)
         error("Gamma structure $(gamma) not supported.")
     end
 
     f = readdlm(path, '\t', '\n', skipstart=1)
-    #return f 
     header = filter(x-> typeof(x)<:AbstractString && occursin("nb", x), f)
 
     rep_info = last.(split.(header))
@@ -50,6 +52,50 @@ function read_hvp_data(path::String, id::String)
     return CData(id, rep_len, re_data, im_data, idm, gamma)    
 end
 
+
+function read_disconnected_data(path::String, id::String)
+
+    nn = basename(path)
+    gamma = split(nn, "_")[end]
+    if occursin(".txt", gamma)
+        gamma = split(gamma, ".")[1]
+    end
+    if !(gamma in GAMMA)
+        error("Gamma structure $(gamma) not supported.")
+    end
+
+    f = readdlm(path, '\t', skipstart=0)
+
+    delim = findall(x-> typeof(x)<:AbstractString && occursin("#", x), f)
+
+    tvals = length(f[delim[1]:delim[2]]) - 2
+    # if tvals%2 != 0
+        # error("Temporal dimension T has to be an even number \n T = $(tvals)" )
+    # end
+
+    tot_data_len = length(f[delim])
+    println(tot_data_len)
+    idm = Vector{Int64}(undef, tot_data_len)
+    rep_id = Vector{Int64}(undef, tot_data_len)
+
+
+    re_data = Array{Float64}(undef, tot_data_len, tvals)
+    im_data = similar(re_data)
+
+    for k in eachindex(delim)
+        rep_id[k], idm[k] = map(eachmatch(r"\d+", f[delim[k]])) do m
+            parse(Float64, m.match)
+        end
+        idx = delim[k].I[1]
+        data = split.(f[idx+1:idx+tvals])
+        re_data[k,:] = parse.(Float64, getindex.(data, 2))
+        im_data[k,:] = parse.(Float64, getindex.(data, 3))
+    end
+    rep_len = [count(x->x==i, rep_id) for i in unique(rep_id)]
+    println(rep_len)
+
+    return CData(id, rep_len, re_data, im_data, idm, gamma)
+end
 """@doc raw
     read_meson_data(path::String, id::String)
 

@@ -19,7 +19,7 @@ function get_data(path::String, ens::String, fl::String, g::String)
             data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
             return read_hvp_data(data[1], ens)
         end
-    elseif  fl == "pion"
+    elseif  fl == "pion" 
         p = joinpath(path, ens, fl)        
     else 
         p = joinpath(path, ens, fl, "raw_data")
@@ -27,10 +27,29 @@ function get_data(path::String, ens::String, fl::String, g::String)
 
     data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
     if isempty(data)
-        error("No data found for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
+        error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
     end
 
     return read_hvp_data(data[1], ens)
+end
+
+function get_data_disc(path::String, ens::String, fl::String, g::String)
+    if !(fl in ["33", "88", "08", "03", "30", "80" ])
+        error("Flavour $(fl) not found. \n Choose fl from: 33, 88, 08, 03, 30, 80")
+    end
+    if !(g in GAMMA)
+        error("Gamma structure \"$(g)\" not found in $(GAMMA)")
+    end
+
+    p = joinpath(path, ens, "disc")
+
+    data = filter(x-> occursin("$(fl)_$(g).txt", basename(x)), readdir(p, join=true))
+
+    println(data)
+    if isempty(data)
+        error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
+    end
+    return read_disconnected_data(data[1], ens)    
 end
 
 function get_mesons_data(path::String, ens::String, fl::String, g::String )
