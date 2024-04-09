@@ -45,7 +45,6 @@ function get_data_disc(path::String, ens::String, fl::String, g::String)
 
     data = filter(x-> occursin("$(fl)_$(g).txt", basename(x)), readdir(p, join=true))
 
-    println(data)
     if isempty(data)
         error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
     end
@@ -101,8 +100,11 @@ function get_rw(path::String, ens::String; v::String="1.2")
 end
 
 function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
-
-    cdata = get_data(path, ens.id, fl, g)
+    if fl in ["33", "88", "08", "03", "30", "80"]
+        cdata = get_data_disc(path, ens.id, fl, g)
+    else
+        cdata = get_data(path, ens.id, fl, g)
+    end
     rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
     corr = corr_obs(cdata, real=true, rw=rw, L=L)
     if frw_bcwd

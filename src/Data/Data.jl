@@ -53,7 +53,7 @@ export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_l
 
 
 include("DataConst.jl")
-export GAMMA, CLS_db, hc, t0, a,  CLS_kappa_crit, mpi_ph
+export GAMMA, CLS_db, CLS_kappa_crit #, hc, t0, a,  , Zvc_l
 
 
 end

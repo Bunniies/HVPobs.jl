@@ -6,7 +6,7 @@ and it returns a `CData` structure.
 
 ```@example
 cdata = read_hvp_data(path, "H101")
-````
+```
 """
 function read_hvp_data(path::String, id::String)
 
@@ -52,7 +52,16 @@ function read_hvp_data(path::String, id::String)
     return CData(id, rep_len, re_data, im_data, idm, gamma)    
 end
 
+"""@doc raw
+    read_disconnected_data(path::String, id::String)
 
+This function reads the disconnected contribution of the HVP data used in the g-2 analysis. 
+It takes as input a `path` to the data and en ensemble `id` and it returns a `CData` structure.
+
+```@example
+cdata = read_disconnected_data(path, "H101")
+```
+"""
 function read_disconnected_data(path::String, id::String)
 
     nn = basename(path)
@@ -74,7 +83,6 @@ function read_disconnected_data(path::String, id::String)
     # end
 
     tot_data_len = length(f[delim])
-    println(tot_data_len)
     idm = Vector{Int64}(undef, tot_data_len)
     rep_id = Vector{Int64}(undef, tot_data_len)
 
@@ -92,7 +100,6 @@ function read_disconnected_data(path::String, id::String)
         im_data[k,:] = parse.(Float64, getindex.(data, 3))
     end
     rep_len = [count(x->x==i, rep_id) for i in unique(rep_id)]
-    println(rep_len)
 
     return CData(id, rep_len, re_data, im_data, idm, gamma)
 end

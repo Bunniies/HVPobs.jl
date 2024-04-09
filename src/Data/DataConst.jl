@@ -89,24 +89,4 @@ const CLS_CNFG = Dict(
     "J501" => Dict("repLen" => [1635, 1142, 1150], "nms" => 3927)
 )
 
-const b_values = [3.34, 3.40, 3.46, 3.55, 3.70, 3.85]
-const hc = 197.3269804 #MeV fm
-
-# Madrid scale setting
-const t0_ph = uwreal([0.1439, 0.0006], "sqrtt0 [fm]") 
-#1608.08900
-const t0_data = [2.173, 2.86, 3.659, 5.164, 8.595, 14.040]
-const t0_error = [7, 11, 16, 18, 29, 49] .* 1e-3
-
-const Ct0 = zeros(6, 6)
-for i = 1:6
-    Ct0[i,i] = t0_error[i] ^ 2    
-end
-
-const t0_ = cobs(t0_data, Ct0, "t0sym/a2")
-const a_ = t0_ph ./ sqrt.( t0_)
-
-t0(beta::Float64) = t0_[b_values .== beta][1]
-a(beta::Float64)  = a_[b_values .== beta][1]
-
 
