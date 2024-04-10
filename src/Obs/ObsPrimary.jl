@@ -20,7 +20,7 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
     tvals = size(data, 2)
-    replen = cd.rep_len
+    replen = collect(values(cd.rep_len))
     vcfg = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
     replica = Int64.(maximum.(vcfg))
     nms = isnothing(nms) ?  sum(replica) : nms
@@ -28,7 +28,7 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     idm = cd.idm[:]
     if length(replen) != 1
         # idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.replicatot)]
-        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.rep_len)]
+        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(replen)]
         idm .+= vcat(idm_sum...)
     end
 

@@ -13,7 +13,7 @@ include("Data/Data.jl")
 using .Data 
 export CData, Corr, YData
 export GAMMA, CLS_db, CLS_kappa_crit # hc, t0, a, , mpi_ph, Zvc_l
-export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_data
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_data, read_disconnected_from_npz
 
 include("Fits/Fits.jl")
 

@@ -1,5 +1,5 @@
-function apply_rw(data::Array{Float64}, W::Matrix{Float64}, vcfg::Union{Nothing, Vector{Int64}}=nothing)
-    nc =  isnothing(vcfg) ? collect(1:size(data, 1)) : vcfg
+function apply_rw(data::Array{Float64}, W::Matrix{Float64}, idm::Union{Nothing, Vector{Int64}}=nothing)
+    nc =  isnothing(idm) ? collect(1:size(data, 1)) : idm
     W1 = W[1, nc]
     W2 = W[2, nc]
 

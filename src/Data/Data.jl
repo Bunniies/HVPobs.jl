@@ -1,10 +1,10 @@
 module Data
 
-using DelimitedFiles, ADerrors, Statistics, MultiFloats
+using DelimitedFiles, ADerrors, Statistics, MultiFloats, PyCall, OrderedCollections
 
 struct CData
     id::String
-    rep_len::Vector{Int64}
+    rep_len::OrderedDict{String,Int64}
     re_data::Array{Float64}
     im_data::Array{Float64}
     idm::Vector{Int64}
@@ -49,7 +49,7 @@ end
 export FVCData
 
 include("DataReader.jl")
-export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_data
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_data, read_disconnected_from_npz
 
 
 include("DataConst.jl")

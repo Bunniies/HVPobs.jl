@@ -53,6 +53,7 @@ const CLS_kappa_crit = Dict( # taken from 2211.03744
 )
 
 const CLS_CNFG = Dict(
+
     "A653" => Dict("repLen" => [5050], "nms" => 5050),
     "A654" => Dict("repLen" => [5068], "nms" => 5068),
 

@@ -48,8 +48,13 @@ function read_hvp_data(path::String, id::String)
         im_data[k,:] = f[idx+1:idx+tvals, 3]
     end
 
+    rep_len_dict = OrderedDict{String, Int64}()
+    for (k, rep) in enumerate(unique(rep_id))
+        rep_len_dict["r"*string(rep)] = rep_len[k]
+    end
+
     
-    return CData(id, rep_len, re_data, im_data, idm, gamma)    
+    return CData(id, rep_len_dict, re_data, im_data, idm, gamma)    
 end
 
 """@doc raw
@@ -103,6 +108,52 @@ function read_disconnected_data(path::String, id::String)
 
     return CData(id, rep_len, re_data, im_data, idm, gamma)
 end
+
+"""@doc raw
+    read_disconnected_data_from_npz(path::String, id::String)
+
+This function reads the disconnected contribution of the HVP data  from the npz files used in the g-2 analysis. 
+It takes as input a `path` to the data and en ensemble `id` and it returns a dictionary of `CData` structure with
+keys given by the following gamma structures: VV, VVc, Vt, VcT.
+
+```@example
+cdata = read_disconnected_data_from_npz(path, "H101")
+```
+"""
+function read_disconnected_from_npz(path::String, id::String)
+
+    np = pyimport("numpy")
+    data_raw = np.load(path, allow_pickle=true)
+    
+    icfg = collect(get(data_raw, "icfg"))
+    rep =  String.(getindex.(split.(icfg, "n"),1))
+    rep_len = [count(x->x==i, rep) for i in unique(rep) ]
+    idm_aux = parse.(Int64, getindex.(split.(icfg, "n") ,2))
+
+    
+    KEYS = ["VV", "VVc", "VT", "VcT"] 
+    dict_res = Dict()
+
+    for kk in KEYS
+        data = get(data_raw, kk)
+
+        ncfg, nsrc = size(data)
+        T = size(data[1,2])[1]
+        re_data = Array{Float64}(undef, ncfg, T, nsrc-1)
+
+        for n in 1:ncfg
+            for s in 1:nsrc-1
+                re_data[n, :, s  ] = real(collect(data[n,s+1]))
+            end
+        end
+
+        re_data = dropdims(mean(re_data, dims=3), dims=3)
+
+        dict_res[kk] = CData(id, rep_len, re_data, re_data, idm_aux, kk)
+    end
+    return dict_res
+end
+
 """@doc raw
     read_meson_data(path::String, id::String)
 
