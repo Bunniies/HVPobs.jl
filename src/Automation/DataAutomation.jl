@@ -48,7 +48,7 @@ function get_data_disc(path::String, ens::String, fl::String, g::String)
     if isempty(data)
         error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
     end
-    return read_disconnected_data(data[1], ens)    
+    return read_disconnected_from_npz(data[1], ens)    
 end
 
 function get_mesons_data(path::String, ens::String, fl::String, g::String )
@@ -112,6 +112,10 @@ function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Un
     end
 
     return corr 
+end
+
+function get_corr_dsc(path::String, ens::EnsInfo, fl::String, g::String, ; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
+    
 end
 
 function get_mesons_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
