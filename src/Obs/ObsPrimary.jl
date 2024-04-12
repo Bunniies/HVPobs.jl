@@ -19,41 +19,29 @@ corr_r = corr_obs(data, rw=rw)
 function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
     
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
-    tvals = size(data, 2)
-    replen = collect(values(cd.rep_len))
-    vcfg = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
+    tvals   = size(data, 2)
+    replen  = collect(values(cd.rep_len))
+    reptot  = collect(values(cd.replicatot))
+    vcfg    = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
     replica = Int64.(maximum.(vcfg))
-    # nms = isnothing(nms) ?  sum(replica) : nms
-    
-    idm = cd.idm[:]
-    if length(replen) != 1
-        # idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(cd.replicatot)]
-        idm_sum = [fill(sum(cd.replicatot[1:k-1]), replen[k]) for k in eachindex(replen)]
-        idm .+= vcat(idm_sum...)
-    end
+    nms     = isnothing(nms) ?  sum(replica) : nms
+
+    idm = cd.idm[:] 
+    mask = [elem in keys(cd.rep_len) for elem in keys(cd.replicatot)]
+    idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask)[k]) for k in eachindex(reptot)]
+    idm .+= vcat(idm_sum...)
 
     if isnothing(rw)
-        obs = [uwreal(data[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
+        obs = [uwreal(data[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
     else
-        if length(replen)  == 1 
-            if cd.id == "D452" # 2 replicas on HVP data but 1 replica in meson data
-                data_r, W = apply_rw(data, rw[2], cd.idm)
-                idm = idm .+ 161
-            else
-                data_r, W = apply_rw(data, rw, cd.idm)
-            end
+        if length(replen)  == length(reptot) == 1 
+            data_r, W = apply_rw(data, rw, cd.idm)
         else
-            data_r, W = apply_rw(data, rw, cd.idm, replen)
+            data_r, W = apply_rw(data, rw, cd.idm, replen, mask)
         end
-        # println(cd.id)
-        # println(idm[end]," ", length(cd.idm))
-        # println(cd.nms)
-        # println(length(data[:,1]))
-        # println(length(data_r[:,1]))
-        # println(cd.replicatot)
         
-        ow = [uwreal(data_r[:,t], cd.id, cd.replicatot, idm, cd.nms) for t in 1:tvals]
-        W_obs = uwreal(W, cd.id, cd.replicatot, idm, cd.nms)
+        ow = [uwreal(data_r[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
+        W_obs = uwreal(W, cd.id, collect(values(cd.replicatot)), idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]
     end
 

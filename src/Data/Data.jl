@@ -10,7 +10,7 @@ struct CData
     idm::Vector{Int64}
     gamma::String
     nms::Int64
-    replicatot::Vector{Int64}
+    replicatot::OrderedDict{String,Int64}
 
     CData(id, rep_len, re_data, im_data, idm, gamma) = new(id, rep_len, re_data, im_data, idm, gamma, CLS_CNFG[id]["nms"], CLS_CNFG[id]["repLen"] )
 end
@@ -53,7 +53,7 @@ export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_l
 
 
 include("DataConst.jl")
-export GAMMA, CLS_db, CLS_kappa_crit 
+export GAMMA, CLS_db, CLS_kappa_crit, Zvc_l
 
 
 end

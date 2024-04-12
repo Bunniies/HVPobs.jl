@@ -1,5 +1,5 @@
-function apply_rw(data::Array{Float64}, W::Matrix{Float64}, idm::Union{Nothing, Vector{Int64}}=nothing)
-    nc =  isnothing(idm) ? collect(1:size(data, 1)) : idm
+function apply_rw(data::Array{Float64}, W::Matrix{Float64}, cdidm::Union{Nothing, Vector{Int64}}=nothing)
+    nc =  isnothing(cdidm) ? collect(1:size(data, 1)) : cdidm
     W1 = W[1, nc]
     W2 = W[2, nc]
 
@@ -7,20 +7,17 @@ function apply_rw(data::Array{Float64}, W::Matrix{Float64}, idm::Union{Nothing, 
     return (data_r, W1 .* W2)
 end
 
-function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, vcfg::Vector{Int64}, rep_len::Vector{Int64})
+function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vector{Int64}, rep_len::Vector{Int64}, mask::Vector{Bool})
 
     chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
-    idm = chunk(vcfg, rep_len)
+    idm = chunk(cdidm, rep_len)
     rw1 = []
     rw2 = []
-    try
-        rw1 = [W[k][1, idm[k]] for k in eachindex(idm)]
-        rw2 = [W[k][2, idm[k]] for k in eachindex(idm)]
-    catch
-        rw1 = [W[k][1, idm[k]] for k=1:length(W)-1]
-        rw2 = [W[k][2, idm[k]] for k=1:length(W)-1]
-        println("Ens with 2 replica on HVP data but three replica on meson data. Probably J500 ")
-    end
+
+    W = [W[i] for (i, mask_val) in enumerate(mask) if mask_val]
+
+    rw1 = [W[k][1, idm[k]] for k in eachindex(idm)]
+    rw2 = [W[k][2, idm[k]] for k in eachindex(idm)]
 
     rw = vcat([rw1[k] .* rw2[k] for k in eachindex(idm)]...)
     data_r = data .* rw 

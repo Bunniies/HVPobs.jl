@@ -54,40 +54,41 @@ const CLS_kappa_crit = Dict( # taken from 2211.03744
 
 const CLS_CNFG = Dict(
 
-    "A653" => Dict("repLen" => [5050], "nms" => 5050),
-    "A654" => Dict("repLen" => [5068], "nms" => 5068),
+    "A653" => Dict("repLen" => OrderedDict("r0" => 5050), "nms" => 5050),
+    "A654" => Dict("repLen" => OrderedDict("r0" => 5068), "nms" => 5068),
 
-    "H101" => Dict("repLen" => [1007, 1009], "nms" => 2016),
-    "H102" => Dict("repLen" => [1029, 1008], "nms" => 2037),
-    "H105" => Dict("repLen" => [1027, 1042], "nms" => 2069),
-    "N101" => Dict("repLen" => [280, 404, 240, 352, 320], "nms" => 1596),
-    "C101" => Dict("repLen" => [2000, 601], "nms" => 2601),
-    "C102" => Dict("repLen" => [500, 500, 500], "nms" => 1500),
-    "D150" => Dict("repLen" => [404], "nms" => 404),
+    "H101" => Dict("repLen" => OrderedDict("r0" => 1007, "r1" => 1009), "nms" => 2016),
+    "H102" => Dict("repLen" => OrderedDict("r1" => 1029, "r2" => 1008), "nms" => 2037),
+    #"H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042), "nms" => 2069),
+    "H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042, "r5" => 837), "nms" => 2906),
+    "N101" => Dict("repLen" => OrderedDict("r1" => 280, "r3" => 404, "r4" => 240, "r5" => 352, "r6" => 320), "nms" => 1596),
+    "C101" => Dict("repLen" => OrderedDict("r14" => 2000, "r15" => 601), "nms" => 2601),
+    "C102" => Dict("repLen" => OrderedDict("r3" => 500, "r4" => 500, "r5" => 500), "nms" => 1500),
+    "D150" => Dict("repLen" => OrderedDict("r0" => 404), "nms" => 404),
 
-    "B450" => Dict("repLen" => [1612], "nms" => 1612),
-    "S400" => Dict("repLen" => [872,2001], "nms" => 2873),
-    "N451" => Dict("repLen" => [1011], "nms" => 1011),
-    "D450" => Dict("repLen" => [500], "nms" => 500),
-    "D451" => Dict("repLen" => [1028], "nms" => 1028),
-    "D452" => Dict("repLen" => [161, 1000], "nms" => 1161),
+    "B450" => Dict("repLen" => OrderedDict("r0" => 1612), "nms" => 1612),
+    "S400" => Dict("repLen" => OrderedDict("r0" => 872, "r1" => 2001), "nms" => 2873),
+    "N451" => Dict("repLen" => OrderedDict("r0" => 1011), "nms" => 1011),
+    "D450" => Dict("repLen" => OrderedDict("r10" => 500), "nms" => 500),
+    "D451" => Dict("repLen" => OrderedDict("r0" => 1028), "nms" => 1028),
+    "D452" => Dict("repLen" => OrderedDict("r1" => 161, "r2" => 1000), "nms" => 1161),
 
-    "N202" => Dict("repLen" => [899], "nms" => 899),
-    "N203" => Dict("repLen" => [756, 787],  "nms" => 1543),
-    "N200" => Dict("repLen" => [856, 856],  "nms" => 1712),
-    "D251" => Dict("repLen" => [403, 1610],  "nms" => 2013),
-    "D200" => Dict("repLen" => [2001],      "nms" => 2001),
-    "D201" => Dict("repLen" => [1078],      "nms" => 1078),
-    "E250" => Dict("repLen" => [151, 1009], "nms" => 1160),
+    "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899),
+    "N203" => Dict("repLen" => OrderedDict("r0" => 756, "r1" => 787),  "nms" => 1543),
+    "N200" => Dict("repLen" => OrderedDict("r0" => 856, "r1" => 856),  "nms" => 1712),
+    "D251" => Dict("repLen" => OrderedDict("r0" => 403, "r1" => 1610),  "nms" => 2013),
+    "D200" => Dict("repLen" => OrderedDict("r0" => 2001),      "nms" => 2001),
+    "D201" => Dict("repLen" => OrderedDict("r1" => 1078),      "nms" => 1078),
+    "E250" => Dict("repLen" => OrderedDict("r0" => 151, "r1" => 1009), "nms" => 1160),
 
-    "N300" => Dict("repLen" => [507, 1540], "nms" => 2047),
-    "N302" => Dict("repLen" => [2201],      "nms" => 2201),
-    "J303" => Dict("repLen" => [1073],      "nms" => 1073),
-    "J304" => Dict("repLen" => [830, 804],      "nms" => 1634),
-    "E300" => Dict("repLen" => [1137],      "nms" => 1137),
+    "N300" => Dict("repLen" => OrderedDict("r1" => 507, "r2" => 1540), "nms" => 2047),
+    "N302" => Dict("repLen" => OrderedDict("r1" => 2201),      "nms" => 2201),
+    "J303" => Dict("repLen" => OrderedDict("r3" => 1073),      "nms" => 1073),
+    "J304" => Dict("repLen" => OrderedDict("r0" => 830, "r1" => 804),      "nms" => 1634),
+    "E300" => Dict("repLen" => OrderedDict("r1" => 1137),      "nms" => 1137),
     
-    "J500" => Dict("repLen" => [789, 655, 431],    "nms" => 1875),
-    "J501" => Dict("repLen" => [1635, 1142, 1150], "nms" => 3927)
+    "J500" => Dict("repLen" => OrderedDict("r4" => 789, "r5" => 655, "r6" => 431),    "nms" => 1875),
+    "J501" => Dict("repLen" => OrderedDict("r1" => 1635, "r2" => 1142, "r3" => 1150), "nms" => 3927)
 )
 
 
