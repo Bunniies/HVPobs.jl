@@ -23,7 +23,7 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     replen = collect(values(cd.rep_len))
     vcfg = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
     replica = Int64.(maximum.(vcfg))
-    nms = isnothing(nms) ?  sum(replica) : nms
+    # nms = isnothing(nms) ?  sum(replica) : nms
     
     idm = cd.idm[:]
     if length(replen) != 1

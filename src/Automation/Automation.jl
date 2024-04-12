@@ -1,5 +1,6 @@
 module Automation
-    
+
+    using OrderedCollections
     using ..Data
     using ..Obs
 
@@ -24,6 +25,6 @@ module Automation
     export EnsInfo
 
     include("DataAutomation.jl")
-    export get_data, get_rw, get_t0, get_corr, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
+    export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
 
 end

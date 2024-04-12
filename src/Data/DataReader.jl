@@ -147,12 +147,14 @@ function read_disconnected_from_npz_PBC(path::String, id::String)
         data = get(data_raw, kk)
         ncfg, ngamma, T = size(data)
         
-        re_data =  data[:, 2:4, :] # skip G0-G0
-        re_data = dropdims(mean(re_data, dims=2), dims=2) # average over Gi-Gi
+        re_data =  data[:, 2:4, :] # skip V0-V0
+        re_data = dropdims(mean(re_data, dims=2), dims=2) # average over Vi-Vi
 
         rep_len_dict = OrderedDict{String, Int64}()
         for (k, rr) in enumerate(unique(rep))
-            rep_len_dict["r"*string(rr)] = rep_len[k]
+            m = match(r"(?![0])\d{1,3}", rr)
+            rr_new = isnothing(m) ? "0" : m.match
+            rep_len_dict["r"*rr_new] = rep_len[k]
         end
 
         dict_res[kk] = CData(id, rep_len_dict, re_data, re_data, idm_aux, kk )
@@ -182,19 +184,22 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
         ncfg, ngamma = size(data)
         Tfalse = size(data[1,2])[1]
         Ttruehalf = Int64(Ttrue / 2) 
-        re_data = Array{Float64}(undef, ncfg, Tfalse, ngamma-1)
+        re_data = Array{Float64}(undef, ncfg, Ttrue, ngamma-1)
 
+        idx = vcat(collect(1:Ttruehalf), collect(Tfalse-Ttruehalf+1:Tfalse)...)
         for n in 1:ncfg
-            for s in 2:ngamma # skip G0-G0
-                re_data[n, :, s-1] = real(collect(data[n,s]))
+            for s in 2:ngamma # skip V0-V0
+                re_data[n, :, s-1] = real(collect(data[n,s])[idx])
             end
         end
 
-        re_data = dropdims(mean(re_data, dims=3), dims=3) # average over Gi-Gi
+        re_data = dropdims(mean(re_data, dims=3), dims=3) # average over Vi-Vi
 
         rep_len_dict = OrderedDict{String, Int64}()
         for (k, rr) in enumerate(unique(rep))
-            rep_len_dict["r"*string(rr)] = rep_len[k]
+            m = match(r"(?![0])\d{1,3}", rr)
+            rr_new = isnothing(m) ? "0" : m.match
+            rep_len_dict["r"*rr_new] = rep_len[k]
         end
 
         dict_res[kk] = CData(id, rep_len_dict, re_data, re_data, idm_aux, kk)

@@ -33,20 +33,17 @@ function get_data(path::String, ens::String, fl::String, g::String)
     return read_hvp_data(data[1], ens)
 end
 
-function get_data_disc(path::String, ens::String, fl::String, g::String)
-    if !(fl in ["33", "88", "08", "03", "30", "80" ])
+function get_data_disc(path::String, ens::String, fl::String)
+    if !(fl in ["88", "08", "80", "0c", "c0", "c8", "cc", "8c" ])
         error("Flavour $(fl) not found. \n Choose fl from: 33, 88, 08, 03, 30, 80")
     end
-    if !(g in GAMMA)
-        error("Gamma structure \"$(g)\" not found in $(GAMMA)")
-    end
 
-    p = joinpath(path, ens, "disc")
+    p = joinpath(path, "disc", ens, "disc/2pt")
 
-    data = filter(x-> occursin("$(fl)_$(g).txt", basename(x)), readdir(p, join=true))
+    data = filter(x-> occursin("$(fl).npz", basename(x)), readdir(p, join=true))
 
     if isempty(data)
-        error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" and gamma structure  \"$(g)\" ")
+        error("No data found in $(p) for ensemble $(ens) with flavour \"$(fl)\" ")
     end
     return read_disconnected_from_npz(data[1], ens)    
 end
@@ -100,11 +97,8 @@ function get_rw(path::String, ens::String; v::String="1.2")
 end
 
 function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
-    if fl in ["33", "88", "08", "03", "30", "80"]
-        cdata = get_data_disc(path, ens.id, fl, g)
-    else
-        cdata = get_data(path, ens.id, fl, g)
-    end
+
+    cdata = get_data(path, ens.id, fl, g)
     rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
     corr = corr_obs(cdata, real=true, rw=rw, L=L)
     if frw_bcwd
@@ -114,8 +108,24 @@ function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Un
     return corr 
 end
 
-function get_corr_dsc(path::String, ens::EnsInfo, fl::String, g::String, ; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
+function get_corr_disc(path::String, ens::EnsInfo, fl::String ; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
+    if fl ∉ ["08", "0c", "80", "88", "8c", "c0", "c8", "cc"]
+        error("Unrecognised flavour structure $(fl): choose from [08, 0c, 80, 88, 8c, c0, c8, cc]")
+    end
+
+    cdata = get_data_disc(path, ens.id, fl)
+    KEYS = collect(keys(cdata))
+    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
     
+    corr_dict  = OrderedDict{String,Corr}()
+    for kk in KEYS
+        corr = corr_obs(cdata[kk], real=true, rw=rw, L=L)
+        if frw_bcwd
+            frwd_bckwrd_symm!(corr)
+        end
+        corr_dict[kk] = corr
+    end
+    return corr_dict
 end
 
 function get_mesons_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)

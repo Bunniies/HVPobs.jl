@@ -36,7 +36,7 @@ include("Automation/Automation.jl")
 
 using .Automation
 export EnsInfo
-export get_data, get_rw, get_t0, get_corr, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
+export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
 
 include("LMA/LMA.jl")
 
