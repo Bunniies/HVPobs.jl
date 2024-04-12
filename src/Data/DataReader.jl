@@ -447,7 +447,7 @@ function read_rw_openQCD2(path::String; print_info::Bool=false)
         end
 
         for k in 1:nrw
-            #read_array_rwf_dat_openQCD2(data)
+            read_array_rwf_dat_openQCD2(data)
             tmp_rw, n = read_array_rwf_dat_openQCD2(data, print_info=print_info)
 
             tmp_nfct=1.0
