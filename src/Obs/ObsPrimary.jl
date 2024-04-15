@@ -28,8 +28,16 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
 
     idm = cd.idm[:] 
     mask = [elem in keys(cd.rep_len) for elem in keys(cd.replicatot)]
-    idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask)[k]) for k in eachindex(reptot)]
+    maskedrep = [haskey(cd.rep_len, key) ? cd.rep_len[key] : 0 for key in keys(cd.replicatot)]
+    idm_sum = [fill(sum(reptot[1:k-1]), (maskedrep)[k]) for k in eachindex(reptot)]
     idm .+= vcat(idm_sum...)
+
+    # try
+        # idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask)[k]) for k in eachindex(reptot)]
+    # catch
+        # println("tmp solution. probably J500")
+        # idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask[1:end-1])[k]) for k in eachindex(reptot[1:2])]
+    # end
 
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]

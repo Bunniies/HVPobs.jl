@@ -140,7 +140,7 @@ function read_disconnected_from_npz_PBC(path::String, id::String)
     idm_aux = parse.(Int64, getindex.(split.(icfg, "n") ,2))
 
     
-    KEYS = ["VV", "VVc", "VT", "VcT"] 
+    KEYS = ["VV", "VVc", "VT", "VcT", "VcVc"] 
     dict_res = Dict()
 
     for kk in KEYS
@@ -162,7 +162,33 @@ function read_disconnected_from_npz_PBC(path::String, id::String)
     return dict_res
 
 end
+ 
+function read_disconnected_cons_cons(path::String, id::String, Ttrue::Int64)
+    np = pyimport("numpy")
+    data_raw = np.load(path, allow_pickle=true)
+    icfg = collect(get(data_raw, "icfg"))
+    rep =  String.(getindex.(split.(icfg, "n"),1))
+    rep_len = [count(x->x==i, rep) for i in unique(rep) ]
+    idm_aux = parse.(Int64, getindex.(split.(icfg, "n") ,2))
 
+    data = get(data_raw, "VcVc")
+    ncfg, ngamma, Tfalse = size(data)
+    Ttruehalf = Int64(Ttrue / 2) 
+
+    idx = vcat(collect(1:Ttruehalf), collect(Tfalse-Ttruehalf+1:Tfalse)...)
+    re_data =  data[:, 2:4, idx] # skip V0-V0
+    re_data = dropdims(mean(re_data, dims=2), dims=2) # average over Vi-Vi
+    rep_len_dict = OrderedDict{String, Int64}()
+    
+    for (k, rr) in enumerate(unique(rep))
+        m = match(r"(?![0])\d{1,3}", rr)
+        rr_new = isnothing(m) ? "0" : m.match
+        rep_len_dict["r"*rr_new] = rep_len[k]
+    end
+
+    res = CData(id, rep_len_dict, re_data, re_data, idm_aux, "VcVc" )
+    return res
+end
 
 function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
 
@@ -204,6 +230,7 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
 
         dict_res[kk] = CData(id, rep_len_dict, re_data, re_data, idm_aux, kk)
     end
+    dict_res["VcVc"] = read_disconnected_cons_cons(path, id, Ttrue)
     return dict_res
 end
 
