@@ -157,7 +157,7 @@ function read_disconnected_from_npz_PBC(path::String, id::String)
             rep_len_dict["r"*rr_new] = rep_len[k]
         end
 
-        dict_res[kk] = CData(id, rep_len_dict, real.(re_data), im.(re_data), idm_aux, kk )
+        dict_res[kk] = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, kk )
     end
     return dict_res
 
@@ -186,7 +186,7 @@ function read_disconnected_cons_cons(path::String, id::String, Ttrue::Int64)
         rep_len_dict["r"*rr_new] = rep_len[k]
     end
 
-    res = CData(id, rep_len_dict, real.(re_data), im.(re_data), idm_aux, "VcVc" )
+    res = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, "VcVc" )
     return res
 end
 
@@ -228,7 +228,7 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
             rep_len_dict["r"*rr_new] = rep_len[k]
         end
 
-        dict_res[kk] = CData(id, rep_len_dict, real.(re_data), im.(re_data), idm_aux, kk)
+        dict_res[kk] = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, kk)
     end
     dict_res["VcVc"] = read_disconnected_cons_cons(path, id, Ttrue)
     return dict_res
