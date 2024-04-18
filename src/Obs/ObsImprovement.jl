@@ -54,7 +54,6 @@ if true it uses the standard symmetric derivative.
     ```
 """
 function improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
-    
     der_t0tk_l = improve_derivative(vkt0k_l, std=std)
     der_t0tk_c = improve_derivative(vkt0k_c, std=std)
 
@@ -70,10 +69,9 @@ function improve_derivative(corr::Vector{uwreal}; std::Bool=false)
         return dcorr
     else
         tvals = Float64.(collect(0:length(corr)-1))
+        tvals = vcat(collect(0:length(corr)/2), -reverse(collect(1:length(corr)/2-1))...)
         corr_aux = corr .* tvals.^2
-        dcorr_aux = (corr_aux[3:end] - corr_aux[1:end-2]) / 2
-        dcorr_aux[1] = corr_aux[3] - corr_aux[2]
-        push!(dcorr_aux, corr[end] - corr[end-1])
+        dcorr_aux = improve_derivative(corr_aux, std=true)
         dcorr = 1 ./ tvals[2:end].^2 .* (dcorr_aux .- 2 .* tvals[2:end] .* corr[2:end])
         return dcorr
     end
