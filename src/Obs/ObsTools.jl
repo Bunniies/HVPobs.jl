@@ -1,20 +1,9 @@
-function apply_rw(data::Array{Float64}, W::Matrix{Float64}, cdidm::Union{Nothing, Vector{Int64}}=nothing)
-    nc =  isnothing(cdidm) ? collect(1:size(data, 1)) : cdidm
-    W1 = W[1, nc]
-    W2 = W[2, nc]
-
-    data_r = data .* W1 .* W2
-    return (data_r, W1 .* W2)
-end
-
-function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vector{Int64}, rep_len::Vector{Int64}, mask::Vector{Bool})
+function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vector{Int64}, rep_len::Vector{Int64})
 
     chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
     idm = chunk(cdidm, rep_len)
     rw1 = []
     rw2 = []
-
-    W = [W[i] for (i, mask_val) in enumerate(mask) if mask_val]
 
     rw1 = [W[k][1, idm[k]] for k in eachindex(idm)]
     rw2 = [W[k][2, idm[k]] for k in eachindex(idm)]

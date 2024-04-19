@@ -1,3 +1,5 @@
+using OrderedCollections
+
 @doc raw"""
     corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
 
@@ -18,36 +20,44 @@ corr_r = corr_obs(data, rw=rw)
 """
 function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector{Array{Float64,2}}, Nothing}=nothing, L::Int64=1, nms::Union{Int64, Nothing}=nothing)
     
-    real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
-    tvals   = size(data, 2)
-    replen  = collect(values(cd.rep_len))
-    reptot  = collect(values(cd.replicatot))
-    vcfg    = [cd.idm[1+sum(replen[1:k-1]):sum(replen[1:k])] for k in eachindex(replen)]
-    replica = Int64.(maximum.(vcfg))
-    nms     = isnothing(nms) ?  sum(replica) : nms
+    # The idm values for uwreal() are creating by "chunking" and then sorting the cd.idm values
+    replen = collect(values(cd.rep_len))
+    reptot = collect(values(cd.replicatot))
 
-    idm = cd.idm[:] 
-    mask = [elem in keys(cd.rep_len) for elem in keys(cd.replicatot)]
+    reporder  = [parse(Int64,collect(keys(cd.rep_len))[i][end]) for i in 1:length(cd.rep_len)]
+    if !all([reporder[i+1]>reporder[i] ? true : false for i in 1:(length(reporder)-1)])            # check if order is preserved when reading the data (my be a problem for disconnected)
+        chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
+        vec_idm = chunk(cd.idm, replen)
+        vec_idm_sorted = Vector{Vector{Int64}}()
+        for rep in collect(keys(cd.replicatot))
+            push!(vec_idm_sorted,vec_idm[findall(x -> x == rep, collect(keys(cd.rep_len)))][1])
+        end
+        idm = vcat(vec_idm_sorted...)
+    else
+        idm = cd.idm[:] 
+    end
+
     maskedrep = [haskey(cd.rep_len, key) ? cd.rep_len[key] : 0 for key in keys(cd.replicatot)]
     idm_sum = [fill(sum(reptot[1:k-1]), (maskedrep)[k]) for k in eachindex(reptot)]
     idm .+= vcat(idm_sum...)
 
-    # try
-        # idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask)[k]) for k in eachindex(reptot)]
-    # catch
-        # println("tmp solution. probably J500")
-        # idm_sum = [fill(sum(reptot[1:k-1]), (replen.*mask[1:end-1])[k]) for k in eachindex(reptot[1:2])]
-    # end
+    # The reweighting is obtained by defining a new reweighting Vector{matrix} which follows the order and existance of the data
+    real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
+    tvals = size(data, 2)
+
+    #myreplicatot = OrderedDict{String, Int64}()
+    myrw = Vector{Matrix{Float64}}()
+    for rep in collect(keys(cd.rep_len))
+        #myreplicatot[rep] = cd.replicatot[rep]
+        push!(myrw,rw[findall(x -> x == rep, collect(keys(cd.replicatot)))][1])
+    end
+
+    #myreptot = collect(values(myreplicatot))
 
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
-    else
-        if length(replen)  == length(reptot) == 1 
-            data_r, W = apply_rw(data, rw, cd.idm)
-        else
-            data_r, W = apply_rw(data, rw, cd.idm, replen, mask)
-        end
-        
+    else      
+        data_r, W = apply_rw(data, myrw, cd.idm, replen)
         ow = [uwreal(data_r[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
         W_obs = uwreal(W, cd.id, collect(values(cd.replicatot)), idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]
