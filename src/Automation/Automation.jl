@@ -1,5 +1,6 @@
 module Automation
 
+    using ADerrors
     using OrderedCollections
     using ..Data
     using ..Obs
