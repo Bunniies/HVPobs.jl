@@ -68,7 +68,7 @@ function improve_derivative(corr::Vector{uwreal}; std::Bool=false)
         push!(dcorr, corr[end] - corr[end-1])
         return dcorr
     else
-        tvals = Float64.(collect(0:length(corr)-1))
+        # tvals = Float64.(collect(0:length(corr)-1))
         tvals = vcat(collect(0:length(corr)/2), -reverse(collect(1:length(corr)/2-1))...)
         corr_aux = corr .* tvals.^2
         dcorr_aux = improve_derivative(corr_aux, std=true)
@@ -158,11 +158,19 @@ Given the coupling beta, this function returns the cv improvement coefficient
 for the local vector current based on the SF results of 2010.09539. 
 """
 function cv_loc_set2(beta::Float64)
-    g2 = 6/beta
-    #CC = [[1.97358e6^2, -1.15750e6*1.97358e6*6.78869e5 ] [-1.15750e6*1.97358e6*6.78869e5, 6.78869e5^2]]
-    #p = cobs([-3.039e3, 2.649e3], CC, [8,9])
-    cv = -0.01030*4/3*g2 * (1+ exp(-1/(2*(9/(16*pi^2))*g2))*(-3.039e3 +2.649e3*g2))
-    return cv
+    # g2 = 6/beta
+    # CC = [[1.97358e6^2, -1.15750e6*1.97358e6*6.78869e5 ] [-1.15750e6*1.97358e6*6.78869e5, 6.78869e5^2]]
+    # p = cobs([-3.039e3, 2.649e3], CC, [8,9])
+    # cv = -0.01030*4/3*g2 * (1+ exp(-1/(2*(9/(16*pi^2))*g2))*(-3.039e3 +2.649e3*g2))
+    cv = Dict(
+        3.34 => -0.346,
+        3.4  => -0.299,
+        3.46 => -0.259,
+        3.55 => -0.209,
+        3.7  => -0.147, 
+        3.85  => -0.105 
+    )
+    return cv[beta]
 end
 
 @doc raw"""
@@ -172,9 +180,17 @@ Given the coupling beta, this function returns the cv improvement coefficient
 for the conserved vector current based on the SF results of 2010.09539. 
 """
 function cv_cons_set2(beta::Float64)
-    g2 = 6/beta
-    cv = 0.5 - 2.112e-2 * g2 * (1 + exp(-1/(2*(9/(16*pi^2))*g2)) * 506.5*g2 )
-    return cv
+    # g2 = 6/beta
+    # cv = 0.5 - 2.112e-2 * g2 * (1 + exp(-1/(2*(9/(16*pi^2))*g2)) * 506.5*g2 )
+    cv = Dict(
+        3.34 => 0.201,
+        3.4  => 0.232,
+        3.46 => 0.259,
+        3.55 => 0.294,
+        3.7  => 0.340, 
+        3.85 => 0.374 
+    )
+    return cv[beta]
 end
 
 @doc raw"""

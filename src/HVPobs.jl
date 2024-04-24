@@ -30,13 +30,14 @@ export Corr, Window
 export meff, mpcac 
 export corr_obs, comp_t0, comp_fvc
 export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!, cv_loc_set2, cv_cons_set2, bv_set2, ZV_set2, bv_bar_set2, ca, Za_l_sub, ZP
-export plat_av, frwd_bckwrd_symm!
+export plat_av, frwd_bckwrd_symm!, frwd_bckwrd_antisymm!
 
 include("Automation/Automation.jl")
 
 using .Automation
 export EnsInfo
 export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
+export corrConnected, corrDisconnected, get_Z3, get_Z8, get_Z08, renormalize!
 
 include("LMA/LMA.jl")
 

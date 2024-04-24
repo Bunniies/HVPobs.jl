@@ -34,8 +34,8 @@ function get_data(path::String, ens::String, fl::String, g::String)
 end
 
 function get_data_disc(path::String, ens::String, fl::String)
-    if !(fl in ["88", "08", "80", "0c", "c0", "c8", "cc", "8c" ])
-        error("Flavour $(fl) not found. \n Choose fl from: 33, 88, 08, 03, 30, 80, cc, 8c")
+    if fl ∉ ["08", "0c", "80", "88", "8c", "c0", "c8", "cc"]
+        error("Unrecognised flavour structure $(fl): choose from [08, 0c, 80, 88, 8c, c0, c8, cc]")
     end
 
     p = joinpath(path, "disc", ens, "disc/2pt")

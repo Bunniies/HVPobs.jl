@@ -46,10 +46,12 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     tvals = size(data, 2)
 
     #myreplicatot = OrderedDict{String, Int64}()
-    myrw = Vector{Matrix{Float64}}()
-    for rep in collect(keys(cd.rep_len))
-        #myreplicatot[rep] = cd.replicatot[rep]
-        push!(myrw,rw[findall(x -> x == rep, collect(keys(cd.replicatot)))][1])
+    if length(cd.replicatot) != 1
+        myrw = Vector{Matrix{Float64}}()
+        for rep in collect(keys(cd.rep_len))
+            #myreplicatot[rep] = cd.replicatot[rep]
+            push!(myrw,rw[findall(x -> x == rep, collect(keys(cd.replicatot)))][1])
+        end
     end
 
     #myreptot = collect(values(myreplicatot))
@@ -57,7 +59,11 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
     else      
-        data_r, W = apply_rw(data, myrw, cd.idm, replen)
+        if length(cd.replicatot) != 1
+            data_r, W = apply_rw(data, myrw, cd.idm, replen)
+        else
+            data_r, W = apply_rw(data, rw, cd.idm)
+        end
         ow = [uwreal(data_r[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
         W_obs = uwreal(W, cd.id, collect(values(cd.replicatot)), idm, cd.nms)
         obs = [ow[t] / W_obs for t in 1:tvals]

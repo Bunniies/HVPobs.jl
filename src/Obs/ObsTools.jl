@@ -1,3 +1,12 @@
+function apply_rw(data::Array{Float64}, W::Matrix{Float64}, cdidm::Union{Nothing, Vector{Int64}}=nothing)
+    nc =  isnothing(cdidm) ? collect(1:size(data, 1)) : cdidm
+    W1 = W[1, nc]
+    W2 = W[2, nc]
+
+    data_r = data .* W1 .* W2
+    return (data_r, W1 .* W2)
+end
+
 function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vector{Int64}, rep_len::Vector{Int64})
 
     chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
@@ -80,5 +89,9 @@ end
 frwd_bckwrd_symm!(corr::Corr) = frwd_bckwrd_symm!(corr.obs)
 
 
-
+function frwd_bckwrd_antisymm!(obs::Vector{uwreal})
+    obs[2:end] = (obs[2:end] .- reverse(obs[2:end]))  ./ 2.
+    return nothing
+end
+frwd_bckwrd_antisymm!(corr::Corr) = frwd_bckwrd_antisymm!(corr.obs)
 
