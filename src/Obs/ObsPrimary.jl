@@ -45,21 +45,15 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     real ? data = cd.re_data ./ L^3 : data = cd.im_data ./ L^3
     tvals = size(data, 2)
 
-    #myreplicatot = OrderedDict{String, Int64}()
-    if length(cd.replicatot) != 1
-        myrw = Vector{Matrix{Float64}}()
-        for rep in collect(keys(cd.rep_len))
-            #myreplicatot[rep] = cd.replicatot[rep]
-            push!(myrw,rw[findall(x -> x == rep, collect(keys(cd.replicatot)))][1])
-        end
-    end
-
-    #myreptot = collect(values(myreplicatot))
 
     if isnothing(rw)
         obs = [uwreal(data[:,t], cd.id, collect(values(cd.replicatot)), idm, cd.nms) for t in 1:tvals]
     else      
         if length(cd.replicatot) != 1
+            myrw = Vector{Matrix{Float64}}()
+            for rep in collect(keys(cd.rep_len))
+                push!(myrw, rw[findall(x -> x == rep, collect(keys(cd.replicatot)))][1])
+            end
             data_r, W = apply_rw(data, myrw, cd.idm, replen)
         else
             data_r, W = apply_rw(data, rw, cd.idm)

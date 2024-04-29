@@ -1,0 +1,408 @@
+Ensemble D150r000
+Configurations processed: 404
+First: 1
+Last: 404
+Flagged configurations: 119 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 206 207 208 209 210 290
+Number of flagged configurations: 25
+Ensemble D150r001
+Configurations processed: 199
+First: 1
+Last: 199
+Flagged configurations: 3 8 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142
+Number of flagged configurations: 42
+Ensemble N452r000
+Configurations processed: 1000
+First: 1
+Last:  1000
+Flagged configurations:
+Number of flagged configurations: 0
+Ensemble D450r011
+Configurations processed: 1000
+First: 1
+Last: 1000
+Flagged configurations: 127 128 129 130 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 438 439 441 442 443 444 445 446 447 448 449 450 451 452 453 454 455 456 457 458 459 467 468 493 495 496 497 498 499 500 676 677 678 681 682 710 711 863
+Number of flagged configurations: 84
+Ensemble C102r003
+Configurations processed: 500
+First: 1
+Last: 500
+Flagged configurations: 112 339 341
+Number of flagged configurations: 3
+Ensemble C102r004
+Configurations processed: 500
+First: 1
+Last: 500
+Flagged configurations: 305 306 307 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 379 382
+Number of flagged configurations: 24
+Ensemble C102r005
+Configurations processed: 500
+First: 1 
+Last: 500
+Flagged configurations: 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 76 77 78 79 80 81 82 83 87 88 141 142 471
+Number of flagged configurations: 52
+Ensemble D451r000
+Configurations processed: 1028
+First: 1
+Last: 1028
+Flagged configurations: 179 180 181 182 348 497 498 499 500 501 502 503 504 505 506 507 508 509 510 512 561 562 568 569 570 824 825 826 827 828 829 830 831 832 833 834 835 836 837 838 839 840 841 842 843 844 845 846 847 848 849 850 851 852 853 854 855 856 857 858 859 860 861 862 863 865 866 867 868 869 971 972 973 974 975 976 977 978 979 980 981 982 983 984 985 986 987 988 989 990 991 992 993 994 995 996 997 998 999 1007 1008 1009 1010 1011
+Number of flagged configurations: 104
+Ensemble D201r001
+Configurations processed: 1078
+First: 1
+Last: 1078
+Flagged configurations: 838 839 840
+Number of flagged configurations: 3
+Ensemble J304r000
+Configurations processed: 830
+First: 1
+Last: 830
+Flagged configurations:
+Number of flagged configurations: 0
+Ensemble J304r001
+Configurations processed: 804
+First: 1
+Last: 804
+Flagged configurations:
+Number of flagged configurations: 0
+Ensemble H107r000
+Configurations processed: 150
+First: 1
+Last:  150
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H107r001
+Configurations processed: 150
+First: 1
+Last:  150
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H107r002
+Configurations processed: 248
+First: 1
+Last:  248
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H107r003
+Configurations processed: 252
+First: 1
+Last:  252
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H107r004
+Configurations processed: 388
+First: 1
+Last:  388
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H107r005
+Configurations processed: 376
+First: 1
+Last:  376
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble S201r002
+Configurations processed: 1057
+First: 1
+Last:  1112
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble S201r003
+Configurations processed: 1036
+First: 1
+Last:  1036
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble C101r014
+Configurations processed: 2000
+First: 1
+Last:  2000
+Flagged configurations: 1657 1830 1831 1832 1833 1834 1836 1837 1841 1842 1843 1844 1845 1846 1847 1850 1851 1938 1939 1940 1941 1942 1943 1944 1945 1946 1947 1948 1949 1993 1994 1995 1996 1997 1998 764 
+Number of flagged configurations: 36
+Ensemble C101r015
+Configurations processed: 601
+First: 1
+Last:  601
+Flagged configurations: 471 472 473 474 475 476 477 478 482 483 484 485 486 487 493 494 497 498 499 500 501 502 503 504 505 506 507 508 509 510 511 512 513 514 515 516 517 518 519 520 521 522 523 524 525 526 527 528 529 531 532 545 
+Number of flagged configurations: 52
+Ensemble D101r005
+Configurations processed: 286
+First: 1
+Last:  286
+Flagged configurations: 24 25 26 27 28 29 30 31 32 
+Number of flagged configurations: 9
+Ensemble H105r001
+Configurations processed: 1023
+First: 1
+Last:  1027
+Flagged configurations: 100 101 105 106 
+Number of flagged configurations: 4
+Ensemble H105r002
+Configurations processed: 1042
+First: 1
+Last:  1042
+Flagged configurations: 1 
+Number of flagged configurations: 1
+Ensemble H105r005
+Configurations processed: 837
+First: 1
+Last:  837
+Flagged configurations: 254 255 256 257 258 259 260 261 262 263 264 265 266 267 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284 285 286 287 288 289 290 291 292 293 294 295 296 297 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 
+Number of flagged configurations: 92
+Ensemble H102r001
+Configurations processed: 1029
+First: 1
+Last:  1029
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H102r002
+Configurations processed: 1008
+First: 1
+Last:  1008
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H101r000
+Configurations processed: 1007
+First: 1
+Last:  1007
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H101r001
+Configurations processed: 1009
+First: 1
+Last:  1009
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N101r001
+Configurations processed: 280
+First: 1
+Last:  280
+Flagged configurations: 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 
+Number of flagged configurations: 30
+Ensemble N101r003
+Configurations processed: 404
+First: 1
+Last:  404
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N101r004
+Configurations processed: 240
+First: 1
+Last:  240
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N101r005
+Configurations processed: 352
+First: 1
+Last:  352
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N101r006
+Configurations processed: 320
+First: 1
+Last:  320
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble U101r001
+Configurations processed: 1513
+First: 1
+Last:  1513
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble U101r002
+Configurations processed: 452
+First: 1
+Last:  452
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble U102r001
+Configurations processed: 1299
+First: 1
+Last:  1299
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble U102r002
+Configurations processed: 3561
+First: 1
+Last:  3562
+Flagged configurations: 3133 3135 3136 3137 3138 3139 3140 3141 3142 3143 3144 3145 3146 
+Number of flagged configurations: 13
+Ensemble U103r001
+Configurations processed: 2121
+First: 1
+Last:  2121
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble U103r002
+Configurations processed: 1781
+First: 1
+Last:  1781
+Flagged configurations: 1000 1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1017 1018 1019 1020 1021 1022 1023 1024 1025 1026 1027 1028 1029 1030 1031 1032 1033 1034 1035 1036 1037 884 885 886 887 888 889 890 891 892 893 894 895 896 897 898 899 900 901 902 903 904 905 906 907 908 909 910 911 912 913 914 915 916 917 918 919 920 921 922 923 924 925 926 927 928 929 930 931 932 933 934 935 936 937 938 939 940 941 942 943 944 945 946 947 948 949 950 951 952 953 954 955 956 957 958 959 960 961 962 963 964 965 966 967 968 969 970 971 972 973 974 975 976 977 978 979 980 981 982 983 984 985 986 987 988 989 990 991 992 993 994 995 996 997 998 999 
+Number of flagged configurations: 154
+Ensemble U103r003
+Configurations processed: 1819
+First: 1
+Last:  1819
+Flagged configurations: 826 
+Number of flagged configurations: 1
+Ensemble B450r000
+Configurations processed: 1612
+First: 1
+Last:  1612
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble B451r000
+Configurations processed: 2008
+First: 1
+Last:  2008
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble B452r000
+Configurations processed: 1944
+First: 1
+Last:  1944
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N401r000
+Configurations processed: 1100
+First: 1
+Last:  1100
+Flagged configurations: 446 447 448 449 450 451 452 453 454 455 456 508 509 510 511 512 513 514 515 516 517 518 519 520 521 522 523 524 525 526 527 528 529 530 531 532 533 534 535 536 537 538 539 540 541 542 543 544 545 546 547 548 549 550 551 552 553 554 555 556 557 558 559 560 561 562 563 564 565 566 567 568 569 570 571 572 573 574 575 576 577 578 579 903 904 905 906 907 908 909 910 911 912 913 914 915 916 917 918 919 920 921 922 923 924 925 926 927 928 929 930 931 932 933 934 935 936 937 938 939 940 941 942 943 944 945 946 947 948 949 950 951 952 953 954 955 956 957 958 959 960 961 962 963 964 965 966 967 968 969 970 971 972 973 974 975 976 977 978 979 980 981 982 983 984 985 986 987 988 989 990 991 992 
+Number of flagged configurations: 173
+Ensemble S400r000
+Configurations processed: 872
+First: 1
+Last:  872
+Flagged configurations: 516 517 518 519 520 521 522 523 524 525 
+Number of flagged configurations: 10
+Ensemble S400r001
+Configurations processed: 2001
+First: 1
+Last:  2001
+Flagged configurations: 931 932 933 934 935 936 937 938 939 940 941 942 943 944 945 946 947 948 949 950 951 
+Number of flagged configurations: 21
+Ensemble D200r000
+Configurations processed: 2001
+First: 1
+Last:  2001
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H200r000
+Configurations processed: 1000
+First: 1
+Last:  1000
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H200r001
+Configurations processed: 1000
+First: 1
+Last:  1000
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N202r001
+Configurations processed: 899
+First: 1
+Last:  899
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N200r000
+Configurations processed: 856
+First: 1
+Last:  856
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N200r001
+Configurations processed: 856
+First: 1
+Last:  856
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N203r000
+Configurations processed: 756
+First: 1
+Last:  756
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N203r001
+Configurations processed: 787
+First: 1
+Last:  787
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble E300r001
+Configurations processed: 1139
+First: 1
+Last:  1139
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble J303r003
+Configurations processed: 1073
+First: 1
+Last:  1073
+Flagged configurations: 324 325 326 
+Number of flagged configurations: 3
+Ensemble N302r001
+Configurations processed: 2201
+First: 1
+Last:  2201
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N300r001
+Configurations processed: 507
+First: 1
+Last:  507
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble N300r002
+Configurations processed: 1540
+First: 1
+Last:  1540
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble E250r000
+Configurations processed: 151
+First: 1
+Last:  151
+Flagged configurations: 118 124 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 
+Number of flagged configurations: 18
+Ensemble E250r001
+Configurations processed: 1009
+First: 1
+Last:  1009
+Flagged configurations: 200 201 222 295 296 297 492 493 494 495 499 500 501 502 503 570 571 572 573 574 575 576 577 578 579 580 581 582 596 597 598 635 847 848 849 850 851 854 855 856 857 858 859 860 861 862 863 979 
+Number of flagged configurations: 48
+Ensemble D450r010
+Configurations processed: 500
+First: 1
+Last:  500
+Flagged configurations: 217 218 219 220 221 222 223 224 225 226 227 228 229 
+Number of flagged configurations: 13
+Ensemble N451r000
+Configurations processed: 1011
+First: 1
+Last:  1011
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble D452r002
+Configurations processed: 1000
+First: 1
+Last:  1000
+Flagged configurations: 175 176 191 192 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 490 491 492 493 593 707 965 966 967 968 969 970 971 972 973 974 
+Number of flagged configurations: 51
+Ensemble D452r001
+Configurations processed: 161
+First: 1
+Last:  161
+Flagged configurations: 66 
+Number of flagged configurations: 1
+Ensemble A653r000
+Configurations processed: 5050
+First: 1
+Last:  5050
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble A654r000
+Configurations processed: 5068
+First: 1
+Last:  5068
+Flagged configurations: 1139 1140 1141 1142 1143 1144 1145 1146 
+Number of flagged configurations: 8

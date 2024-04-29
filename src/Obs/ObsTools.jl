@@ -2,9 +2,10 @@ function apply_rw(data::Array{Float64}, W::Matrix{Float64}, cdidm::Union{Nothing
     nc =  isnothing(cdidm) ? collect(1:size(data, 1)) : cdidm
     W1 = W[1, nc]
     W2 = W[2, nc]
+    W3 = W[3, nc]
 
-    data_r = data .* W1 .* W2
-    return (data_r, W1 .* W2)
+    data_r = data .* W1 .* W2 .* W3
+    return (data_r, W1 .* W2 .* W3)
 end
 
 function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vector{Int64}, rep_len::Vector{Int64})
@@ -16,8 +17,9 @@ function apply_rw(data::Array{Float64}, W::Vector{Matrix{Float64}}, cdidm::Vecto
 
     rw1 = [W[k][1, idm[k]] for k in eachindex(idm)]
     rw2 = [W[k][2, idm[k]] for k in eachindex(idm)]
+    rw3 = [W[k][3, idm[k]] for k in eachindex(idm)]
 
-    rw = vcat([rw1[k] .* rw2[k] for k in eachindex(idm)]...)
+    rw = vcat([rw1[k] .* rw2[k] .* rw3[k] for k in eachindex(idm)]...)
     data_r = data .* rw 
     return (data_r, rw)
 end

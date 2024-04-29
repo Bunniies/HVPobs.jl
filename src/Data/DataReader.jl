@@ -563,15 +563,22 @@ read_ms1(path, v="2.0")
 ```
 """
 function read_ms1(path::String; v::String="1.2")
+    ens = split(basename(path), ".")[1]
+    r = match(r"(?![0])\d{1,3}", split(ens, "r")[2])
+    r = isnothing(r) ? "r0" : "r"*r.match
+    rwf_strange = read_rwf_strange(joinpath(@__DIR__, "strange_rwf/", "strange_sign.txt"), String(split(ens,"r")[1]))[r]
 
     if v == "2.0"
-        return read_rw_openQCD2(path)
+        W =  read_rw_openQCD2(path)
+        W = vcat(W, rwf_strange')
+        return W
     end
     r_data = read_rw(path, v=v)
     nrw = length(r_data)
     ncnfg = size(r_data[1])[3]
     W = zeros(Float64, nrw, ncnfg)
     [W[k, :] = prod(mean(exp.(.-r_data[k]), dims=2), dims=1) for k = 1:nrw]
+    W = vcat(W, rwf_strange')
     return W
 end
 
@@ -662,4 +669,33 @@ function get_T(id::String)
     else
         error("Invalid ensemble id $(id)")
     end
+end
+
+
+function read_rwf_strange(path::String, id::String)
+    f = readdlm(path)
+    
+    repLen = CLS_CNFG[id]["repLen"]
+    key = collect(keys(repLen))
+    delim_ens = findall(x-> typeof(x)<:AbstractString && occursin(id, x) , f )
+
+    strange_rwf = OrderedDict([k => ones(repLen[k]) for k in key])
+
+    for (k,d) in enumerate(delim_ens)
+        m = match(r"(?![0])\d{1,3}", split(f[d], "r")[2])
+        m = isnothing(m) ? "r0" : "r"*m.match
+
+        if m == key[k]
+            idx_x = d.I[1]
+            n_of_flagged_cnfg = f[idx_x+5,5][1]
+            flagged_cnfg = filter(x-> typeof(x) == Int64, f[idx_x+4, 3:end])
+            # println(flagged_cnfg)
+            if n_of_flagged_cnfg != length(flagged_cnfg)
+                error("Number of flagged configs does not match with the found flagged configs.")
+            end
+            strange_rwf[m][flagged_cnfg] .*= -1
+        end
+    end
+
+    return strange_rwf
 end
