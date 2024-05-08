@@ -98,6 +98,10 @@ function corrDisconnected(path_data::String, ens::EnsInfo, fl::String; path_rw::
         error("Unrecognised flavour structure $(fl): choose from [08, 0c, 80, 88, 8c, c0, c8, cc]")
     end
 
+    if fl ∈ ["08", "80"]
+        return corrDisconnected80(path_data, ens, path_rw=path_rw, impr=impr, impr_set=impr_set, std=std)
+    end
+
     corr_dict = get_corr_disc(path_data, ens, fl, path_rw=path_rw, frw_bcwd=false, L=L)
     g_ll = Corr(corr_dict["VV"].obs, ens.id,   "G"*fl*"_ll_disc")
     g_lc = Corr(corr_dict["VVc"].obs, ens.id,  "G"*fl*"_lc_disc")
@@ -115,6 +119,7 @@ function corrDisconnected(path_data::String, ens::EnsInfo, fl::String; path_rw::
         improve_corr_vkvk!(g_ll, corr_dict["VT"], 2*cv_l, std=std)
         improve_corr_vkvk!(g_cc, corr_dict["VcT"], 2*cv_c, std=std)
         improve_corr_vkvk_cons!(g_lc, corr_dict["VT"], corr_dict["VcT"], cv_l, cv_c, std=std)
+       
     end
    
     frwd_bckwrd_symm!(g_ll)
@@ -122,6 +127,85 @@ function corrDisconnected(path_data::String, ens::EnsInfo, fl::String; path_rw::
     frwd_bckwrd_symm!(g_cc)
 
     return  g_ll, g_lc, g_cc
+end
+
+@doc raw"""
+    corrDisconnected80(path_data::String, ens::EnsInfo; path_rw::Union{Nothing,String}=nothing, impr::Bool=true, impr_set::String="1", std::Bool=true, L::Int64=1)
+
+Computes the Vector-Vector  local-local, local-conserved and consereved-conserved disconnected correlators for a given EnsInfo `ens` and flavour 08 or 80.
+It returns the forward-backward symmetrised local-local, local-conserved, conserved-conserved correlators as Corr objects.
+No charge factor is included in the computation. This function is called by corrDisconnected when flavour 08 or 80 are detected.
+
+Optional flags:    
+
+    - path_rw  : if !isnothing(path_rw), correlators are reweighted.  
+    - impr     : if true, the correlator is improved.  
+    - impr_set : either "1" or "2", to select set1 (Mainz) or set2 (ALPHA) improvement coefficients accordingly.  
+    - std      : if true, standard symmetric derivatives are used for the vector-tensor correlator. If false, improved derivatives are used.
+    - L        : correlators are normalised with the volume L^3. L=1 by default.    
+
+Examples:
+```@example
+ens = EnsInfo("N200")
+gvv_ll, gvv_lc , gvv_cc = corrDonnected80(pathToData, ens, "cc", path_rw=pathToRwf, impr=true, impr_set="1", std=false, L=1) 
+```
+"""
+function corrDisconnected80(path_data::String, ens::EnsInfo; path_rw::Union{Nothing,String}=nothing, impr::Bool=true, impr_set::String="1", std::Bool=true, L::Int64=1)
+    
+
+    corr_dict_80 = get_corr_disc(path_data, ens, "80", path_rw=path_rw, frw_bcwd=false, L=L)
+    corr_dict_08 = get_corr_disc(path_data, ens, "08", path_rw=path_rw, frw_bcwd=false, L=L)
+    
+    g_ll80 = Corr(corr_dict_80["VV"].obs, ens.id,   "G80_ll_disc")
+    g_lc80 = Corr(corr_dict_80["VVc"].obs, ens.id,  "G80_lc_disc")
+    g_cc80 = Corr(corr_dict_80["VcVc"].obs, ens.id, "G80_cc_disc")
+
+    g_ll08 = Corr(corr_dict_08["VV"].obs, ens.id,   "G08_ll_disc")
+    g_lc08 = Corr(corr_dict_08["VVc"].obs, ens.id,  "G08_lc_disc")
+    g_cc08 = Corr(corr_dict_08["VcVc"].obs, ens.id, "G08_cc_disc")
+
+    if impr
+        beta = ens.beta
+        if impr_set == "1"
+            cv_l = cv_loc(beta) 
+            cv_c = cv_cons(beta)      
+        elseif impr_set =="2"
+            cv_l = cv_loc_set2(beta)
+            cv_c = cv_cons_set2(beta)
+        end
+
+        # local-local
+        deriv_t8v0 = Obs.improve_derivative(corr_dict_80["TV"].obs, std=std) 
+        deriv_v8t0 = Obs.improve_derivative(corr_dict_80["VT"].obs, std=std)
+
+        deriv_t0v8 = Obs.improve_derivative(corr_dict_08["TV"].obs, std=std) 
+        deriv_v0t8 = Obs.improve_derivative(corr_dict_08["VT"].obs, std=std)
+
+        g_ll80.obs[2:end] = g_ll80.obs[2:end] + cv_l .* (-deriv_t8v0 + deriv_v8t0) 
+        g_ll08.obs[2:end] = g_ll08.obs[2:end] + cv_l .* (-deriv_t0v8 + deriv_v0t8) 
+
+        # local-conserved
+        deriv_vc0t8 = Obs.improve_derivative(corr_dict_08["VcT"].obs, std=std)
+
+        g_lc80.obs[2:end] = g_lc80.obs[2:end] + cv_l .* deriv_vc0t8 .+ cv_c .* deriv_v8t0
+
+        # conserved-conserved
+        deriv_t8vc0 = Obs.improve_derivative(corr_dict_80["TVc"].obs, std=std) 
+        deriv_vc8t0 = Obs.improve_derivative(corr_dict_80["VcT"].obs, std=std)
+
+        g_cc80.obs[2:end] = g_cc80.obs[2:end] + cv_c .* (-deriv_t8vc0 + deriv_vc8t0)
+        
+    end
+    
+    g_ll = Corr(g_ll80.obs , ens.id, "G08_ll_disc")
+    g_lc = Corr(g_lc80.obs , ens.id, "G08_lc_disc")
+    g_cc = Corr(g_cc80.obs , ens.id, "G08_cc_disc")
+
+    frwd_bckwrd_symm!(g_ll)
+    frwd_bckwrd_symm!(g_lc)
+    frwd_bckwrd_symm!(g_cc)
+
+    return  g_ll , g_lc , g_cc
 end
 
 @doc raw"""

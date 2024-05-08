@@ -3,10 +3,11 @@ module HVPobs
 
 
 include("LinAlg/LinAlg.jl")
+
+using .LinAlg
 export Rationaluw, uwerr
 export abs
 
-using .LinAlg
 
 include("Data/Data.jl")
 
@@ -37,7 +38,7 @@ include("Automation/Automation.jl")
 using .Automation
 export EnsInfo
 export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
-export corrConnected, corrDisconnected, get_Z3, get_Z8, get_Z08, renormalize!
+export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!
 
 include("LMA/LMA.jl")
 

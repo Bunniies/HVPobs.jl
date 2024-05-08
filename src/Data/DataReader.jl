@@ -140,7 +140,7 @@ function read_disconnected_from_npz_PBC(path::String, id::String)
     idm_aux = parse.(Int64, getindex.(split.(icfg, "n") ,2))
 
     
-    KEYS = ["VV", "VVc", "VT", "VcT", "VcVc"] 
+    KEYS = ["VV", "VVc", "VT", "VcT", "VcVc", "TV", "TVc"] 
     dict_res = Dict()
 
     for kk in KEYS
@@ -201,7 +201,7 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
     idm_aux = parse.(Int64, getindex.(split.(icfg, "n") ,2))
 
     
-    KEYS = ["VV", "VVc", "VT", "VcT"] 
+    KEYS = ["VV", "VVc", "VT", "TV", "VcT", "TVc"] 
     dict_res = Dict()
 
     for kk in KEYS
