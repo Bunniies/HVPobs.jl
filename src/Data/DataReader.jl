@@ -186,6 +186,12 @@ function read_disconnected_cons_cons(path::String, id::String, Ttrue::Int64)
         rep_len_dict["r"*rr_new] = rep_len[k]
     end
 
+    if id == "E300"
+        re_data = re_data[1:1137, :] 
+        idm_aux = collect(1:1137)
+        rep_len_dict["r1"] = 1137
+    end
+
     res = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, "VcVc" )
     return res
 end
@@ -220,12 +226,20 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
         end
 
         re_data = dropdims(mean(re_data, dims=3), dims=3) # average over Vi-Vi
+        
+        
 
         rep_len_dict = OrderedDict{String, Int64}()
         for (k, rr) in enumerate(unique(rep))
             m = match(r"(?![0])\d{1,3}", rr)
             rr_new = isnothing(m) ? "0" : m.match
             rep_len_dict["r"*rr_new] = rep_len[k]
+        end
+
+        if id == "E300"
+            re_data = re_data[1:1137, :] 
+            idm_aux = collect(1:1137)
+            rep_len_dict["r1"] = 1137
         end
 
         dict_res[kk] = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, kk)
@@ -673,13 +687,14 @@ end
 
 
 function read_rwf_strange(path::String, id::String)
-    f = readdlm(path)
+    f = readdlm(path, comments=true)
     
     repLen = CLS_CNFG[id]["repLen"]
     key = collect(keys(repLen))
     delim_ens = findall(x-> typeof(x)<:AbstractString && occursin(id, x) , f )
 
     strange_rwf = OrderedDict([k => ones(repLen[k]) for k in key])
+
 
     for (k,d) in enumerate(delim_ens)
         m = match(r"(?![0])\d{1,3}", split(f[d], "r")[2])

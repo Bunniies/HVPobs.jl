@@ -5,6 +5,8 @@ Computes the Vector-Vector  local-local and local-conserved connected correlator
 The supported sectors are: light, strange, charm, charm_plus.
 It returns the forward-backward symmetrised local-local and local-conserved correlators as Corr objects.
 No charge factor is included in the computation. 
+A sign flip is performed on the correlator according to Eq 16 of 2206.06582.
+
 
 Optional flags:    
 
@@ -30,14 +32,14 @@ function corrConnected(path_data::String, ens::EnsInfo, sector::String; path_rw=
     v1v1 = get_corr(path_data, ens, sector, Gamma_l[1], path_rw=path_rw, frw_bcwd=false, L=L)
     v2v2 = get_corr(path_data, ens, sector, Gamma_l[2], path_rw=path_rw, frw_bcwd=false, L=L)
     v3v3 = get_corr(path_data, ens, sector, Gamma_l[3], path_rw=path_rw, frw_bcwd=false, L=L)
-    gvv_ll = Corr(abs.(v1v1.obs .+ v2v2.obs .+ v3v3.obs)./3, ens.id, "Gvv_ll_"*sector)
+    gvv_ll = Corr(-1 .* (v1v1.obs .+ v2v2.obs .+ v3v3.obs)./3, ens.id, "Gvv_ll_"*sector)
         
     # local-conserved VV
     Gamma_c = ["V1V1c", "V2V2c", "V3V3c", "V1cT10", "V2cT20", "V3cT30"]
     v1v1_c = get_corr(path_data, ens, sector, Gamma_c[1], path_rw=path_rw, frw_bcwd=false, L=L)
     v2v2_c = get_corr(path_data, ens, sector, Gamma_c[2], path_rw=path_rw, frw_bcwd=false, L=L)
     v3v3_c = get_corr(path_data, ens, sector, Gamma_c[3], path_rw=path_rw, frw_bcwd=false, L=L)
-    gvv_lc = Corr(abs.(v1v1_c.obs .+ v2v2_c.obs .+ v3v3_c.obs)./3, ens.id, "Gvv_lc_"*sector)
+    gvv_lc = Corr(-1 .* (v1v1_c.obs .+ v2v2_c.obs .+ v3v3_c.obs)./3, ens.id, "Gvv_lc_"*sector)
 
     
     if impr
@@ -45,13 +47,13 @@ function corrConnected(path_data::String, ens::EnsInfo, sector::String; path_rw=
         v1t10 = get_corr(path_data, ens, sector, Gamma_l[4], path_rw=path_rw, frw_bcwd=false, L=L)
         v2t20 = get_corr(path_data, ens, sector, Gamma_l[5], path_rw=path_rw, frw_bcwd=false, L=L)
         v3t30 = get_corr(path_data, ens, sector, Gamma_l[6], path_rw=path_rw, frw_bcwd=false, L=L)
-        gvt_ll = Corr((v1t10.obs .+ v2t20.obs .+ v3t30.obs)./3, ens.id, "Gvt_ll_"*sector)
+        gvt_ll = Corr(-1 .* (v1t10.obs .+ v2t20.obs .+ v3t30.obs)./3, ens.id, "Gvt_ll_"*sector)
 
         # local-consereved VT
         v1t10_c = get_corr(path_data, ens, sector, Gamma_c[4], path_rw=path_rw, frw_bcwd=false, L=L)
         v2t20_c = get_corr(path_data, ens, sector, Gamma_c[5], path_rw=path_rw, frw_bcwd=false, L=L)    
         v3t30_c = get_corr(path_data, ens, sector, Gamma_c[6], path_rw=path_rw, frw_bcwd=false, L=L)
-        gvt_lc = Corr((v1t10_c.obs .+ v2t20_c.obs .+ v3t30_c.obs)./3, ens.id, "Gvt_lc_"*sector)
+        gvt_lc = Corr(-1 .* (v1t10_c.obs .+ v2t20_c.obs .+ v3t30_c.obs)./3, ens.id, "Gvt_lc_"*sector)
 
         beta = ens.beta
         if impr_set == "1"
@@ -62,8 +64,8 @@ function corrConnected(path_data::String, ens::EnsInfo, sector::String; path_rw=
             cv_c = cv_cons_set2(beta)
         end
 
-        improve_corr_vkvk!(gvv_ll, gvt_ll, -2*cv_l, std=std)
-        improve_corr_vkvk_cons!(gvv_lc, gvt_ll, gvt_lc, -cv_l, -cv_c, std=std)
+        improve_corr_vkvk!(gvv_ll, gvt_ll, 2*cv_l, std=std)
+        improve_corr_vkvk_cons!(gvv_lc, gvt_ll, gvt_lc, cv_l, cv_c, std=std)
     end
     frwd_bckwrd_symm!(gvv_ll)
     frwd_bckwrd_symm!(gvv_lc)
@@ -78,6 +80,8 @@ Computes the Vector-Vector  local-local, local-conserved and consereved-conserve
 The supported flavours are: [08, 0c, 80, 88, 8c, c0, c8, cc].
 It returns the forward-backward symmetrised local-local, local-conserved, conserved-conserved correlators as Corr objects.
 No charge factor is included in the computation. 
+A sign flip is performed on the correlator according to Eq 16 of 2206.06582.
+
 
 Optional flags:    
 
@@ -122,11 +126,11 @@ function corrDisconnected(path_data::String, ens::EnsInfo, fl::String; path_rw::
        
     end
    
-    frwd_bckwrd_symm!(g_ll)
-    frwd_bckwrd_symm!(g_lc)
-    frwd_bckwrd_symm!(g_cc)
+    frwd_bckwrd_symm!(g_ll); renormalize!(g_ll, uwreal(-1.0))
+    frwd_bckwrd_symm!(g_lc); renormalize!(g_lc, uwreal(-1.0))
+    frwd_bckwrd_symm!(g_cc); renormalize!(g_cc, uwreal(-1.0))
 
-    return  g_ll, g_lc, g_cc
+    return g_ll, g_lc, g_cc
 end
 
 @doc raw"""
@@ -135,6 +139,7 @@ end
 Computes the Vector-Vector  local-local, local-conserved and consereved-conserved disconnected correlators for a given EnsInfo `ens` and flavour 08 or 80.
 It returns the forward-backward symmetrised local-local, local-conserved, conserved-conserved correlators as Corr objects.
 No charge factor is included in the computation. This function is called by corrDisconnected when flavour 08 or 80 are detected.
+A sign flip is performed on the correlator according to Eq 16 of 2206.06582.
 
 Optional flags:    
 
@@ -201,11 +206,11 @@ function corrDisconnected80(path_data::String, ens::EnsInfo; path_rw::Union{Noth
     g_lc = Corr(g_lc80.obs , ens.id, "G08_lc_disc")
     g_cc = Corr(g_cc80.obs , ens.id, "G08_cc_disc")
 
-    frwd_bckwrd_symm!(g_ll)
-    frwd_bckwrd_symm!(g_lc)
-    frwd_bckwrd_symm!(g_cc)
+    frwd_bckwrd_symm!(g_ll); renormalize!(g_ll, uwreal(-1.0))
+    frwd_bckwrd_symm!(g_lc); renormalize!(g_lc, uwreal(-1.0))
+    frwd_bckwrd_symm!(g_cc); renormalize!(g_cc, uwreal(-1.0))
 
-    return  g_ll , g_lc , g_cc
+    return g_ll, g_lc, g_cc
 end
 
 @doc raw"""
