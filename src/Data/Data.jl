@@ -49,7 +49,8 @@ end
 export FVCData
 
 include("DataReader.jl")
-export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03, read_disconnected_from_Marcos_data, read_disconnected_from_npz, read_rwf_strange
+export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03
+export read_disconnected_from_Marcos_data, read_disconnected_from_npz, read_rwf_strange, read_kappa_charm_all_config, get_kappa_values
 
 
 include("DataConst.jl")

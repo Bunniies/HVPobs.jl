@@ -767,13 +767,11 @@ end
 
 function read_kappa_charm_all_config(path::String)
     ensid = basename(path)
-    println("ensId: ", ensid)
     T = get_T(ensid)
 
     path = joinpath(path, "Averages")
     frepl = readdir(path)
     rep_len = length.([readdir(joinpath(path, ff)) for ff in frepl])
-    println("rep_len: ", rep_len)
 
     data_all_dict = Dict()
     [data_all_dict[kk] = Array{Float64}(undef, sum(rep_len), T) for kk in ["ss", "sh1", "sh2", "sh3", "sh4"]]
