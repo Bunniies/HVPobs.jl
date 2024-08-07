@@ -20,12 +20,12 @@ if true it uses the standard symmetric derivative.
     improve_corr_vkvk!(corr_vv, corr_vt, cv )
     ```
 """
-function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal}; std::Bool=false)
+function improve_corr_vkvk!(vkvk::Vector{uwreal}, vkt0k::Vector{uwreal}, cv::Union{Float64,uwreal}; std::Bool=false, treelevel::Bool=false)
     
-    der_t0tk = improve_derivative(vkt0k, std=std)
+    der_t0tk = improve_derivative(vkt0k, std=std, treelevel=treelevel)
     vkvk[2:end] = vkvk[2:end] .+ cv .* der_t0tk
 end
-improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}; std::Bool=false) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv, std=std)
+improve_corr_vkvk!(vkvk::Corr, t0tk::Corr, cv::Union{Float64,uwreal}; std::Bool=false, treelevel::Bool=false) = improve_corr_vkvk!(vkvk.obs, t0tk.obs, cv, std=std, treelevel=treelevel)
 
 @doc raw"""
     improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
@@ -53,23 +53,26 @@ if true it uses the standard symmetric derivative.
     improve_corr_vkvk!(corr_vv, corr_vt_loc, corr_vt_cons, cv_loc, cv_cons)
     ```
 """
-function improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false)
-    der_t0tk_l = improve_derivative(vkt0k_l, std=std)
-    der_t0tk_c = improve_derivative(vkt0k_c, std=std)
+function improve_corr_vkvk_cons!(vkvk::Vector{uwreal}, vkt0k_l::Vector{uwreal}, vkt0k_c::Vector{uwreal}, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false, treelevel::Bool=false)
+    der_t0tk_l = improve_derivative(vkt0k_l, std=std, treelevel=treelevel)
+    der_t0tk_c = improve_derivative(vkt0k_c, std=std, treelevel=treelevel)
 
     vkvk[2:end] = vkvk[2:end] .+ cv_l .* der_t0tk_c .+ cv_c .* der_t0tk_l
 end
-improve_corr_vkvk_cons!(vkvk::Corr, t0tk_l::Corr, t0tk_c::Corr, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false) = improve_corr_vkvk_cons!(vkvk.obs, t0tk_l.obs, t0tk_c.obs, cv_l, cv_c, std=std)
+improve_corr_vkvk_cons!(vkvk::Corr, t0tk_l::Corr, t0tk_c::Corr, cv_l::Union{Float64,uwreal}, cv_c::Union{Float64,uwreal}; std::Bool=false, treelevel::Bool=false) = improve_corr_vkvk_cons!(vkvk.obs, t0tk_l.obs, t0tk_c.obs, cv_l, cv_c, std=std, treelevel=treelevel)
 
-function improve_derivative(corr::Vector{uwreal}; std::Bool=false)
+function improve_derivative(corr::Vector{uwreal}; std::Bool=false, treelevel::Bool=false)
     if std
         dcorr = (corr[3:end] - corr[1:end-2]) / 2 
         dcorr[1] = corr[3] - corr[2]
         push!(dcorr, corr[end] - corr[end-1])
         return dcorr
     else
-        # tvals = Float64.(collect(0:length(corr)-1))
-        tvals = vcat(collect(0:length(corr)/2), -reverse(collect(1:length(corr)/2-1))...)
+        if treelevel
+            tvals = Float64.(collect(0:length(corr)-1))
+        else
+            tvals = vcat(collect(0:length(corr)/2), -reverse(collect(1:length(corr)/2-1))...)
+        end
         corr_aux = corr .* tvals.^2
         dcorr_aux = improve_derivative(corr_aux, std=true)
         dcorr = 1 ./ tvals[2:end].^2 .* (dcorr_aux .- 2 .* tvals[2:end] .* corr[2:end])

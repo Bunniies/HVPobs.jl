@@ -14,14 +14,15 @@ module Automation
         kappa_crit::Float64
         plat_t0::Vector{Int64}
         dtr::Int64
+        bc::String
         function EnsInfo(id::String)
             db = CLS_db[id]
             kappa_crit = CLS_kappa_crit[db["beta"]]
-            return new(id, db["beta"], db["L"], db["kappa_l"], db["kappa_s"], kappa_crit, db["plat_t0"], db["dtr"])
+            return new(id, db["beta"], db["L"], db["kappa_l"], db["kappa_s"], kappa_crit, db["plat_t0"], db["dtr"], db["bc"])
         end
     end
     function Base.show(io::IO, a::EnsInfo)
-        println(io, "Ensemble: ", a.id, " beta: ", a.beta, " L: ", a.L )
+        println(io, "Ensemble: ", a.id, " beta: ", a.beta, " L: ", a.L, " bc: ", a.bc )
     end
     export EnsInfo
 

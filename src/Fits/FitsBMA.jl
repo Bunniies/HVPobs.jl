@@ -71,7 +71,7 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
                    #println("if you see me: $(INDEX + j)==$(length(y))")
                 end
             end
-            try
+            #try
                 x = [i for i in INDEX:1:j] .-1	
 	            yy = y[INDEX:1:j]
 	            Ncut = total - length(x)
@@ -96,9 +96,9 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
                 push!(chi2chi2exp, chi2 / chi_exp) 
                 push!(p1, up[1])
                 push!(mods,string("[", INDEX, ",", j, "]"))
-            catch 
-               @warn string(":/ Negative window for error propagation at tmin = ", INDEX, ", tmax = ", j, "; skipping that point")
-            end
+            #catch 
+            #   @warn string(":/ Negative window for error propagation at tmin = ", INDEX, ", tmax = ", j, "; skipping that point")
+            #end
         end
     end
     

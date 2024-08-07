@@ -306,14 +306,19 @@ function read_mesons_data(path::String, id::String)
 
     end
     
+    rep_len_dict = OrderedDict{String, Int64}()
+    for (k, rep) in enumerate(unique(rep_id))
+        rep_len_dict["r"*string(rep)] = rep_len[k]
+    end
+    
     if id == "E300"
         re_data = re_data[1:1137, :]
         im_data = im_data[1:1137, :]
         idm = idm[1:1137]
-        rep_len = [1137]
+        rep_len_dict[] = [1137]
     end
     
-    return CData(id, rep_len, re_data, im_data, idm, gamma)    
+    return CData(id, rep_len_dict, re_data, im_data, idm, gamma)    
 end
 
 @doc raw"""
@@ -684,7 +689,23 @@ function get_T(id::String)
         error("Invalid ensemble id $(id)")
     end
 end
-
+function get_a(beta::Float64) # central values from 2022 Regensburg determination
+    if beta == 3.34
+        return 0.097198
+    elseif beta == 3.4
+        return 0.085147
+    elseif beta == 3.46
+        return 0.075201
+    elseif  beta == 3.55
+        return 0.063512
+    elseif  beta == 3.7
+        return 0.049168
+    elseif  beta == 3.85
+        return 0.038550
+    else
+        error("Invalid beta value $(beta)")
+    end
+end
 
 function read_rwf_strange(path::String, id::String)
     f = readdlm(path, comments=true)
@@ -713,4 +734,119 @@ function read_rwf_strange(path::String, id::String)
     end
 
     return strange_rwf
+end
+
+function read_kappa_charm_data_config(path::String)
+
+    f = readdlm(path)
+    elems = unique([f[i,1:2] for i in eachindex(f[:,1])]) # number of stored matrix elements
+    # T = sizeof(f) / (length(elems) * size(f,2) * sizeof(Float64))
+    #println("time: ", T)
+
+    idx2keys = Dict(
+        [0., 0.] => "ss", 
+        [0., 1.] => "sh1", 
+        [0., 2.] => "sh2", 
+        [0., 3.] => "sh3", 
+        [0., 4.] => "sh4" 
+
+    )
+
+    res = Dict()
+    for el in elems
+        if el ∉ keys(idx2keys)
+            continue
+        end
+        idx_el = findall(x-> x == el, [f[i,1:2] for i in eachindex(f[:,1])])
+
+        res[idx2keys[el]] = f[idx_el, 4]
+    end
+
+    return res
+end
+
+function read_kappa_charm_all_config(path::String)
+    ensid = basename(path)
+    println("ensId: ", ensid)
+    T = get_T(ensid)
+
+    path = joinpath(path, "Averages")
+    frepl = readdir(path)
+    rep_len = length.([readdir(joinpath(path, ff)) for ff in frepl])
+    println("rep_len: ", rep_len)
+
+    data_all_dict = Dict()
+    [data_all_dict[kk] = Array{Float64}(undef, sum(rep_len), T) for kk in ["ss", "sh1", "sh2", "sh3", "sh4"]]
+
+    rep_len_dict = OrderedDict()
+    idm = Vector(undef, length(rep_len))
+
+    idx_cn = 1
+    for (idx,ff) in enumerate(frepl) # loop over replicas
+        rep_len_dict[split(ff, "_")[2]] = rep_len[idx]
+
+        allconf = sort(parse.(Int64, chop.(readdir(joinpath(path, ff)), head=1, tail=0)))
+        idm[idx] = allconf
+
+        for cc in allconf # loop over configs
+            pconf = readdir(joinpath(path, ff, "b"*string(cc)), join=true)[1]
+            data_1cnfg = read_kappa_charm_data_config(pconf)
+            
+            for kk in collect(keys(data_1cnfg))
+                data_all_dict[kk][idx_cn,:] = data_1cnfg[kk] 
+            end
+            idx_cn+=1
+        end
+    end
+
+    cdata_dict = Dict()
+    for kk in collect(keys(data_all_dict))
+        cdata_dict[kk] = CData(ensid, rep_len_dict, data_all_dict[kk], data_all_dict[kk], vcat(idm...), "kappa_charm" )
+    end
+
+    return cdata_dict
+end
+
+function get_kappa_configs()
+    path_configs = joinpath(@__DIR__, "kappa_charm", "kappa_configs.txt")
+
+    dict = Dict{String,Vector{Vector{Int64}}}()
+
+    f = readdlm(path_configs, '\n')
+
+    strings = filter(x-> typeof(x)<:AbstractString && occursin("    //  ", x), f)
+    enslist = [s[9:end] for s in strings]
+
+    for ens in enslist
+        println(" - $ens")
+        dict[ens] = Vector{Vector{Int64}}()
+        nreps = parse(Int64, split(f[findfirst(x -> occursin("ensemble[$(ens)].Nreps", x), f)]," ")[end][1:end-1])
+
+        for rep=0:(nreps-1)
+            rep_id    = parse(Int64, split(f[findfirst(x -> occursin("ensemble[$(ens)].rep_id[$(rep)]", x), f)]," ")[end][1:end-1])
+            rep_nconf = parse(Int64, split(f[findfirst(x -> occursin("ensemble[$(ens)].Nconfs[$(rep)]", x), f)]," ")[end][1:end-1])
+
+            push!(dict[ens],[rep_id,rep_nconf])
+        end
+    end
+    return dict
+end
+
+function get_kappa_values()
+    path_values = joinpath(@__DIR__, "kappa_charm", "kappa_values.txt")
+    dict = Dict{String,Vector{Float64}}()
+
+    f = readdlm(path_values, '\n')
+
+    strings = filter(x-> occursin("    //  ", x), f)
+    enslist = [s[13:end] for s in strings]
+    for ens in enslist
+        dict[ens] = Vector{Float64}()
+        index = findfirst(x -> occursin(ens, x), f)[1]
+
+        for vec in f[index+2:index+6]
+            push!(dict[ens],parse(Float64,split(vec, " ")[end][1:end-1]))
+        end
+    end
+    return dict
 end

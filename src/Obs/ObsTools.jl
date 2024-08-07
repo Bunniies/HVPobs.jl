@@ -58,6 +58,13 @@ function plat_av(obs::Vector{uwreal}, plat::Vector{Int64}; wpm::Union{Dict{Int64
     av = sum(w .* obs[plat[1]:plat[2]]) / sum(w)
     return av
 end
+function plat_av(obs::Vector{uwreal}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+    isnothing(wpm) ? uwerr.(obs) : [uwerr(obs[k], wpm) for k in eachindex(obs)]
+    w = 1 ./ err.(obs).^2
+    av = sum(w .* obs) / sum(w)
+    return av
+end
+
 
 function t0_guess(t::Vector{Float64}, Ysl::Array{Float64, 3}, plat::Vector{Int64}, L::Int64)
     t2E_ax = t.^2 .* mean(mean(Ysl[:, plat[1]:plat[2], :], dims=2), dims=1)[1, 1, :] / L^3

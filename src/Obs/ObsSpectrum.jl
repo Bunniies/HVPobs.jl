@@ -1,11 +1,13 @@
 @doc raw"""
     meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
     meff(corr::Corr, plat::Vector{Int64}; pl::Bool=true, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+    meff(obs::Vector{uwreal})
 
 Computes effective mass for a given correlator corr at a given plateau `plat`.
 Correlator can be passed as an `Corr` struct or `Vector{uwreal}`.
     
 The flags `pl` and `data` allow to show the plots and return data as an extra result.
+If no `plat` is passed the function returs the effective mass at all time slices.
 
 ```@example
 data = read_mesons(path, "G5", "G5")
@@ -39,6 +41,11 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
 end
 meff(corr::Corr, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing) = meff(corr.obs, plat; pl=pl, data=data, wpm=wpm)
 
+function meff(obs::Vector{uwreal})
+    tvals = length(obs)
+    m = 0.5 .* log.((obs[2:tvals-2] ./ obs[3:tvals-1]) .^2)
+    return m
+end
 
 @doc raw"""
     mpcac(a0p::Vector{uwreal}, pp::Vector{uwreal}, plat::Vector{Int64}; ca::Float64=0.0, pl::Bool=true, data::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)

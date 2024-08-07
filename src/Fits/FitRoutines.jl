@@ -143,3 +143,136 @@ function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} w
         return FitRes(length(yval) - data, upar, min_fun(sol.minimizer), chi2_exp, pvalue)        
     end
 end
+
+
+function fit_defs_yerr(f, x, dy)
+    
+    function lmfit(prm, y)
+        
+	nof = round(Int64, length(y))
+	res = Vector{eltype(prm)}(undef,nof)
+	# for i in 1:nof
+	    # res[i] = (y[i] - f(x[i], prm)) / dy[i]
+	# end
+    res =   (y .- f(x, prm)) ./ dy
+	return res
+    end
+    chisq(prm,data) = sum(lmfit(prm, data) .^ 2)
+    
+    return lmfit, chisq
+end
+
+function fit_defs_yerr_corr(f, x, Winv)
+
+    u = LinearAlgebra.cholesky(LinearAlgebra.Symmetric(Winv)).U
+
+    function lmfit(prm, y)
+        
+	nof  = round(Int64, length(y))
+	res  = Vector{eltype(prm)}(undef,nof)
+	res2 = Vector{eltype(prm)}(undef,nof)
+    res =   (y .- f(x, prm)) ./ dy
+
+	# for i in 1:nof
+	    # res[i] = (y[i] - f(x[i], prm))
+	# end
+
+        for k in 1:length(res)
+            res2[k] = u[k,1]*res[1]
+            for i in 2:length(res)
+                res2[k] = res2[k] + u[k,i]*res[i]
+            end
+        end
+
+	return res2
+    end
+    chisq(prm,data) = sum(lmfit(prm, data) .^ 2)
+    
+    return lmfit, chisq
+end
+
+function fit_data_yerr(f, xv, yv, nparam; correlated=false)
+
+    ADerrors.uwerr.(yv)
+    if correlated
+        cvi = LinearAlgebra.inv(ADerrors.cov(yv))
+        lm, csq = fit_defs_yerr_corr(f, xv, cvi)
+
+        prm0 = zeros(nparam)
+        fit  = LeastSquaresOptim.optimize(xx -> lm(xx, ADerrors.value.(yv)), prm0,
+		                          LeastSquaresOptim.LevenbergMarquardt(), autodiff = :forward)
+    
+        fitp, csqexp = ADerrors.fit_error(csq, fit.minimizer, yv, W=cvi)
+    else
+        lm, csq = fit_defs_yerr(f, xv, ADerrors.err.(yv))
+        prm0 = zeros(nparam)
+        fit  = LeastSquaresOptim.optimize(xx -> lm(xx, ADerrors.value.(yv)), prm0,
+		                          LeastSquaresOptim.LevenbergMarquardt(), autodiff = :forward)
+
+        fitp, csqexp = ADerrors.fit_error(csq, fit.minimizer, yv)
+    end
+    println("χ2/χ2exp: ", fit.ssr, " / ", csqexp, " (dof: ", length(yv) - nparam,")")
+
+    return FitRes(length(yv)-nparam, fitp, fit.ssr, csqexp, nothing)
+    # return fitp, csqexp, fit.ssr    
+end
+
+function fit_defs_xyerr(f, dxy, Nalpha)
+    
+    function lmfit(prm, xy)
+        Ndata = div(length(xy), Nalpha+1)
+        Npar = length(prm) - Ndata*Nalpha
+        # println("Nalpha: ", Nalpha)
+        # println("Ndata:  ", Ndata)
+        # println("Npar:   ", Npar)
+        p = prm[1:Npar]
+        res = Vector{Vector{eltype(prm)}}(undef, Ndata)
+        for k = 1:Ndata
+            inverr = [1 / dxy[k + (i-1)*Ndata] for i=1:Nalpha+1]
+            xx = [prm[Npar + k + (i-1)*Ndata] for i=1:Nalpha]
+
+            delta = [xy[k + (i-1)*Ndata] - xx[i] for i=1:Nalpha]
+            yy = f(xx', p)
+            push!(delta, xy[k+Nalpha*Ndata] - yy[1])
+            res[k] = delta .* inverr
+        end
+
+        return vcat(res...)
+	   
+    end
+
+    chisq(prm,data) = sum(lmfit(prm, data) .^ 2)
+    
+    return lmfit, chisq
+end
+
+function fit_data_xyerr(f, xv, yv, nparam)
+    Nalpha = size(xv,2) # number of x-variables
+    Ndata = size(yv, 1) # number of datapoints
+    ADerrors.uwerr.(xv)
+    ADerrors.uwerr.(yv)
+
+    dxyv = [vcat(value.(xv)...);value.(yv)]
+    dxye = [vcat(err.(xv)...);err.(yv)]
+    dxy = [vcat(xv...);yv]
+
+    lm, csq = fit_defs_xyerr(f, dxye, Nalpha)
+    
+    prm0 = zeros(nparam+length(xv))
+    fit  = LeastSquaresOptim.optimize(xx -> lm(xx, dxyv), prm0,
+		    LeastSquaresOptim.LevenbergMarquardt(), autodiff = :forward)
+    
+    fitp, csqexp = ADerrors.fit_error(csq, fit.minimizer, dxy)
+    
+    println("χ2/χ2exp: ", fit.ssr, " / ", csqexp, " (dof: ", length(yv) - nparam,")")
+    return FitRes(length(yv) - nparam, fitp, fit.ssr, csqexp, nothing )
+    # return fitp, csqexp, fit.ssr
+end
+
+function fit_data(f, xv, yv, nparam; correlated=false)
+    if (isa(xv, Array{ADerrors.uwreal}))
+        return fit_data_xyerr(f, xv, yv, nparam)
+    else
+        return fit_data_yerr(f, xv, yv, nparam, correlated=correlated)
+    end
+end

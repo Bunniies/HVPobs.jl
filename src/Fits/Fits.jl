@@ -2,6 +2,7 @@ module Fits
 
 using LsqFit, LinearAlgebra, ForwardDiff, Statistics, Optim, PyPlot
 using ADerrors, LaTeXStrings
+using LeastSquaresOptim
 
 """@doc raw
     FitRes structure.
@@ -37,7 +38,7 @@ include("FitPval.jl")
 export get_pvalue
 
 include("FitRoutines.jl")
-export fit_routine
+export fit_routine, fit_data
 
 include("FitsBMA.jl")
 export  bayesian_av

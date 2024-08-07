@@ -21,7 +21,7 @@ include("Fits/Fits.jl")
 using .Fits
 export FitRes
 export get_pvalue
-export fit_routine
+export fit_routine, fit_data
 export bayesian_av
 
 include("Obs/Obs.jl")

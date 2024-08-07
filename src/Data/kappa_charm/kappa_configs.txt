@@ -1,0 +1,148 @@
+    //  A653
+    
+    ensemble[A653].Nreps = 1;
+    ensemble[A653].rep_id[0] = 0;
+    ensemble[A653].Nconfs[0] = 4000;
+    
+    //  A654
+    
+    ensemble[A654].Nreps = 1;
+    ensemble[A654].rep_id[0] = 0;
+    ensemble[A654].Nconfs[0] = 700;
+    
+    //  H101
+    
+    ensemble[H101].Nreps = 2;
+    ensemble[H101].rep_id[0] = 0;
+    ensemble[H101].Nconfs[0] = 1000;
+    ensemble[H101].rep_id[1] = 1;
+    ensemble[H101].Nconfs[1] = 1000;
+
+    //  H102
+
+    ensemble[H102].Nreps = 2;
+    ensemble[H102].rep_id[0] = 1;
+    ensemble[H102].Nconfs[0] = 950;
+    ensemble[H102].rep_id[1] = 2;
+    ensemble[H102].Nconfs[1] = 950;
+    
+    //  N101
+    
+    ensemble[N101].Nreps = 5;
+    ensemble[N101].rep_id[0] = 1;
+    ensemble[N101].Nconfs[0] = 278;
+    ensemble[N101].rep_id[1] = 3;
+    ensemble[N101].Nconfs[1] = 397;
+    ensemble[N101].rep_id[2] = 4;
+    ensemble[N101].Nconfs[2] = 175;
+    ensemble[N101].rep_id[3] = 5;
+    ensemble[N101].Nconfs[3] = 350;
+    ensemble[N101].rep_id[4] = 6;
+    ensemble[N101].Nconfs[4] = 300;
+    
+    //  C101
+    
+    ensemble[C101].Nreps = 1;
+    ensemble[C101].rep_id[0] = 14;
+    ensemble[C101].Nconfs[0] = 2000;
+
+    //  B450
+    
+    ensemble[B450].Nreps = 1;
+    ensemble[B450].rep_id[0] = 0;
+    ensemble[B450].Nconfs[0] = 1500;
+
+    //  S400
+    
+    ensemble[S400].Nreps = 2;
+    ensemble[S400].rep_id[0] = 0;
+    ensemble[S400].Nconfs[0] = 850;
+    ensemble[S400].rep_id[1] = 1;
+    ensemble[S400].Nconfs[1] = 1550;
+
+    //  N401
+    
+    ensemble[N401].Nreps = 1;
+    ensemble[N401].rep_id[0] = 0;
+    ensemble[N401].Nconfs[0] = 1050;
+
+    //  D450
+    
+    ensemble[D450].Nreps = 1;
+    ensemble[D450].rep_id[0] = 10;
+    ensemble[D450].Nconfs[0] = 260;
+    
+    //  D452
+    
+    ensemble[D452].Nreps = 2;
+    ensemble[D452].rep_id[0] = 1;
+    ensemble[D452].Nconfs[0] = 150;
+    ensemble[D452].rep_id[1] = 2;
+    ensemble[D452].Nconfs[1] = 800;
+
+    //  N202
+    
+    ensemble[N202].Nreps = 1;
+    ensemble[N202].rep_id[0] = 1;
+    ensemble[N202].Nconfs[0] = 850;
+
+    //  E250
+    
+    ensemble[E250].Nreps = 2;
+    ensemble[E250].rep_id[0] = 0;
+    ensemble[E250].Nconfs[0] = 139;
+    ensemble[E250].rep_id[1] = 1;
+    ensemble[E250].Nconfs[1] = 311;
+    
+    //  N203
+
+    ensemble[N203].Nreps = 2;
+    ensemble[N203].rep_id[0] = 0;
+    ensemble[N203].Nconfs[0] = 750;
+    ensemble[N203].rep_id[1] = 1;
+    ensemble[N203].Nconfs[1] = 750;
+  
+    //  N200
+
+    ensemble[N200].Nreps = 2;
+    ensemble[N200].rep_id[0] = 0;
+    ensemble[N200].Nconfs[0] = 850;
+    ensemble[N200].rep_id[1] = 1;
+    ensemble[N200].Nconfs[1] = 850;
+
+    //  D200
+    
+    ensemble[D200].Nreps = 1;
+    ensemble[D200].rep_id[0] = 0;
+    ensemble[D200].Nconfs[0] = 1100;
+ 
+    //  N300
+
+    ensemble[N300].Nreps = 1;
+    ensemble[N300].rep_id[0] = 2;
+    ensemble[N300].Nconfs[0] = 1150;
+
+    //  N302
+
+    ensemble[N302].Nreps = 1;
+    ensemble[N302].rep_id[0] = 1;
+    ensemble[N302].Nconfs[0] = 2200;
+  
+    //  J303
+
+    ensemble[J303].Nreps = 1;
+    ensemble[J303].rep_id[0] = 3;
+    ensemble[J303].Nconfs[0] = 600;
+    
+    //  E300
+    
+    ensemble[E300].Nreps = 1;
+    ensemble[E300].rep_id[0] = 1;
+    ensemble[E300].Nconfs[0] = 140;
+
+    //  J500
+    
+    ensemble[J500].Nreps = 1;
+    ensemble[J500].rep_id[0] = 4;
+    ensemble[J500].Nconfs[0] = 600;
+    

@@ -36,7 +36,7 @@ struct Window
     function Window(str::String)
         delta = 0.15
 
-        if str == "SD"
+        if str == "SD" 
             d = 0.4
             @. funcsd(x0) =  1 - 0.5 * (1 + tanh((x0-d)/delta))
             return new(funcsd)
@@ -53,6 +53,10 @@ struct Window
             d = 0.4
             @. funcild(x0) = 0.5 * (1 + tanh((x0-d)/delta))
             return new(funcild)
+        elseif str == "SID" # short and intermediate distance
+            d = 2.5
+            @. funcsid(x0) =  1 - 0.5 * (1 + tanh((x0-d)/delta))
+            return new(funcsid)
         else
             error("Window $(str) not defined.")
         end
