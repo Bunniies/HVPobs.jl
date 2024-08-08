@@ -772,8 +772,8 @@ function read_kappa_charm_all_config(path::String)
     path = joinpath(path, "Averages")
     frepl = readdir(path)
     filter!(x->occursin("confs", x), frepl)
-
-    rep_len = length.([readdir(joinpath(path, ff)) for ff in frepl])
+    
+    rep_len = length.(filter!.(x->occursin("b",x), [readdir(joinpath(path, ff)) for ff in frepl]))
 
     data_all_dict = Dict()
     [data_all_dict[kk] = Array{Float64}(undef, sum(rep_len), T) for kk in ["ss", "sh1", "sh2", "sh3", "sh4"]]
