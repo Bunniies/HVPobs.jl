@@ -785,7 +785,10 @@ function read_kappa_charm_all_config(path::String)
     for (idx,ff) in enumerate(frepl) # loop over replicas
         rep_len_dict[split(ff, "_")[2]] = rep_len[idx]
 
-        allconf = sort(parse.(Int64, chop.(readdir(joinpath(path, ff)), head=1, tail=0)))
+        fname = readdir(joinpath(path, ff))
+        filter!(x->occursin("b", x), fname)
+
+        allconf = sort(parse.(Int64, chop.(fname, head=1, tail=0)))
         idm[idx] = allconf
 
         for cc in allconf # loop over configs
