@@ -771,6 +771,8 @@ function read_kappa_charm_all_config(path::String)
 
     path = joinpath(path, "Averages")
     frepl = readdir(path)
+    filter!(x->occursin("confs"), frepl)
+    
     rep_len = length.([readdir(joinpath(path, ff)) for ff in frepl])
 
     data_all_dict = Dict()
