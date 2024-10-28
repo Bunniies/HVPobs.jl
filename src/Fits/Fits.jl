@@ -38,7 +38,7 @@ include("FitPval.jl")
 export get_pvalue
 
 include("FitRoutines.jl")
-export fit_routine, fit_data
+export fit_routine, fit_data, lin_fit, x_lin_fit, y_lin_fit
 
 include("FitsBMA.jl")
 export  bayesian_av

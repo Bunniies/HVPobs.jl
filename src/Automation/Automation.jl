@@ -28,7 +28,8 @@ module Automation
 
     include("DataAutomation.jl")
     export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
-
+    export get_data_Bphysics, get_Bphysics_corr
+    
     include("CorrAutomation.jl")
     export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!
 end

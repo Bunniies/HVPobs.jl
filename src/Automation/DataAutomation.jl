@@ -33,6 +33,20 @@ function get_data(path::String, ens::String, fl::String, g::String)
     return read_hvp_data(data[1], ens)
 end
 
+function get_data_Bphysics(path::String, ens::String, fl::String, g::String)
+    if !(g in GAMMA)
+        error("Gamma structure \"$(g)\" not found in $(GAMMA)")
+    end
+
+    path = joinpath(path, fl)
+    fdata = filter(x-> occursin(g, x), readdir(path, join=true))
+    if isempty(fdata)
+        error("No data file found for Ens $(ens), sector $(fl), gamma $(g)")
+    end
+    return read_Bphysics_data(fdata[1], ens)
+end
+
+
 function get_data_disc(path::String, ens::String, fl::String)
     if fl ∉ ["08", "0c", "80", "88", "8c", "c0", "c8", "cc"]
         error("Unrecognised flavour structure $(fl): choose from [08, 0c, 80, 88, 8c, c0, c8, cc]")
@@ -77,6 +91,9 @@ function get_rw(path::String, ens::String; v::String="1.2")
     if ens == "D450"
         return read_ms1(rep[1], v="2.0")
     end
+    if ens == "E300"
+        return read_ms1(rep[1], v="1.4")
+    end
     if length(rep)!=0
         try
             length(rep) == 1 ? (return read_ms1(rep[1], v=v)) : (return read_ms1.(rep, v=v)) 
@@ -102,6 +119,15 @@ function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Un
     end
 
     return corr 
+end
+
+function get_Bphysics_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1)
+    
+    cdata = get_data_Bphysics(path, ens.id, fl, g)
+    rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
+    corr = corr_obs(cdata, real=true, rw=rw, L=L)
+
+    return corr
 end
 
 function get_corr_disc(path::String, ens::EnsInfo, fl::String ; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)

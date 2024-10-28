@@ -129,10 +129,16 @@ end
 cv_loc(beta::Float64)
 
 Given the coupling beta, this function returns the cv improvement coefficient 
-for the local vector current based on the results of  1811.08209. 
+for the local vector current based on the results of  1811.08209. (updated values not yet published)
 """
 function cv_loc(beta::Float64)
-    
+    g2 = 6 / beta
+    b0 = 9 / (4*π)^2
+    p = [-2603.598964596533, 2097.241663044384] 
+    return -0.01030 * 4 / 3 * g2 * (1 + exp(-1/(2*b0*g2)) * (p[1] + p[2]*g2) )
+end
+function cv_loc_old(beta::Float64)
+    # Old values of Mainz improvement coefficients
     g2 = 6/beta
     p = uwreal([0.15, 0.35], "cv_loc 1-loop")
     cv = -0.01030 * 4 / 3 * g2 * (1. + value(p)*g2)
@@ -143,10 +149,16 @@ end
 cv_cons(beta::Float64)
 
 Given the coupling beta, this function returns the cv improvement coefficient 
-for the conserved vector current based on the results of  1811.08209. 
+for the conserved vector current based on the results of  1811.08209. (updated values not yet published)
 """
 function cv_cons(beta::Float64)
-   
+    g2 = 6 / beta
+    b0 = 9 / (4*π)^2
+    p = [0.024348066540864678, 321.0689682507245] 
+    return 0.5 - p[1] * g2 * (1 + exp(-1/(2*b0*g2)) * (p[2]*g2) )
+end
+function cv_cons_old(beta::Float64)
+   # Old values of Mainz improvement coefficients
     g2 = 6/beta
     p = uwreal([0.093, 0.13], "cv_cons 1-loop")
     cv = 0.5 * (1 - value(p)*g2)

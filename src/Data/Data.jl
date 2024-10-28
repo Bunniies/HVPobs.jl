@@ -12,7 +12,13 @@ struct CData
     nms::Int64
     replicatot::OrderedDict{String,Int64}
 
+    kappas::Union{Nothing, Vector{Float64}}
+    theta1::Union{Nothing, Vector{Float64}}
+    theta2::Union{Nothing, Vector{Float64}}
+
     CData(id, rep_len, re_data, im_data, idm, gamma) = new(id, rep_len, re_data, im_data, idm, gamma, CLS_CNFG[id]["nms"], CLS_CNFG[id]["repLen"] )
+    CData(id, rep_len, re_data, im_data, idm, gamma, kappas, theta1, theta2) = new(id, rep_len, re_data, im_data, idm, gamma, CLS_CNFG[id]["nms"], CLS_CNFG[id]["repLen"], kappas, theta1, theta2 )
+
 end
 function Base.show(io::IO, cd::CData)
     println(io, "CData")
@@ -51,7 +57,7 @@ export FVCData
 include("DataReader.jl")
 export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03
 export read_disconnected_from_Marcos_data, read_disconnected_from_npz, read_rwf_strange, read_kappa_charm_all_config, get_kappa_values
-
+export read_Bphysics_data
 
 include("DataConst.jl")
 export GAMMA, CLS_db, CLS_kappa_crit, Zvc_l

@@ -272,6 +272,7 @@ function read_mesons_data(path::String, id::String)
 
     rep_info = last.(split.(header))
     rep_len = parse.(Int64, rep_info)
+ 
     delim = findall(x-> typeof(x)<:AbstractString && occursin("#", x), f)
     delim_line1 = delim[1:2:end]
     delim_line2 = delim[2:2:end]
@@ -315,10 +316,94 @@ function read_mesons_data(path::String, id::String)
         re_data = re_data[1:1137, :]
         im_data = im_data[1:1137, :]
         idm = idm[1:1137]
-        rep_len_dict[] = [1137]
+        rep_len_dict["r1"] = 1137
+    end
+    if id == "J306"
+        re_data = re_data[1:480, :]
+        im_data = im_data[1:480, :]
+        idm = idm[1:480]
+        rep_len_dict["r0"] = 240
+        rep_len_dict["r1"] = 240
     end
     
     return CData(id, rep_len_dict, re_data, im_data, idm, gamma)    
+end
+
+
+function read_Bphysics_data(path::String, id::String)
+    
+    nn = basename(path)
+    idx = occursin.(GAMMA, nn)
+    gamma = GAMMA[idx][1]
+    if !(gamma in GAMMA)
+        error("Gamma structure $(gamma) not supported.")
+    end
+
+    f = readdlm(path, '\t')
+
+    header = filter(x-> typeof(x)<:AbstractString && occursin("nb", x), f)
+    rep_info = filter(x-> occursin("confs", x), header)
+    rep_len = parse.(Int64, last.(split.(rep_info)))
+    # println("rep_len: ", rep_len)
+
+    kappa_info = filter(x-> occursin("kappa", x), header)
+    kappa_val = parse.(Float64, last.(split.(kappa_info)))
+    # println("kappa_val: ", kappa_val)
+
+    theta_info = filter(x-> occursin("theta", x), header)
+    myregex = r"[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)"
+    m = eachmatch.(myregex, getindex.(split.(theta_info, ":"), 2))
+    theta1 = parse.(Float64, getfield.(m[1], :match))
+    theta2 = parse.(Float64, getfield.(m[2], :match))
+    # println("theta1: ", theta1)
+    # println("theta2: ", theta2)
+
+    delim = findall(x-> typeof(x)<:AbstractString && occursin("#", x), f)
+    # println(f[delim[1]])
+    # println(f[delim[2]])
+
+    tvals = get_T(id)
+    # println("tvals: ", tvals)
+
+    re_data = Array{Float64}(undef, sum(rep_len), tvals)
+    im_data = similar(re_data)
+    
+    idm = Vector{Int64}(undef, sum(rep_len))
+    rep_id = Vector{Int64}(undef, sum(rep_len))
+
+    for k in eachindex(delim)
+
+        rep_id[k], idm[k] = map(eachmatch(r"\d+", f[delim[k]])) do m
+            parse(Float64, m.match)
+        end
+        idx = delim[k].I[1]
+        # data = split.(f[idx+1:idx+tvals])
+        # re_data[k,:] = parse.(Float64, getindex.(data, 4)) 
+        # im_data[k,:] = parse.(Float64, getindex.(data, 7)) 
+        re_data[k,:] = f[idx+2:idx+tvals+1, 4]
+        im_data[k,:] = f[idx+2:idx+tvals+1, 7]
+
+
+    end
+    rep_len_dict = OrderedDict{String, Int64}()
+    for (k, rep) in enumerate(unique(rep_id))
+        rep_len_dict["r"*string(rep)] = rep_len[k]
+    end
+    if id == "E300"
+        re_data = re_data[1:1137, :]
+        im_data = im_data[1:1137, :]
+        idm = idm[1:1137]
+        rep_len_dict["r1"] = 1137
+    end
+    if id == "J306"
+        re_data = re_data[1:480, :]
+        im_data = im_data[1:480, :]
+        idm = idm[1:480]
+        rep_len_dict["r0"] = 240
+        rep_len_dict["r1"] = 240
+    end
+
+    return CData(id, rep_len_dict, re_data, im_data, idm, gamma, kappa_val, theta1, theta2)
 end
 
 @doc raw"""
@@ -685,6 +770,8 @@ function get_T(id::String)
         return 128
     elseif fl == 'U'
         return 128
+    elseif fl == 'F'
+        return 256
     else
         error("Invalid ensemble id $(id)")
     end

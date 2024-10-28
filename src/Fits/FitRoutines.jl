@@ -145,6 +145,63 @@ function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} w
 end
 
 
+function lin_fit(x::Vector{<:Real}, v::Vector{Float64}, e::Vector{Float64})
+    sig2 = e .* e
+    S = sum(1 ./ sig2)
+    Sx = sum(x ./ sig2)
+    Sy = sum(v ./ sig2)
+    Sxy = sum(v .* x ./ sig2)
+    Sxx = sum(x .* x ./sig2)
+    delta = S * Sxx - Sx*Sx
+    par = [Sxx*Sy-Sx*Sxy, S*Sxy-Sx*Sy] ./delta
+    #C = [[Sxx/delta, -Sx/delta], [-Sx/delta,  S/delta]]
+    return par
+end
+
+@doc raw"""
+    lin_fit(x::Vector{<:Real}, y::Vector{uwreal})
+
+Computes a linear fit of uwreal data points y. This method return uwreal fit parameters and chisqexpected.
+
+```@example
+fitp, csqexp = lin_fit(phi2, m2)
+m2_phys = fitp[1] + fitp[2] * phi2_phys
+```
+"""
+function lin_fit(x::Vector{<:Real}, y::Vector{uwreal}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+    isnothing(wpm) ? uwerr.(y) : [uwerr(yaux, wpm) for yaux in y]
+    par = lin_fit(x, value.(y), err.(y))
+    chisq(p, d) = sum((d .- p[1] .- p[2].*x).^2 ./ err.(y) .^2)
+    (fitp, csqexp) = fit_error(chisq, par, y)
+    for i in eachindex(fitp) 
+        isnothing(wpm) ? uwerr(fitp[i]) : uwerr(fitp[i], wpm)
+        print("\n Fit parameter: ", i, ": ")
+        details(fitp[i])
+    end
+    println("Chisq / chiexp: ", chisq(par, y), " / ", csqexp, " (dof: ", length(x)-length(par),")")
+    return (fitp, csqexp)
+end
+
+@doc raw"""
+    x_lin_fit(par::Vector{uwreal}, y::Union{uwreal, Float64})
+
+Computes the results of a linear interpolation/extrapolation in the x axis
+"""
+x_lin_fit(par::Vector{uwreal}, y::Union{uwreal, Float64}) = (y - par[1]) / par[2]
+@doc raw"""
+    y_lin_fit(par::Vector{uwreal}, y::Union{uwreal, Float64})
+
+Computes the results of a linear interpolation/extrapolation in the y axis
+"""
+y_lin_fit(par::Vector{uwreal}, x::Union{uwreal, Float64}) = par[1] + par[2] * x
+
+
+
+
+
+
+# FIT ROUTINES FROM A RAMOS
+
 function fit_defs_yerr(f, x, dy)
     
     function lmfit(prm, y)
