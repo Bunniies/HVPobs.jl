@@ -35,7 +35,7 @@ fit_routine(model, xdata, ydata, param=3)
 fit_routine([model, model2], [xdata, xdata2], [ydata, ydata2], param=3)
 ```
 """
-function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3;pval::Bool=false; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, info::Bool=false, lineprint::Bool=true, fitRes::Bool=false)
+function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3; pval::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, info::Bool=false, lineprint::Bool=true, fitRes::Bool=false)
 
     isnothing(wpm) ? uwerr.(ydata) : [uwerr(yaux, wpm) for yaux in ydata]
     
