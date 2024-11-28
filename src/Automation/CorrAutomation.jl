@@ -59,6 +59,9 @@ function corrConnected(path_data::String, ens::EnsInfo, sector::String; path_rw=
         if impr_set == "1"
             cv_l = cv_loc(beta)
             cv_c = cv_cons(beta)
+        elseif impr_set == "1old"
+            cv_l = cv_loc_old(beta)
+            cv_c = cv_cons_old(beta)
         elseif impr_set =="2"
             cv_l = cv_loc_set2(beta)
             cv_c = cv_cons_set2(beta)
@@ -115,7 +118,10 @@ function corrDisconnected(path_data::String, ens::EnsInfo, fl::String; path_rw::
         beta = ens.beta
         if impr_set == "1"
             cv_l = cv_loc(beta) 
-            cv_c = cv_cons(beta)      
+            cv_c = cv_cons(beta) 
+        elseif impr_set == "1old"
+            cv_l = cv_loc_old(beta)
+            cv_c = cv_cons_old(beta)     
         elseif impr_set =="2"
             cv_l = cv_loc_set2(beta)
             cv_c = cv_cons_set2(beta)
@@ -174,6 +180,9 @@ function corrDisconnected80(path_data::String, ens::EnsInfo; path_rw::Union{Noth
         if impr_set == "1"
             cv_l = cv_loc(beta) 
             cv_c = cv_cons(beta)      
+        elseif impr_set == "1old"
+            cv_l = cv_loc_old(beta)
+            cv_c = cv_cons_old(beta)
         elseif impr_set =="2"
             cv_l = cv_loc_set2(beta)
             cv_c = cv_cons_set2(beta)
@@ -223,7 +232,7 @@ function get_Z3(ens::EnsInfo; impr_set::String="1")
     ml = 0.5 * (1 / ens.kappa_l - 1 / ens.kappa_crit )
     ms = 0.5 * (1 / ens.kappa_s - 1 / ens.kappa_crit )
     trmq = 2*ml + ms
-    if impr_set == "1"
+    if impr_set in ["1","1old"]
         Z3 = ZV(ens.beta) * (1. + bv_bar(ens.beta)*trmq + bv(ens.beta)*ml)
     elseif  impr_set == "2"
         Z3 = ZV_set2(ens.beta) * (1. + bv_bar_set2(ens.beta)*trmq + bv_set2(ens.beta)*ml)
@@ -241,7 +250,7 @@ function get_Z8(ens::EnsInfo; impr_set::String="1")
     ml = 0.5 * (1 / ens.kappa_l - 1 / ens.kappa_crit )
     ms = 0.5 * (1 / ens.kappa_s - 1 / ens.kappa_crit )
     trmq = 2*ml + ms
-    if impr_set == "1"
+    if impr_set in ["1","1old"]
         Z8 = ZV(ens.beta) * (1. + bv_bar(ens.beta)*trmq + bv(ens.beta)*(ml + 2*ms)/3)
     elseif impr_set == "2"
         Z8 = ZV_set2(ens.beta) * (1. + bv_bar_set2(ens.beta)*trmq + bv_set2(ens.beta)*(ml + 2*ms)/3)
@@ -258,7 +267,7 @@ function get_Z08(ens::EnsInfo; impr_set::String="1")
 
     ml = 0.5 * (1 / ens.kappa_l - 1 / ens.kappa_crit )
     ms = 0.5 * (1 / ens.kappa_s - 1 / ens.kappa_crit )
-    if impr_set == "1"
+    if impr_set in ["1","1old"]
         Z08 = 1/3 * ZV(ens.beta) * bv(ens.beta) * (2/sqrt(3)) * (ml - ms)
     elseif impr_set == "2"
         Z08 = 1/3 * ZV_set2(ens.beta) * bv_set2(ens.beta) * (2/sqrt(3)) * (ml - ms)

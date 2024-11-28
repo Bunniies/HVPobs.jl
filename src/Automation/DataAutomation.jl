@@ -91,8 +91,12 @@ function get_rw(path::String, ens::String; v::String="1.2")
     if ens == "D450"
         return read_ms1(rep[1], v="2.0")
     end
+    if ens == "N452"
+        return read_ms1(rep[1], v="2.0")
+    end
     if ens == "E300"
-        return read_ms1(rep[1], v="1.4")
+        # return read_ms1(rep[1], v="1.4")
+        return [read_ms1(rep[1], v="2.0"),  read_ms1(rep[2],v="2.0"), read_ms1(rep[3], v="2.0")]
     end
     if length(rep)!=0
         try

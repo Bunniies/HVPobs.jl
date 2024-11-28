@@ -25,7 +25,7 @@ function corr_obs(cd::CData; real::Bool=true, rw::Union{Array{Float64,2}, Vector
     reptot = collect(values(cd.replicatot))
 
     reporder  = [parse(Int64,collect(keys(cd.rep_len))[i][end]) for i in 1:length(cd.rep_len)]
-    if !all([reporder[i+1]>reporder[i] ? true : false for i in 1:(length(reporder)-1)])            # check if order is preserved when reading the data (my be a problem for disconnected)
+    if !all([reporder[i+1]>reporder[i] for i in 1:(length(reporder)-1)])            # check if order is preserved when reading the data (my be a problem for disconnected)
         chunk(arr, n::Vector{Int64}) = [arr[1+ sum(n[1:i-1]):sum(n[1:i])] for i in eachindex(n)]
         vec_idm = chunk(cd.idm, replen)
         vec_idm_sorted = Vector{Vector{Int64}}()
