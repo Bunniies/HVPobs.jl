@@ -22,6 +22,7 @@ const CLS_db = Dict(
     "S400" => Dict("L"=>32, "beta"=>3.46, "kappa_l"=>0.136984, "kappa_s"=>0.136702387, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"obc"),
     "N452" => Dict("L"=>48, "beta"=>3.46, "kappa_l"=>0.136984, "kappa_s"=>0.136702387, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),
     "N451" => Dict("L"=>48, "beta"=>3.46, "kappa_l"=>0.1370616, "kappa_s"=>0.1365480771, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),
+    "N452" => Dict("L"=>48, "beta"=>3.46, "kappa_l"=>0.136984, "kappa_s"=>0.136702387, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),  # check plat_t0
     "D450" => Dict("L"=>64, "beta"=>3.46, "kappa_l"=>0.137126, "kappa_s"=>0.136420428639937, "dtr"=>1, "plat_t0"=>[25,100], "bc"=>"pbc"),
     "D451" => Dict("L"=>64, "beta"=>3.46, "kappa_l"=>0.137140, "kappa_s"=>0.136337761, "dtr"=>2, "plat_t0"=>[25,100], "bc"=>"pbc"),
     "D452" => Dict("L"=>64, "beta"=>3.46, "kappa_l"=>0.137163675, "kappa_s"=>0.136345904546, "dtr"=>1, "plat_t0"=>[25,100], "bc"=>"pbc"),
@@ -64,8 +65,8 @@ const CLS_CNFG = Dict(
 
     "H101" => Dict("repLen" => OrderedDict("r0" => 1007, "r1" => 1009), "nms" => 2016),
     "H102" => Dict("repLen" => OrderedDict("r1" => 1029, "r2" => 1008), "nms" => 2037),
-    #"H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042), "nms" => 2069),
-    "H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042, "r5" => 837), "nms" => 2906),
+    "H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042), "nms" => 2069),
+    # "H105" => Dict("repLen" => OrderedDict("r1" => 1027, "r2" => 1042, "r5" => 837), "nms" => 2906),
     "N101" => Dict("repLen" => OrderedDict("r1" => 280, "r3" => 404, "r4" => 240, "r5" => 352, "r6" => 320), "nms" => 1596),
     "C101" => Dict("repLen" => OrderedDict("r14" => 2000, "r15" => 601), "nms" => 2601),
     "C102" => Dict("repLen" => OrderedDict("r3" => 500, "r4" => 500, "r5" => 500), "nms" => 1500),
@@ -81,6 +82,7 @@ const CLS_CNFG = Dict(
     "D451" => Dict("repLen" => OrderedDict("r0" => 1028), "nms" => 1028),
     "D452" => Dict("repLen" => OrderedDict("r1" => 161, "r2" => 1000), "nms" => 1161),
 
+    "H200" => Dict("repLen" => OrderedDict("r0" => 1000, "r1" => 1000), "nms" => 2000),
     # "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899), # for HVP
     "N202" => Dict("repLen" => OrderedDict("r1" => 899, "r2"=>1003), "nms" => 1902), # for B physics
     "N203" => Dict("repLen" => OrderedDict("r0" => 756, "r1" => 787),  "nms" => 1543),

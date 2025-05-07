@@ -334,6 +334,18 @@ First: 1
 Last:  1139
 Flagged configurations: 
 Number of flagged configurations: 0
+Ensemble E300r002
+Configurations processed: 432
+First: 1
+Last:  432
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble E300r003
+Configurations processed: 384
+First: 1
+Last:  384
+Flagged configurations: 
+Number of flagged configurations: 0
 Ensemble J303r003
 Configurations processed: 1073
 First: 1

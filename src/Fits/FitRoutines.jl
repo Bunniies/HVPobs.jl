@@ -35,14 +35,14 @@ fit_routine(model, xdata, ydata, param=3)
 fit_routine([model, model2], [xdata, xdata2], [ydata, ydata2], param=3)
 ```
 """
-function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3; info::Bool=false, pval::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3; pval::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, info::Bool=false, lineprint::Bool=true, fitRes::Bool=false)
 
     isnothing(wpm) ? uwerr.(ydata) : [uwerr(yaux, wpm) for yaux in ydata]
     
     yval = value.(ydata)
     yer = err.(ydata)
     
-    @info("Uncorrelated fit")
+    lineprint ? @info("Uncorrelated fit") : nothing
     chisq = gen_uncorrelated_chisq(model, xdata, yer)
     fit = curve_fit(model, xdata, yval, 1.0 ./ yer.^2, fill(0.5, param))
     # println("chi2 ", sum(fit.resid.^2))
@@ -51,11 +51,13 @@ function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}
     chi2_fit_res = sum(fit.resid.^2 )
     
     # compute and print single point contribution to chi2
-    # println("\n")
-    # for i in 1:length(fit.resid)
-        # println((fit.resid[i])^2)
+    # if !isnothing(ensList) && lineprint
+    #     println("Single ensemble contribution to chi2")
+    #     for i in 1:length(fit.resid)
+    #         println("  $(ensList[i]) => $((fit.resid[i])^2)")
+    #     end
+    #     println("------------------------------------")
     # end
-    # println("\n")
 
     if !isapprox(chi2_fit_res, value(chisq(coef(fit), ydata)), atol=1e-2)
        @warn "Chi2 from the two determination not within 0.01 tolerance "
@@ -71,20 +73,18 @@ function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}
         end
     end
 
-    println("χ2/χ2exp: ", chi2_fit_res, " / ", chi_exp, " (dof: ", length(yval) - param,")")
+    lineprint ? println("χ2/χ2exp: ", chi2_fit_res, " / ", chi_exp, " (dof: ", length(yval) - param,")") : nothing
     
     if !pval
-        return FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, nothing)
+        fitRes ? (return [FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, nothing),fit.resid]) : (return FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, nothing))
     else
         pvalue = get_pvalue(chisq, chi2_fit_res, value.(upar), ydata, wpm=wpm, W= 1 ./ err.(ydata).^2, nmc=10000)
-        println("p-value: ", pvalue)
-        return FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, pvalue)        
+        lineprint ? println("p-value: ", pvalue) : nothing
+        fitRes ? ([FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, pvalue),fit.resid]) : (return FitRes(length(yval) - param, upar, chi2_fit_res, chi_exp, pvalue))
     end
-
 end
 
-function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} where N, ydata::Vector{Array{uwreal, N}} where N, param::Int64; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing,
-    correlated_fit::Bool=false, pval::Bool=false)
+function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} where N, ydata::Vector{Array{uwreal, N}} where N, param::Int64; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, correlated_fit::Bool=false, pval::Bool=false, lineprint::Bool=true)
 
     if !(length(model) == length(xdata) == length(ydata))
         error("Dimension mismatch")
@@ -125,21 +125,21 @@ function fit_routine(model::Vector{Function}, xdata::Vector{Array{Float64, N}} w
     #println(chisq(sol.minimizer,dat))
     
     if !correlated_fit
-        @info("Uncorrelated fit ")
+        lineprint ? @info("Uncorrelated fit ") : nothing
         (upar, chi2_exp) = isnothing(wpm) ? fit_error(chisq, sol.minimizer, dat) : fit_error(chisq, sol.minimizer, dat, wpm)
     else
-        @info("Correlated fit ")
+        lineprint ? @info("Correlated fit ") : nothing
 
         (upar, chi2_exp) = isnothing(wpm) ? fit_error(chisq, sol.minimizer, dat, W=inv_cov_tot) : fit_error(chisq, sol.minimizer, dat, wpm, W=inv_cov_tot)
     end
 
-    println("χ2/χ2exp: ", min_fun(sol.minimizer), " / ", chi2_exp, " (dof: ", length(dat) - param,")")
+    lineprint ? println("χ2/χ2exp: ", min_fun(sol.minimizer), " / ", chi2_exp, " (dof: ", length(dat) - param,")") : nothing
     
     if !pval
         return FitRes(length(dat) - param, upar, min_fun(sol.minimizer), chi2_exp, nothing)
     else
         pvalue = get_pvalue(chisq, chi2_fit_res, value.(upar), dat, wpm=wpm, W= 1 ./ err.(dat).^2, nmc=10000)
-        println("p-value: ", pvalue)
+        lineprint ? println("p-value: ", pvalue) : nothing
         return FitRes(length(yval) - data, upar, min_fun(sol.minimizer), chi2_exp, pvalue)        
     end
 end

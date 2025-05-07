@@ -32,7 +32,7 @@ using .Obs
 export Corr, Window
 export meff, mpcac, dec_const 
 export corr_obs, comp_t0, comp_fvc
-export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!, cv_loc_set2, cv_cons_set2, bv_set2, ZV_set2, bv_bar_set2, ca, Za_l_sub, ZP, cv_pert, ba_minus_bp, ba_imp
+export improve_corr_vkvk!, ZV, cv_loc, cv_cons, bv, bv_bar, improve_corr_vkvk_cons!, cv_loc_set2, cv_cons_set2, bv_set2, ZV_set2, bv_bar_set2, ca, Za_l_sub, ZP, cv_pert, ba_minus_bp, ba_imp, cv_loc_old, cv_cons_old
 export plat_av, frwd_bckwrd_symm!, frwd_bckwrd_antisymm!
 
 include("Automation/Automation.jl")
