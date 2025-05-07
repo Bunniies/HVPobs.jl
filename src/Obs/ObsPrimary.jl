@@ -278,7 +278,7 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
     
     model(x, p) = get_model(x, p, npol)
 
-    fit = fit_routine(model, x, t2E, npol)
+    fit = fit_routine(model, x, t2E, npol, wpm=wpm)
     par = fit.param
     fmin(x, p) = model(x, p) .- 0.3
     t0 = root_error(fmin, t[nt0], par)

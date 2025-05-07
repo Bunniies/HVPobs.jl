@@ -2,7 +2,7 @@ module Data
 
 using DelimitedFiles, ADerrors, Statistics, MultiFloats, PyCall, OrderedCollections
 
-struct CData
+mutable struct CData
     id::String
     rep_len::OrderedDict{String,Int64}
     re_data::Array{Float64}
@@ -30,7 +30,7 @@ end
 export CData
 
 
-struct YData
+mutable struct YData
     vtr::Vector{Int32}
     t::Vector{Float64}
     obs::Array{Float64, 3}
@@ -58,6 +58,7 @@ include("DataReader.jl")
 export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_level_v33, read_tree_level_v3sig03
 export read_disconnected_from_Marcos_data, read_disconnected_from_npz, read_rwf_strange, read_kappa_charm_all_config, get_kappa_values
 export read_Bphysics_data
+export concat_data!, truncate_data!
 
 include("DataConst.jl")
 export GAMMA, CLS_db, CLS_kappa_crit, Zvc_l

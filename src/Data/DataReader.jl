@@ -19,7 +19,11 @@ function read_hvp_data(path::String, id::String)
         error("Gamma structure $(gamma) not supported.")
     end
 
-    f = readdlm(path, '\t', '\n', skipstart=1)
+    # if id == "N452"
+        # f = readdlm(path, '\t', '\n', skipstart=1, dims=(129001,3))
+    # else
+    # end
+    f =readdlm(path, '\t', '\n', skipstart=1)
     header = filter(x-> typeof(x)<:AbstractString && occursin("nb", x), f)
 
     rep_info = last.(split.(header))
@@ -44,8 +48,13 @@ function read_hvp_data(path::String, id::String)
         end
 
         idx = delim[k].I[1]
-        re_data[k,:] = f[idx+1:idx+tvals, 2]
-        im_data[k,:] = f[idx+1:idx+tvals, 3]
+        if id == "N452"
+            re_data[k,:] = parse.(Float64, getindex.(split.(f[idx+1:idx+tvals,2]),1))
+            im_data[k,:] = parse.(Float64, getindex.(split.(f[idx+1:idx+tvals,2]),2))
+        else
+            re_data[k,:] = f[idx+1:idx+tvals, 2]
+            im_data[k,:] = f[idx+1:idx+tvals, 3]
+        end
     end
 
     rep_len_dict = OrderedDict{String, Int64}()
@@ -306,25 +315,25 @@ function read_mesons_data(path::String, id::String)
         end
 
     end
-    
+
     rep_len_dict = OrderedDict{String, Int64}()
     for (k, rep) in enumerate(unique(rep_id))
         rep_len_dict["r"*string(rep)] = rep_len[k]
     end
     
-    if id == "E300"
-        re_data = re_data[1:1137, :]
-        im_data = im_data[1:1137, :]
-        idm = idm[1:1137]
-        rep_len_dict["r1"] = 1137
-    end
-    if id == "J306"
-        re_data = re_data[1:480, :]
-        im_data = im_data[1:480, :]
-        idm = idm[1:480]
-        rep_len_dict["r0"] = 240
-        rep_len_dict["r1"] = 240
-    end
+    # if id == "E300"
+        # re_data = re_data[1:1137, :]
+        # im_data = im_data[1:1137, :]
+        # idm = idm[1:1137]
+        # rep_len_dict["r1"] = 1137
+    # end
+    # if id == "J306"
+        # re_data = re_data[1:480, :]
+        # im_data = im_data[1:480, :]
+        # idm = idm[1:480]
+        # rep_len_dict["r0"] = 240
+        # rep_len_dict["r1"] = 240
+    # end
     
     return CData(id, rep_len_dict, re_data, im_data, idm, gamma)    
 end
@@ -940,3 +949,125 @@ function get_kappa_values()
     end
     return dict
 end
+
+@doc raw"""
+    truncate_data!(data::YData, nc::Int64)
+
+    truncate_data!(data::Vector{YData}, nc::Vector{Int64})
+
+    truncate_data!(data::Vector{CData}, nc::Int64)
+
+    truncate_data!(data::Vector{Vector{CData}}, nc::Vector{Int64})
+
+Truncates the output of `read_mesons` and `read_ms` taking the first `nc` configurations.
+
+Examples:
+```@example    
+#Single replica
+dat = read_mesons(path, "G5", "G5")
+Y = read_ms(path)
+truncate_data!(dat, nc)
+truncate_data!(Y, nc)
+
+#Two replicas
+dat = read_mesons([path1, path2], "G5", "G5")
+Y = read_ms.([path1_ms, path2_ms])
+truncate_data!(dat, [nc1, nc2])
+truncate_data!(Y, [nc1, nc2])
+```
+"""
+function truncate_data!(data::YData, nc::Int64)
+    data.vtr = data.vtr[1:nc]
+    data.obs = data.obs[1:nc, :, :]
+    return nothing
+end
+function truncate_data!(data::Vector{YData}, nc::Vector{Int64})
+    truncate_data!.(data, nc)
+    return nothing
+end
+function truncate_data!(data::Vector{CData}, nc::Int64)
+    N = length(data)
+    for k = 1:N
+        data[k].vcfg = data[k].vcfg[1:nc]
+        data[k].re_data = data[k].re_data[1:nc, :]
+        data[k].im_data = data[k].im_data[1:nc, :]
+    end
+    return nothing
+end
+function truncate_data!(data::Vector{Vector{CData}}, nc::Vector{Int64})
+    N = length(data)
+    R = length(data[1])
+    for k = 1:N
+        for r = 1:R
+            data[k][r].vcfg = data[k][r].vcfg[1:nc[r]]
+            data[k][r].re_data = data[k][r].re_data[1:nc[r], :]
+            data[k][r].im_data = data[k][r].im_data[1:nc[r], :]
+        end
+    end
+    return nothing
+end
+
+@doc raw"""
+
+    concat_data!(data1::Vector{CData}, data2::Vector{CData})
+
+    concat_data!(data1::Vector{Vector{CData}}, data2::Vector{Vector{CData}})
+
+Concatenates the output of 2 calls to `read_mesons` over configurations. 
+Both data must have the same number of replicas and correlators. 
+The output is saved in the first argument, so if you want to concatenate 
+3 data sets: `concat_data!(data1, data2); concat_data!(data1, data3)`
+
+Examples:
+```@example    
+#Single replica
+dat = read_mesons(path, "G5", "G5")
+dat2 = read_mesons(path2, "G5", "G5")
+concat_data!(dat, dat2)
+
+#Two replicas
+dat = read_mesons([path1, path2], "G5", "G5")
+dat2 = read_mesons([path3, path4], "G5", "G5")
+concat_data!(dat, dat2)
+```
+"""
+function concat_data!(data1::Vector{CData}, data2::Vector{CData})
+    N = length(data1)
+    if length(data1) != length(data2) 
+        error("number of correlators do not match")
+    end
+    for k = 1:N
+        data1[k].vcfg = vcat(data1[k].vcfg, data2[k].vcfg)
+        data1[k].re_data = vcat(data1[k].re_data, data2[k].re_data)
+        data1[k].im_data = vcat(data1[k].im_data, data2[k].im_data)
+        idx = sortperm(data1[k].vcfg)
+        data1[k].vcfg = data1[k].vcfg[idx]
+        data1[k].re_data = data1[k].re_data[idx, :] 
+        data1[k].im_data = data1[k].im_data[idx, :] 
+    end
+    return nothing
+end
+function concat_data!(data1::Vector{Vector{CData}}, data2::Vector{Vector{CData}})
+    N = length(data1)
+    if length(data1) != length(data2) 
+        error("number of correlators do not match")
+    end
+    R = length(data1[1])
+    if length(data1[1]) != length(data2[1])
+        error("number of replicas do not match")
+    end
+    for k = 1:N
+        for r = 1:R
+            data1[k][r].vcfg = vcat(data1[k][r].vcfg, data2[k][r].vcfg)
+            data1[k][r].re_data = vcat(data1[k][r].re_data, data2[k][r].re_data)
+            data1[k][r].im_data = vcat(data1[k][r].im_data, data2[k][r].im_data)
+            idx = sortperm(data1[k][r].vcfg)
+            data1[k][r].vcfg = data1[k][r].vcfg[idx]
+            data1[k][r].re_data = data1[k][r].re_data[idx, :] 
+            data1[k][r].im_data = data1[k][r].im_data[idx, :] 
+
+        end
+    end
+    return nothing
+end
+

@@ -20,6 +20,7 @@ const CLS_db = Dict(
     "B450" => Dict("L"=>32, "beta"=>3.46, "kappa_l"=>0.136890, "kappa_s"=>0.136890, "dtr"=>1, "plat_t0"=>[20,50], "bc"=>"pbc"),
     "H400" => Dict("L"=>32, "beta"=>3.46, "kappa_l"=>0.13688848, "kappa_s"=>0.13688848, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"obc"),
     "S400" => Dict("L"=>32, "beta"=>3.46, "kappa_l"=>0.136984, "kappa_s"=>0.136702387, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"obc"),
+    "N452" => Dict("L"=>48, "beta"=>3.46, "kappa_l"=>0.136984, "kappa_s"=>0.136702387, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),
     "N451" => Dict("L"=>48, "beta"=>3.46, "kappa_l"=>0.1370616, "kappa_s"=>0.1365480771, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),
     "D450" => Dict("L"=>64, "beta"=>3.46, "kappa_l"=>0.137126, "kappa_s"=>0.136420428639937, "dtr"=>1, "plat_t0"=>[25,100], "bc"=>"pbc"),
     "D451" => Dict("L"=>64, "beta"=>3.46, "kappa_l"=>0.137140, "kappa_s"=>0.136337761, "dtr"=>2, "plat_t0"=>[25,100], "bc"=>"pbc"),
@@ -72,14 +73,16 @@ const CLS_CNFG = Dict(
 
     "B450" => Dict("repLen" => OrderedDict("r0" => 1612), "nms" => 1612),
     "H400" => Dict("repLen" => OrderedDict("r1" => 505, "r2" => 540), "nms" => 1045),
+    "N452" => Dict("repLen" => OrderedDict("r0" => 1000), "nms" => 1000),
     "S400" => Dict("repLen" => OrderedDict("r0" => 872, "r1" => 2001), "nms" => 2873),
     "N451" => Dict("repLen" => OrderedDict("r0" => 1011), "nms" => 1011),
-    #"D450" => Dict("repLen" => OrderedDict("r10" => 500, "r11" => 1000), "nms" => 1500),
-    "D450" => Dict("repLen" => OrderedDict("r10" => 500), "nms" => 500),
+    "D450" => Dict("repLen" => OrderedDict("r10" => 500, "r11" => 1000), "nms" => 1500),
+    # "D450" => Dict("repLen" => OrderedDict("r10" => 500), "nms" => 500),
     "D451" => Dict("repLen" => OrderedDict("r0" => 1028), "nms" => 1028),
     "D452" => Dict("repLen" => OrderedDict("r1" => 161, "r2" => 1000), "nms" => 1161),
 
-    "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899),
+    # "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899), # for HVP
+    "N202" => Dict("repLen" => OrderedDict("r1" => 899, "r2"=>1003), "nms" => 1902), # for B physics
     "N203" => Dict("repLen" => OrderedDict("r0" => 756, "r1" => 787),  "nms" => 1543),
     "N200" => Dict("repLen" => OrderedDict("r0" => 856, "r1" => 856),  "nms" => 1712),
     "D251" => Dict("repLen" => OrderedDict("r0" => 403, "r1" => 1610),  "nms" => 2013),
@@ -87,15 +90,15 @@ const CLS_CNFG = Dict(
     "D201" => Dict("repLen" => OrderedDict("r1" => 1078),      "nms" => 1078),
     "E250" => Dict("repLen" => OrderedDict("r0" => 151, "r1" => 1009), "nms" => 1160),
 
-    "J307" => Dict("repLen" => OrderedDict("r0" => 210, "r1" => 190), "nms" => 400),
+    "J307" => Dict("repLen" => OrderedDict("r0" => 586, "r1" => 536), "nms" => 1122),
     "N300" => Dict("repLen" => OrderedDict("r1" => 507, "r2" => 1540), "nms" => 2047),
-    "J306" => Dict("repLen" => OrderedDict("r0" => 240, "r1" => 240), "nms" => 480),
+    "J306" => Dict("repLen" => OrderedDict("r0" => 587, "r1" => 587), "nms" => 1174),
     "N302" => Dict("repLen" => OrderedDict("r1" => 2201),      "nms" => 2201),
     "J303" => Dict("repLen" => OrderedDict("r3" => 1073),      "nms" => 1073),
     "J304" => Dict("repLen" => OrderedDict("r0" => 830, "r1" => 804),      "nms" => 1634),
-    # "E300" => Dict("repLen" => OrderedDict("r1" => 1137, "r2" => 400, "r3" => 300),      "nms" => 1837),
-    "E300" => Dict("repLen" => OrderedDict("r1" => 1137),      "nms" => 1137),
-    "F300" => Dict("repLen" => OrderedDict("r0" => 105, "r1" => 290),      "nms" => 395),
+    "E300" => Dict("repLen" => OrderedDict("r1" => 1139, "r2" => 432, "r3" => 384), "nms" => 1955),
+    # "E300" => Dict("repLen" => OrderedDict("r1" => 1137),      "nms" => 1137),
+    "F300" => Dict("repLen" => OrderedDict("r0" => 105, "r1" => 398),      "nms" => 503),
     
     "J500" => Dict("repLen" => OrderedDict("r4" => 789, "r5" => 655, "r6" => 431),    "nms" => 1875),
     "J501" => Dict("repLen" => OrderedDict("r1" => 1635, "r2" => 1142, "r3" => 1150), "nms" => 3927)

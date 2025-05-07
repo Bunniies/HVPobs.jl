@@ -89,10 +89,13 @@ function get_rw(path::String, ens::String; v::String="1.2")
         return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4"), read_ms1(rep[3], v="2.0") ]
     end
     if ens == "D450"
-        return read_ms1(rep[1], v="2.0")
+        return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0")]
     end
     if ens == "E300"
-        return read_ms1(rep[1], v="1.4")
+        return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0"), read_ms1(rep[3], v="2.0")] 
+    end
+    if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
+        return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
     end
     if length(rep)!=0
         try
@@ -167,7 +170,7 @@ function get_mesons_corr(path::String, ens::EnsInfo, fl::String, g::String; path
     return corr 
 end
 
-function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{String, Nothing}=nothing)
+function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{String, Nothing}=nothing, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
 
     data = read_t0(path, ens.id, ens.dtr)
     if ens.id == "A653"
@@ -176,7 +179,10 @@ function get_t0(path::String, ens::EnsInfo; pl::Bool=false, path_rw::Union{Strin
     else
         rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
     end
-    t0_res = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false)
+    if ens.id == "F300"
+        truncate_data!(data[1], 105)
+    end
+    t0_res = comp_t0(data, ens.plat_t0, L=ens.L, pl=pl, rw=rw, info=false, wpm=wpm)
     return t0_res
 end
 

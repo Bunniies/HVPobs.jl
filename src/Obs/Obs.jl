@@ -74,12 +74,12 @@ include("ObsTools.jl")
 export plat_av, frwd_bckwrd_symm!, frwd_bckwrd_antisymm!
 
 include("ObsSpectrum.jl")
-export meff, mpcac
+export meff, mpcac, dec_const
 
 include("ObsImprovement.jl")
 export improve_corr_vkvk!, improve_corr_vkvk_cons!
-export ZV, cv_loc, cv_cons, bv, bv_bar, ca, Za_l_sub, ZP 
-export ZV_set2, cv_loc_set2, cv_cons_set2, bv_set2, bv_bar_set2
+export ZV, cv_loc, cv_cons, bv, bv_bar, ca, Za_l_sub, ZP, cv_pert, ba_minus_bp
+export ZV_set2, cv_loc_set2, cv_cons_set2, bv_set2, bv_bar_set2, ba_imp
 
 
 end

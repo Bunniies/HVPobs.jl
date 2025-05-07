@@ -44,6 +44,7 @@ meff(corr::Corr, plat::Vector{Int64}; pl::Bool=false, data::Bool=false, wpm::Uni
 function meff(obs::Vector{uwreal})
     tvals = length(obs)
     m = 0.5 .* log.((obs[2:tvals-2] ./ obs[3:tvals-1]) .^2)
+    # m = log.((obs[2:tvals-2] ./ obs[3:tvals-1]) )
     return m
 end
 
@@ -140,4 +141,58 @@ function mpcac(a0p::Corr, pp::Corr, plat::Vector{Int64}; ca::Float64=0.0, pl::Bo
     else
         error("mu or kappa values does not match")
     end
+end
+
+
+function dec_const(vv::Vector{uwreal}, plat::Vector{Int64}, m::uwreal, y0::Int64; pl::Bool=true, data::Bool=false,
+    kappa::Union{Vector{Float64}, Nothing}=nothing, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)     
+    
+    corr_vv = vv[2:end-1]
+    T = length(corr_vv)
+
+    aux = exp.((collect(1:T) .- y0  ) .* fill(m, T))
+
+    R = ((aux .* corr_vv).^2).^0.25
+    R_av = plat_av(R, plat, wpm=wpm)
+    f = sqrt(2 / m)  * R_av
+    R .*= sqrt.(2 ./ [m for i in 1:length(R)])
+    if pl
+        uwerr.(R)
+        R_av *= sqrt(2/m)
+        isnothing(wpm) ? uwerr(R_av) : uwerr(R_av, wpm)
+        isnothing(wpm) ? uwerr(f) : uwerr(f, wpm)
+        x = 1:length(R)
+        y = value.(R)
+        dy = err.(R)
+        v = value(R_av)
+        e = err(R_av)
+
+        figure()
+        lbl = string(L"$af = $", sprint(show, f))
+        fill_between(plat[1]:plat[2], v-e, v+e, color="green", alpha=0.75, label=L"$R$")
+        errorbar(x, y, dy, fmt="x", color="black", label=lbl)
+        legend()
+        xlim(left=y0)
+        ylim(v-10*e, v+10*e)
+        ylabel(L"$af_{B}$")
+        #ylabel(L"$R_\mathrm{av}$")
+        xlabel(L"$x_0$")
+        #title(L"$f_{B^*}$")
+        if !isnothing(kappa)
+            title(string( L"$\kappa_1 = $", kappa[1], L" $\kappa_2 = $", kappa[2]))
+        end
+        display(gcf())
+        #t = "ps_decay_$(kappa[1])_$(kappa[2]).pdf"
+        #savefig(joinpath("/Users/ale/Il mio Drive/phd/secondment/3pf test/analysis/plots",t))
+    end
+    if !data
+        return f
+    else
+        return f, R
+    end
+end
+function dec_const(vv::Corr, plat::Vector{Int64}, m::uwreal; pl::Bool=true, data::Bool=false,
+    wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing) 
+    
+    return dec_const(vv.obs, plat, m, vv.y0, kappa=vv.kappa, pl=pl, data=data, wpm=wpm)
 end

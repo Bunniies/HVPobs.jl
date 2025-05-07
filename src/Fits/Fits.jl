@@ -14,7 +14,7 @@ This structure is returned by the `fit_routine` function and it contains useful 
     -chi2exp  
     -pval  
 """
-struct FitRes
+mutable struct FitRes
     dof::Int64
     param::Vector{uwreal}
     chi2::Float64
