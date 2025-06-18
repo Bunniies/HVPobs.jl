@@ -150,22 +150,19 @@ function dec_const(vv::Vector{uwreal}, plat::Vector{Int64}, m::uwreal, y0::Int64
     corr_vv = vv[2:end-1]
     T = length(corr_vv)
 
-    aux = exp.((collect(1:T) .- y0  ) .* fill(m, T))
+    aux = exp.(0.5 .* (collect(1:T) .- y0  ) .* fill(m, T))
 
-    R = ((aux .* corr_vv).^2).^0.25
-    R_av = plat_av(R, plat, wpm=wpm)
-    f = sqrt(2 / m)  * R_av
-    R .*= sqrt.(2 ./ [m for i in 1:length(R)])
+    R = aux .* ((corr_vv).^2).^0.25
+    R = sqrt(2 / m)  .* R
+    f = plat_av(R, plat, wpm=wpm)
     if pl
         uwerr.(R)
-        R_av *= sqrt(2/m)
-        isnothing(wpm) ? uwerr(R_av) : uwerr(R_av, wpm)
         isnothing(wpm) ? uwerr(f) : uwerr(f, wpm)
         x = 1:length(R)
         y = value.(R)
         dy = err.(R)
-        v = value(R_av)
-        e = err(R_av)
+        v = value(f)
+        e = err(f)
 
         figure()
         lbl = string(L"$af = $", sprint(show, f))

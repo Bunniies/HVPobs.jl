@@ -1071,3 +1071,52 @@ function concat_data!(data1::Vector{Vector{CData}}, data2::Vector{Vector{CData}}
     return nothing
 end
 
+@doc raw"""
+    print_uwreal(a::uwreal)
+
+Print an uwreal type in the format val(err) with correct value and error rounding.
+"""
+function print_uwreal(a::uwreal)
+    uwerr(a)
+
+    val = value(a)
+    err_ = err(a)
+
+    if err_ == 0.0
+        return string(val)
+    end
+
+    abs_val = abs(val)
+    use_sci = abs_val < 1e-5 || abs_val > 1e5
+
+    if use_sci
+        # Scientific notation
+        exp = floor(Int, log10(abs_val))
+        scaled_val = val / 10.0^exp
+        scaled_err = err_ / 10.0^exp
+    else
+        # Decimal notation
+        exp = 0
+        scaled_val = val
+        scaled_err = err_
+    end
+
+    # Round error to 2 significant digits
+    rounded_err = round(scaled_err, sigdigits=2)
+    
+    # Determine number of decimal places needed
+    err_digits = -floor(Int, log10(rounded_err))
+    digits = max(0, err_digits + 1)
+
+    # Round value to match
+    rounded_val = round(scaled_val, digits=digits)
+    err_in_parens = round(Int, rounded_err * 10^digits)
+
+    val_str = string(round(rounded_val, digits=digits))
+
+    if exp == 0
+        return "$(val_str)($(err_in_parens))"
+    else
+        return "$(val_str)($(err_in_parens))×10^$exp"
+    end
+end

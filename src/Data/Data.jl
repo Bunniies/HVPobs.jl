@@ -59,6 +59,7 @@ export read_hvp_data, read_mesons_data, read_ms, read_ms1, read_FVC, read_tree_l
 export read_disconnected_from_Marcos_data, read_disconnected_from_npz, read_rwf_strange, read_kappa_charm_all_config, get_kappa_values
 export read_Bphysics_data
 export concat_data!, truncate_data!
+export  print_uwreal
 
 include("DataConst.jl")
 export GAMMA, CLS_db, CLS_kappa_crit, Zvc_l

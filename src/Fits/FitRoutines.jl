@@ -35,7 +35,7 @@ fit_routine(model, xdata, ydata, param=3)
 fit_routine([model, model2], [xdata, xdata2], [ydata, ydata2], param=3)
 ```
 """
-function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3; pval::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, info::Bool=false, lineprint::Bool=true, fitRes::Bool=false)
+function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}, param::Int64=3; pval::Bool=false, wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, info::Bool=false, lineprint::Bool=true, fitRes::Bool=false, ensList::Union{Vector{String}, Nothing}=nothing)
 
     isnothing(wpm) ? uwerr.(ydata) : [uwerr(yaux, wpm) for yaux in ydata]
     
@@ -51,13 +51,13 @@ function fit_routine(model::Function, xdata::Array{<:Real}, ydata::Array{uwreal}
     chi2_fit_res = sum(fit.resid.^2 )
     
     # compute and print single point contribution to chi2
-    # if !isnothing(ensList) && lineprint
-    #     println("Single ensemble contribution to chi2")
-    #     for i in 1:length(fit.resid)
-    #         println("  $(ensList[i]) => $((fit.resid[i])^2)")
-    #     end
-    #     println("------------------------------------")
-    # end
+    if !isnothing(ensList) && lineprint
+        println("Single ensemble contribution to chi2")
+        for i in 1:length(fit.resid)
+            println("  $(ensList[i]) => $((fit.resid[i])^2)")
+        end
+        println("------------------------------------")
+    end
 
     if !isapprox(chi2_fit_res, value(chisq(coef(fit), ydata)), atol=1e-2)
        @warn "Chi2 from the two determination not within 0.01 tolerance "
@@ -219,7 +219,7 @@ function fit_defs_yerr(f, x, dy)
     return lmfit, chisq
 end
 
-function fit_defs_yerr_corr(f, x, Winv)
+function fit_defs_yerr_corr(f, x, dy, Winv)
 
     u = LinearAlgebra.cholesky(LinearAlgebra.Symmetric(Winv)).U
 
@@ -253,9 +253,9 @@ function fit_data_yerr(f, xv, yv, nparam; correlated=false)
     ADerrors.uwerr.(yv)
     if correlated
         cvi = LinearAlgebra.inv(ADerrors.cov(yv))
-        lm, csq = fit_defs_yerr_corr(f, xv, cvi)
+        lm, csq = fit_defs_yerr_corr(f, xv, ADerrors.err.(yv), cvi)
 
-        prm0 = zeros(nparam)
+        prm0 = fill(0.5,nparam) #zeros(nparam)
         fit  = LeastSquaresOptim.optimize(xx -> lm(xx, ADerrors.value.(yv)), prm0,
 		                          LeastSquaresOptim.LevenbergMarquardt(), autodiff = :forward)
     
