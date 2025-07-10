@@ -94,9 +94,9 @@ function get_rw(path::String, ens::String; v::String="1.2")
     if ens == "E300"
         return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0"), read_ms1(rep[3], v="2.0")] 
     end
-    if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
-        return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
-    end
+    # if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
+    #     return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
+    # end
     if length(rep)!=0
         try
             length(rep) == 1 ? (return read_ms1(rep[1], v=v)) : (return read_ms1.(rep, v=v)) 

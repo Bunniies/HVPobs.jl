@@ -1091,32 +1091,86 @@ function print_uwreal(a::uwreal)
 
     if use_sci
         # Scientific notation
-        exp = floor(Int, log10(abs_val))
-        scaled_val = val / 10.0^exp
-        scaled_err = err_ / 10.0^exp
+        expo = floor(Int, log10(abs_val))
+        scaled_val = val / 10.0^expo
+        scaled_err = err_ / 10.0^expo
     else
         # Decimal notation
-        exp = 0
+        expo = 0
         scaled_val = val
         scaled_err = err_
     end
 
-    # Round error to 2 significant digits
-    rounded_err = round(scaled_err, sigdigits=2)
-    
-    # Determine number of decimal places needed
-    err_digits = -floor(Int, log10(rounded_err))
-    digits = max(0, err_digits + 1)
+    dot_pos = findfirst(==('.'), string(scaled_err))
 
-    # Round value to match
-    rounded_val = round(scaled_val, digits=digits)
-    err_in_parens = round(Int, rounded_err * 10^digits)
+    if dot_pos > 2
+        val_str = string(round(Int, scaled_val))
+        err_in_parens = string(round(Int, scaled_err))
+    elseif string(scaled_err)[1] != '0'
+        val_str = string(round(scaled_val, digits=1))
+        err_in_parens = string(round(scaled_err, digits=1))
+    else
+        first_sigdigit = dot_pos + findfirst(!=('0'), string(scaled_err)[dot_pos+1:end])
+        val_str = string(round(scaled_val, digits = first_sigdigit+1-2))
+        while length(val_str) < first_sigdigit+1
+            val_str *= '0'
+        end
+        if length(string(scaled_err)) == first_sigdigit
+            err_in_parens = (string(scaled_err)*'0')[first_sigdigit:first_sigdigit+1]
+        elseif string(scaled_err)[first_sigdigit+1] == '0'
+            err_in_parens = (string(round(scaled_err, sigdigits=2))*'0')[first_sigdigit:first_sigdigit+1]
+        else
+            err_in_parens = string(round(scaled_err, sigdigits=2))[first_sigdigit:first_sigdigit+1]
+        end
+    end
 
-    val_str = string(round(rounded_val, digits=digits))
-
-    if exp == 0
+    if expo == 0
         return "$(val_str)($(err_in_parens))"
     else
-        return "$(val_str)($(err_in_parens))×10^$exp"
+        return "$(val_str)($(err_in_parens))×10^$expo"
     end
 end
+# function print_uwreal(a::uwreal)
+#     uwerr(a)
+
+#     val = value(a)
+#     err_ = err(a)
+
+#     if err_ == 0.0
+#         return string(val)
+#     end
+
+#     abs_val = abs(val)
+#     use_sci = abs_val < 1e-5 || abs_val > 1e5
+
+#     if use_sci
+#         # Scientific notation
+#         exp = floor(Int, log10(abs_val))
+#         scaled_val = val / 10.0^exp
+#         scaled_err = err_ / 10.0^exp
+#     else
+#         # Decimal notation
+#         exp = 0
+#         scaled_val = val
+#         scaled_err = err_
+#     end
+
+#     # Round error to 2 significant digits
+#     rounded_err = round(scaled_err, sigdigits=2)
+    
+#     # Determine number of decimal places needed
+#     err_digits = -floor(Int, log10(rounded_err))
+#     digits = max(0, err_digits + 1)
+
+#     # Round value to match
+#     rounded_val = round(scaled_val, digits=digits)
+#     err_in_parens = round(Int, rounded_err * 10^digits)
+
+#     val_str = string(round(rounded_val, digits=digits))
+
+#     if exp == 0
+#         return "$(val_str)($(err_in_parens))"
+#     else
+#         return "$(val_str)($(err_in_parens))×10^$exp"
+#     end
+# end

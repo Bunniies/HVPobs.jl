@@ -168,17 +168,19 @@ fitp, csqexp = lin_fit(phi2, m2)
 m2_phys = fitp[1] + fitp[2] * phi2_phys
 ```
 """
-function lin_fit(x::Vector{<:Real}, y::Vector{uwreal}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing)
+function lin_fit(x::Vector{<:Real}, y::Vector{uwreal}; wpm::Union{Dict{Int64,Vector{Float64}},Dict{String,Vector{Float64}}, Nothing}=nothing, lineprint::Bool=true)
     isnothing(wpm) ? uwerr.(y) : [uwerr(yaux, wpm) for yaux in y]
     par = lin_fit(x, value.(y), err.(y))
     chisq(p, d) = sum((d .- p[1] .- p[2].*x).^2 ./ err.(y) .^2)
     (fitp, csqexp) = fit_error(chisq, par, y)
-    for i in eachindex(fitp) 
-        isnothing(wpm) ? uwerr(fitp[i]) : uwerr(fitp[i], wpm)
-        print("\n Fit parameter: ", i, ": ")
-        details(fitp[i])
+    if lineprint
+        for i in eachindex(fitp) 
+            isnothing(wpm) ? uwerr(fitp[i]) : uwerr(fitp[i], wpm)
+            print("\n Fit parameter: ", i, ": ")
+            details(fitp[i])
+        end
+        println("Chisq / chiexp: ", chisq(par, y), " / ", csqexp, " (dof: ", length(x)-length(par),")")
     end
-    println("Chisq / chiexp: ", chisq(par, y), " / ", csqexp, " (dof: ", length(x)-length(par),")")
     return (fitp, csqexp)
 end
 

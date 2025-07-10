@@ -83,8 +83,8 @@ const CLS_CNFG = Dict(
     "D452" => Dict("repLen" => OrderedDict("r1" => 161, "r2" => 1000), "nms" => 1161),
 
     "H200" => Dict("repLen" => OrderedDict("r0" => 1000, "r1" => 1000), "nms" => 2000),
-    # "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899), # for HVP
-    "N202" => Dict("repLen" => OrderedDict("r1" => 899, "r2"=>1003), "nms" => 1902), # for B physics
+    "N202" => Dict("repLen" => OrderedDict("r1" => 899), "nms" => 899), # for HVP
+    # "N202" => Dict("repLen" => OrderedDict("r1" => 899, "r2"=>1003), "nms" => 1902), # for B physics
     "N203" => Dict("repLen" => OrderedDict("r0" => 756, "r1" => 787),  "nms" => 1543),
     "N200" => Dict("repLen" => OrderedDict("r0" => 856, "r1" => 856),  "nms" => 1712),
     "D251" => Dict("repLen" => OrderedDict("r0" => 403, "r1" => 1610),  "nms" => 2013),
