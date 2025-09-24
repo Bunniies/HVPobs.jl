@@ -241,6 +241,24 @@ function get_Z3(ens::EnsInfo; impr_set::String="1")
 end
 
 @doc raw"""
+    get_Zs(ens::EnsInfo; impr_set::String="1")
+
+Given an EnsInfo `ens` and impr_set (Mainz -> 1, ALPHA -> 2), it returns the strange channel Gss renormalization constant 
+"""
+function get_Zs(ens::EnsInfo; impr_set::String="1")
+    
+    ml = 0.5 * (1 / ens.kappa_l - 1 / ens.kappa_crit )
+    ms = 0.5 * (1 / ens.kappa_s - 1 / ens.kappa_crit )
+    trmq = 2*ml + ms
+    if impr_set in ["1","1old"]
+        Zs = ZV(ens.beta) * (1. + bv_bar(ens.beta)*trmq + bv(ens.beta)*ms)
+    elseif  impr_set == "2"
+        Zs = ZV_set2(ens.beta) * (1. + bv_bar_set2(ens.beta)*trmq + bv_set2(ens.beta)*ms)
+    end
+    return Zs
+end
+
+@doc raw"""
     get_Z8(ens::EnsInfo; impr_set::String="1")
 
 Given an EnsInfo `ens` and impr_set (Mainz -> 1, ALPHA -> 2), it returns the isoscalar G88 renormalization constant 

@@ -41,7 +41,7 @@ include("Automation/Automation.jl")
 using .Automation
 export EnsInfo
 export get_data, get_rw, get_t0, get_corr, get_corr_disc, get_fvc, get_mesons_data, get_mesons_corr, get_data_disc
-export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!
+export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!, get_Zs
 export get_data_Bphysics,  get_Bphysics_corr
 
 include("LMA/LMA.jl")

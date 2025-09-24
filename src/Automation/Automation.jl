@@ -31,5 +31,5 @@ module Automation
     export get_data_Bphysics, get_Bphysics_corr
     
     include("CorrAutomation.jl")
-    export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!
+    export corrConnected, corrDisconnected, corrDisconnected80, get_Z3, get_Z8, get_Z08, renormalize!, get_Zs
 end

@@ -2,7 +2,7 @@ using ADerrors
 
 const GAMMA = ["V1T10", "V1V1c", "V2T20", "V2V2c", "V3T30", "V3V3c",
                "V1V1", "V1cT10", "V2V2", "V2cT20", "V3V3", "V3cT30",
-               "A0P", "PP", "PA0", "A0A0", "PV1", "PV2", "PV3"]
+               "A0P", "PP", "PA0", "A0A0", "PV0", "PV1", "PV2", "PV3", "PS"]
 
 
 const CLS_db = Dict(
@@ -62,6 +62,7 @@ const CLS_CNFG = Dict(
 
     "A653" => Dict("repLen" => OrderedDict("r0" => 5050), "nms" => 5050),
     "A654" => Dict("repLen" => OrderedDict("r0" => 5068), "nms" => 5068),
+    "H650" => Dict("repLen" => OrderedDict("r2" => 954, "r3" => 990), "nms" => 1944),
 
     "H101" => Dict("repLen" => OrderedDict("r0" => 1007, "r1" => 1009), "nms" => 2016),
     "H102" => Dict("repLen" => OrderedDict("r1" => 1029, "r2" => 1008), "nms" => 2037),
