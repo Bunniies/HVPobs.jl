@@ -1104,9 +1104,9 @@ function print_uwreal(a::uwreal; LaTeX::Bool=false)
         scaled_err = err_
     end
 
-    dot_pos = findfirst(==('.'), @sprintf("%.15f", scaled_err))
+    dot_pos_err = findfirst(==('.'), @sprintf("%.15f", scaled_err))
 
-    if dot_pos > 2 
+    if dot_pos_err > 2 
         val_str = string(round(Int, scaled_val))
         err_in_parens = string(round(Int, scaled_err))
     elseif @sprintf("%.15f", scaled_err)[1] != '0'
@@ -1114,9 +1114,10 @@ function print_uwreal(a::uwreal; LaTeX::Bool=false)
         err_in_parens = string(round(scaled_err, digits=1))
     else
         rounded_err = round(scaled_err, sigdigits=2)
-        first_sigdigit = dot_pos + findfirst(!=('0'), @sprintf("%.15f", rounded_err)[dot_pos+1:end])
+        first_sigdigit = dot_pos_err + findfirst(!=('0'), @sprintf("%.15f", rounded_err)[dot_pos_err+1:end])
         val_str = string(round(scaled_val, digits = first_sigdigit+1-2))
-        while length(val_str) < first_sigdigit+1
+        dot_pos_val = findfirst(==('.'), @sprintf("%.15f", scaled_val))
+        while length(val_str[dot_pos_val+1:end]) < first_sigdigit - dot_pos_err + 1
             val_str *= '0'
         end
         try
