@@ -1,5 +1,5 @@
 
-function get_data(path::String, ens::String, fl::String, g::String)
+function get_data(path::String, ens::String, fl::String, g::String; lma::Bool=true)
 
     if !(fl in ["light", "light_LMA", "pion", "strange", "charm", "charm_plus"])
         error("Flavour $(fl) not found. \n Choose fl from: light, pion, strange, charm, charm_plus ")
@@ -10,11 +10,17 @@ function get_data(path::String, ens::String, fl::String, g::String)
 
     
     if fl == "light"
-        try
-            p = joinpath(path, ens, "light_LMA", "raw_data")
-            data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
-            return read_hvp_data(data[1], ens)
-        catch
+        if lma
+            try
+                p = joinpath(path, ens, "light_LMA", "raw_data")
+                data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
+                return read_hvp_data(data[1], ens)
+            catch
+                p = joinpath(path, ens, fl, "raw_data")
+                data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
+                return read_hvp_data(data[1], ens)
+            end
+        else
             p = joinpath(path, ens, fl, "raw_data")
             data = filter(x-> last(split(basename(x), "_")) == g, readdir(p, join=true))
             return read_hvp_data(data[1], ens)
@@ -112,9 +118,9 @@ function get_rw(path::String, ens::String; v::String="1.2")
     end
 end
 
-function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false)
+function get_corr(path::String, ens::EnsInfo, fl::String, g::String; path_rw::Union{String, Nothing}=nothing, L::Int64=1, frw_bcwd::Bool=false, lma::Bool=true)
 
-    cdata = get_data(path, ens.id, fl, g)
+    cdata = get_data(path, ens.id, fl, g, lma=lma)
     rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
     corr = corr_obs(cdata, real=true, rw=rw, L=L)
     if frw_bcwd

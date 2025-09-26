@@ -1079,7 +1079,7 @@ end
 
 Print an uwreal type in the format val(err) with correct value and error rounding.
 """
-function print_uwreal(a::uwreal)
+function print_uwreal(a::uwreal; LaTeX::Bool=false)
     uwerr(a)
 
     val = value(a)
@@ -1104,30 +1104,31 @@ function print_uwreal(a::uwreal)
         scaled_err = err_
     end
 
-    dot_pos = findfirst(==('.'), @sprintf("%.20f", scaled_err))
+    dot_pos = findfirst(==('.'), @sprintf("%.15f", scaled_err))
 
     if dot_pos > 2 
         val_str = string(round(Int, scaled_val))
         err_in_parens = string(round(Int, scaled_err))
-    elseif @sprintf("%.20f", scaled_err)[1] != '0'
+    elseif @sprintf("%.15f", scaled_err)[1] != '0'
         val_str = string(round(scaled_val, digits=1))
         err_in_parens = string(round(scaled_err, digits=1))
     else
-        first_sigdigit = dot_pos + findfirst(!=('0'), @sprintf("%.20f", scaled_err)[dot_pos+1:end])
+        rounded_err = round(scaled_err, sigdigits=2)
+        first_sigdigit = dot_pos + findfirst(!=('0'), @sprintf("%.15f", rounded_err)[dot_pos+1:end])
         val_str = string(round(scaled_val, digits = first_sigdigit+1-2))
         while length(val_str) < first_sigdigit+1
             val_str *= '0'
         end
         try
-            err_in_parens = @sprintf("%.20f", round(scaled_err, sigdigits=2))[first_sigdigit:first_sigdigit+1]
+            err_in_parens = @sprintf("%.15f", rounded_err)[first_sigdigit:first_sigdigit+1]
         catch
-            err_in_parens = (@sprintf("%.20f", round(scaled_err, sigdigits=2))*'0')[first_sigdigit:first_sigdigit+1]
+            err_in_parens = (@sprintf("%.15f", rounded_err)*'0')[first_sigdigit:first_sigdigit+1]
         end
     end
 
     if !use_sci
         return "$(val_str)($(err_in_parens))"
     else
-        return "$(val_str)($(err_in_parens))×10^$expo"
+        return LaTeX ? "$(val_str)($(err_in_parens))×10^{$expo}" : "$(val_str)($(err_in_parens))e$expo"
     end
 end
