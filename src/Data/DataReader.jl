@@ -1075,14 +1075,16 @@ function concat_data!(data1::Vector{Vector{CData}}, data2::Vector{Vector{CData}}
 end
 
 @doc raw"""
-    print_uwreal(a::uwreal)
+    print_uwreal(a::uwreal;LaTeX::Bool=false)
+    print_uwreal(a::uwreal,syst::Vector{Float64};LaTeX::Bool=false,total::Bool=false)
 
 Print an uwreal type in the format val(err) with correct value and error rounding.
+If syst is given, print an uwreal type in the format val(err)(syst1)...(systn) with correct value and error rounding. In case total flag is set to true, it also returns the total 'non-correlated' cuadratic sum of statistical and systematic errors.
 """
 function print_uwreal(a::uwreal; LaTeX::Bool=false)
     uwerr(a)
 
-    val = value(a)
+    val  = value(a)
     err_ = err(a)
 
     if err_ == 0.0
@@ -1131,5 +1133,70 @@ function print_uwreal(a::uwreal; LaTeX::Bool=false)
         return "$(val_str)($(err_in_parens))"
     else
         return LaTeX ? "$(val_str)($(err_in_parens))×10^{$expo}" : "$(val_str)($(err_in_parens))e$expo"
+    end
+end
+function print_uwreal(a::uwreal, syst::Vector{Float64}; LaTeX::Bool=false, total::Bool=false)
+    uwerr(a)
+
+    val  = value(a)
+    err_ = vcat(err(a),syst...)
+    if total
+        push!(err_,sqrt(sum(err_.^2)))
+    end
+
+    abs_val = abs(val)
+    use_sci = abs_val < 1e-5 || abs_val > 1e5
+
+    if use_sci
+        # Scientific notation
+        expo = floor(Int, log10(abs_val))
+        scaled_val = val / 10.0^expo
+        scaled_err = err_ ./ 10.0^expo
+    else
+        # Decimal notation
+        expo = 0
+        scaled_val = val
+        scaled_err = err_
+    end
+
+    dot_pos_err = maximum([findfirst(==('.'), @sprintf("%.15f", err)) for err in scaled_err])
+
+    if dot_pos_err > 2 
+        val_str = string(round(Int, scaled_val))
+        err_in_parens = [string(round(Int, err)) for err in scaled_err]
+    elseif any([@sprintf("%.15f", err)[1] for err in scaled_err] .!= '0')
+        val_str = string(round(scaled_val, digits=1))
+        err_in_parens = [string(round(err, digits=1)) for err in scaled_err]
+    else
+        rounded_err = round.(scaled_err, sigdigits=2)
+        first_sigdigit = minimum(dot_pos_err .+ [findfirst(!=('0'), @sprintf("%.15f", err)[dot_pos_err+1:end]) for err in rounded_err])
+        val_str = string(round(scaled_val, digits = first_sigdigit+1-2))
+        dot_pos_val = findfirst(==('.'), @sprintf("%.15f", scaled_val))
+        while length(val_str[dot_pos_val+1:end]) < first_sigdigit - dot_pos_err + 1
+            val_str *= '0'
+        end
+        err_in_parens = []
+        for err in rounded_err
+            try
+                push!(err_in_parens, @sprintf("%.15f", err)[first_sigdigit:first_sigdigit+1])
+            catch
+                push!(err_in_parens, (@sprintf("%.15f", err)*'0')[first_sigdigit:first_sigdigit+1])
+            end
+        end
+    end
+
+    err_str = ""
+    for err in (!total ? err_in_parens : err_in_parens[1:end-1])
+        err_str*="($err)"
+    end
+    if total
+        err_str*="[$(err_in_parens[end])]"
+    end
+
+
+    if !use_sci
+        return "$(val_str)$(err_str)"
+    else
+        return LaTeX ? "$(val_str)$(err_str)×10^{$expo}" : "$(val_str)$(err_str)e$expo"
     end
 end
