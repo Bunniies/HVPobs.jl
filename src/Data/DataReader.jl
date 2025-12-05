@@ -1200,3 +1200,4 @@ function print_uwreal(a::uwreal, syst::Vector{Float64}; LaTeX::Bool=false, total
         return LaTeX ? "$(val_str)$(err_str)×10^{$expo}" : "$(val_str)$(err_str)e$expo"
     end
 end
+print_uwreal(a::uwreal, syst::Float64; LaTeX::Bool=false) = print_uwreal(a, [syst]; LaTeX=LaTeX, total=false)

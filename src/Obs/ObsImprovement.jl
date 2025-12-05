@@ -110,14 +110,17 @@ end
 bv(beta::Float64)
 
 Given the coupling beta, this function returns the bv improvement coefficient for 
-the vector carrent based on the results of 1811.08209. 
+the vector current based on the results of 1811.08209. 
 """
 function bv(beta::Float64)
-
-    g2 = 6/beta
-    CC = [[36.7139, 12.6698] [12.6698, 4.41224]] .*1e-4
-    p = cobs([-0.184, -0.444], CC, [4,5] )
-    bvv = 1 + 0.11813 * g2 * (1 + p[1]*g2) / ( 1 + p[2]*g2)
+    if beta == 3.34
+        bvv = uwreal([1,0.1].*1.64316,"bv(b=3.34,set='1')") # provided by Antoine on 02.12.2021 via Skype
+    else
+        g2 = 6/beta
+        CC = [[36.7139, 12.6698] [12.6698, 4.41224]] .*1e-4
+        p = cobs([-0.184, -0.444], CC, [4,5] )
+        bvv = 1 + 0.11813 * g2 * (1 + p[1]*g2) / ( 1 + p[2]*g2)
+    end
     return bvv
 end
 
@@ -125,14 +128,17 @@ end
 bv_bar(beta::Float64)
 
 Given the coupling beta, this function returns the bv_bar improvement coefficient for 
-the vector carrent based on the results of 1811.08209. 
+the vector current based on the results of 1811.08209. 
 """
 function  bv_bar(beta::Float64)
-
-    g2 = 6/beta
-    CC = [[1.061463, 14.53004 ] [14.53004, 248.5266]] .*1e-8
-    p = cobs([0.00112, -0.5577], CC, [6,7] )
-    bvbar = ( p[1]*g2^2) / ( 1 + p[2]*g2)
+    if beta == 3.34
+        bvbar = uwreal([1,0.5].*0.41563,"bv_bar(b=3.34,set='1')") # provided by Antoine on 02.12.2021 via Skype
+    else
+        g2 = 6/beta
+        CC = [[1.061463, 14.53004 ] [14.53004, 248.5266]] .*1e-8
+        p = cobs([0.00112, -0.5577], CC, [6,7] )
+        bvbar = ( p[1]*g2^2) / ( 1 + p[2]*g2)
+    end
     return bvbar
 end
 

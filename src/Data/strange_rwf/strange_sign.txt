@@ -418,3 +418,15 @@ First: 1
 Last:  5068
 Flagged configurations: 1139 1140 1141 1142 1143 1144 1145 1146 
 Number of flagged configurations: 8
+Ensemble H650r002
+Configurations processed: 1286
+First: 1
+Last:  1286
+Flagged configurations: 
+Number of flagged configurations: 0
+Ensemble H650r003
+Configurations processed: 1286
+First: 1
+Last:  1286
+Flagged configurations: 
+Number of flagged configurations: 0

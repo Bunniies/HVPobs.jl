@@ -8,6 +8,7 @@ const GAMMA = ["V1T10", "V1V1c", "V2T20", "V2V2c", "V3T30", "V3V3c",
 const CLS_db = Dict(
     "A653" => Dict("L"=>24, "beta"=>3.34, "kappa_l"=>0.1365716, "kappa_s"=>0.1365716, "dtr"=>1, "plat_t0"=>[15,35], "bc"=>"pbc"),
     "A654" => Dict("L"=>24, "beta"=>3.34, "kappa_l"=>0.136750, "kappa_s"=>0.136216193, "dtr"=>1, "plat_t0"=>[15,35],"bc"=>"pbc"),
+    "H650" => Dict("L"=>32, "beta"=>3.34, "kappa_l"=>0.136850, "kappa_s"=>0.13601818, "dtr"=>1, "plat_t0"=>[20,80], "bc"=>"pbc"),
 
     "H101" => Dict("L"=>32, "beta"=>3.4, "kappa_l"=>0.13675962, "kappa_s"=>0.13675962, "dtr"=>2, "plat_t0"=>[20,80], "bc"=>"obc"),
     "H102" => Dict("L"=>32, "beta"=>3.4, "kappa_l"=>0.136865, "kappa_s"=>0.136549339, "dtr"=>2, "plat_t0"=>[20,80], "bc"=>"obc"),
@@ -62,7 +63,9 @@ const CLS_CNFG = Dict(
 
     "A653" => Dict("repLen" => OrderedDict("r0" => 5050), "nms" => 5050),
     "A654" => Dict("repLen" => OrderedDict("r0" => 5068), "nms" => 5068),
-    "H650" => Dict("repLen" => OrderedDict("r2" => 954, "r3" => 990), "nms" => 1944),
+    # "H650" => Dict("repLen" => OrderedDict("r2" => 1286, "r3" => 1328), "nms" => 2614),
+    # "H650" => Dict("repLen" => OrderedDict("r2" => 870, "r3" => 900), "nms" => 1770),
+    "H650" => Dict("repLen" => OrderedDict("r2" => 1000, "r3" => 1000), "nms" => 2000),
 
     "H101" => Dict("repLen" => OrderedDict("r0" => 1007, "r1" => 1009), "nms" => 2016),
     "H102" => Dict("repLen" => OrderedDict("r1" => 1029, "r2" => 1008), "nms" => 2037),

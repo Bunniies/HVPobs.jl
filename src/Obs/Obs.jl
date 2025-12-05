@@ -57,6 +57,15 @@ struct Window
             d = 2.5
             @. funcsid(x0) =  1 - 0.5 * (1 + tanh((x0-d)/delta))
             return new(funcsid)
+        elseif str == "LD1"
+            d1 = 1.0
+            d2 = 1.5
+            @. funcld1(x0) = 0.5 * (1 + tanh((x0-d1)/delta)) - 0.5 * (1 + tanh((x0-d2)/delta))
+            return new(funcld1)
+        elseif str == "LD2"
+            d = 1.5
+            @. funcld2(x0) = 0.5 * (1 + tanh((x0-d)/delta))
+            return new(funcld2)
         else
             error("Window $(str) not defined.")
         end
