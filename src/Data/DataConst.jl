@@ -63,8 +63,6 @@ const CLS_CNFG = Dict(
 
     "A653" => Dict("repLen" => OrderedDict("r0" => 5050), "nms" => 5050),
     "A654" => Dict("repLen" => OrderedDict("r0" => 5068), "nms" => 5068),
-    # "H650" => Dict("repLen" => OrderedDict("r2" => 1286, "r3" => 1328), "nms" => 2614),
-    # "H650" => Dict("repLen" => OrderedDict("r2" => 870, "r3" => 900), "nms" => 1770),
     "H650" => Dict("repLen" => OrderedDict("r2" => 1000, "r3" => 1000), "nms" => 2000),
 
     "H101" => Dict("repLen" => OrderedDict("r0" => 1007, "r1" => 1009), "nms" => 2016),

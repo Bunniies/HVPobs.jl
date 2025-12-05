@@ -100,6 +100,11 @@ function get_rw(path::String, ens::String; v::String="1.2")
     if ens == "E300"
         return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0"), read_ms1(rep[3], v="2.0")] 
     end
+    if ens == "A653"
+        # A653 was created with no twisted-mass deflation, so we add a row of ones to keep the general 'rw' structure
+        rw = read_ms1(rep[1], v="1.4")
+        return vcat(rw[1, :]', ones(size(rw)[2])', rw[2, :]')
+    end
     # if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
     #     return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
     # end
