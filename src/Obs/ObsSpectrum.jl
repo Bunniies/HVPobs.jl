@@ -30,8 +30,7 @@ function meff(obs::Vector{uwreal}, plat::Vector{Int64}; pl::Bool=false, data::Bo
         fill_between(plat[1]:plat[2], value(m_av)-err(m_av), value(m_av)+err(m_av), alpha=0.6, color="royalblue")
         ylabel(L"$m_\mathrm{eff}$")
         xlabel(L"$x_0$")
-        ylim(value(m_av)-80*err(m_av), value(m_av)+80*err(m_av))
-
+        ylim(value(m_av)-20*err(m_av), value(m_av)+20*err(m_av))
 
         display(gcf())
         close("all")

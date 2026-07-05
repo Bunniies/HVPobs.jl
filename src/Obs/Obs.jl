@@ -54,12 +54,25 @@ struct Window
             @. funcild(x0) = 0.5 * (1 + tanh((x0-d)/delta))
             return new(funcild)
         elseif str == "SID" # short and intermediate distance
-            d = 2.5
+            d = 1.0
             @. funcsid(x0) =  1 - 0.5 * (1 + tanh((x0-d)/delta))
             return new(funcsid)
         else
             error("Window $(str) not defined.")
         end
+    end
+    function Window(::Val{:SD}, t1; delta=0.15) # user-defined SD
+        @. func(x0) = 1 - 0.5 * (1 + tanh((x0-t1)/delta))
+        return new(func)
+    end
+    function Window(::Val{:ID}, t1, t2; delta=0.15) # user-defined ID
+        @assert t2 > t1 "Require t2 > t1"
+        @. func(x0) = 0.5 * (1 + tanh((x0-t1)/delta)) - 0.5 * (1 + tanh((x0-t2)/delta))
+        return new(func)
+    end
+    function Window(::Val{:LD}, t2; delta=0.15) # user-defined LD
+        @. func(x0) = 0.5 * (1 + tanh((x0-t2)/delta))
+        return new(func)
     end
 end
 function (a::Window)(x)

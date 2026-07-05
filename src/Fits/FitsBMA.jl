@@ -65,10 +65,11 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
         for j in tmax_array ## vary tmax
             if pbc==true
                 #println("pbc is true, T= $(INDEX + j), y = $(length(y))")
-                if INDEX + j != length(y) 
+                if INDEX + j != length(y) +2
+                    #println("INDEX = ", INDEX, " j= ", j, " length(y)= ", length(y))
                     continue
                 else
-                   #println("if you see me: $(INDEX + j)==$(length(y))")
+                   println("if you see me: $(INDEX + j )==$(length(y))+2")
                 end
             end
             try
@@ -112,7 +113,7 @@ function bayesian_av(fun::Function, y::Array{uwreal}, tmin_array::Array{Int64}, 
     idxW = sortperm(weight_model, rev=true)
     cumulative_w = cumsum(weight_model[idxW])
     # println("acceptance in bayeasian_av set to 0.99, should be 0.95")
-    idxcumw = findfirst(x->x>=0.9999, cumulative_w)
+    idxcumw = findfirst(x->x>=0.9, cumulative_w)
     # println(length(idxW) - idxcumw)
     idxW = sort(idxW[1:idxcumw])
     

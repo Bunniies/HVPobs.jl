@@ -118,7 +118,11 @@ function bv(beta::Float64)
     CC = [[36.7139, 12.6698] [12.6698, 4.41224]] .*1e-4
     p = cobs([-0.184, -0.444], CC, [4,5] )
     bvv = 1 + 0.11813 * g2 * (1 + p[1]*g2) / ( 1 + p[2]*g2)
-    return bvv
+    if beta > 3.34
+        return bvv
+    else
+        bvv = uwreal([1.64316, 0.026], "bv_beta_3.34")
+    end
 end
 
 @doc raw"""
@@ -133,7 +137,12 @@ function  bv_bar(beta::Float64)
     CC = [[1.061463, 14.53004 ] [14.53004, 248.5266]] .*1e-8
     p = cobs([0.00112, -0.5577], CC, [6,7] )
     bvbar = ( p[1]*g2^2) / ( 1 + p[2]*g2)
-    return bvbar
+    if beta > 3.34
+        return bvbar
+    else
+        bvbar =  uwreal([0.41563, 0.046], "bvbar_beta_3.34")
+        return bvbar
+    end
 end
 
 @doc raw"""

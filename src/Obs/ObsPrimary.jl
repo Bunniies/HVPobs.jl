@@ -218,6 +218,9 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
     id = getfield.(Y, :id)
     replica = size.(Ysl, 1)
 
+    # @warn("plat is hard coded for J501")
+    # plat = [42,160]
+
     if !all(id .== id[1])
         error("IDs are not equal")
     end
@@ -306,6 +309,7 @@ function comp_t0(Y::Vector{YData}, plat::Vector{Int64}; L::Int64, pl::Bool=false
         t_pl = dt0 + 1
         plot(collect(1:xmax), value.(Y_aux[:, t_pl]) * t[nt0]^2 / L^3, "x")
         fill_between(collect(plat[1]:plat[2]), v[t_pl]+e[t_pl], v[t_pl]-e[t_pl], alpha=0.75, color="green")
+        ylim(v[t_pl]-10*e[t_pl], v[t_pl]+10*e[t_pl])
         ylabel(L"$t^2E(x0, t)$")
         xlabel(L"$x_0/a$")
         title(string(L"$t/a^2 = $", t[nt0]))

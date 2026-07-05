@@ -51,7 +51,8 @@ function read_hvp_data(path::String, id::String)
         end
 
         idx = delim[k].I[1]
-        if id == "N452"
+        first_val = f[idx+1, 2]
+        if first_val isa AbstractString && occursin(' ', first_val)
             re_data[k,:] = parse.(Float64, getindex.(split.(f[idx+1:idx+tvals,2]),1))
             im_data[k,:] = parse.(Float64, getindex.(split.(f[idx+1:idx+tvals,2]),2))
         else
@@ -133,7 +134,7 @@ cdata = read_disconnected_data_from_npz(path, "H101")
 ```
 """
 function read_disconnected_from_npz(path::String, id::String)
-    if id in ["A653", "A654", "D150", "B450", "N452", "N451", "D450", "D451", "D452", "D251", "E250"]
+    if  id[3] == '5' #id in ["A653", "A654", "D150", "B450", "N452", "N451", "D450", "D451", "D452", "D251", "E250"]
         return read_disconnected_from_npz_PBC(path, id)
     else
         Ttrue = get_T(id)
@@ -198,11 +199,11 @@ function read_disconnected_cons_cons(path::String, id::String, Ttrue::Int64)
         rep_len_dict["r"*rr_new] = rep_len[k]
     end
 
-    if id == "E300"
-        re_data = re_data[1:1137, :] 
-        idm_aux = collect(1:1137)
-        rep_len_dict["r1"] = 1137
-    end
+    # if id == "E300"
+        # re_data = re_data[1:1137, :] 
+        # idm_aux = collect(1:1137)
+        # rep_len_dict["r1"] = 1137
+    # end
 
     res = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, "VcVc" )
     return res
@@ -248,11 +249,11 @@ function read_disconnected_from_npz_OBC(path::String, id::String, Ttrue::Int64)
             rep_len_dict["r"*rr_new] = rep_len[k]
         end
 
-        if id == "E300"
-            re_data = re_data[1:1137, :] 
-            idm_aux = collect(1:1137)
-            rep_len_dict["r1"] = 1137
-        end
+        # if id == "E300"
+            # re_data = re_data[1:1137, :] 
+            # idm_aux = collect(1:1137)
+            # rep_len_dict["r1"] = 1137
+        # end
 
         dict_res[kk] = CData(id, rep_len_dict, real.(re_data), imag.(re_data), idm_aux, kk)
     end
@@ -402,17 +403,11 @@ function read_Bphysics_data(path::String, id::String)
         rep_len_dict["r"*string(rep)] = rep_len[k]
     end
     if id == "E300"
-        re_data = re_data[1:1137, :]
-        im_data = im_data[1:1137, :]
-        idm = idm[1:1137]
-        rep_len_dict["r1"] = 1137
-    end
-    if id == "J306"
-        re_data = re_data[1:480, :]
-        im_data = im_data[1:480, :]
-        idm = idm[1:480]
-        rep_len_dict["r0"] = 240
-        rep_len_dict["r1"] = 240
+        @warn("For HVP data uncomment these lines!")
+        # re_data = re_data[1:1137, :]
+        # im_data = im_data[1:1137, :]
+        # idm = idm[1:1137]
+        # rep_len_dict["r1"] = 1137
     end
 
     return CData(id, rep_len_dict, re_data, im_data, idm, gamma, kappa_val, theta1, theta2)
@@ -1132,4 +1127,46 @@ function print_uwreal(a::uwreal; LaTeX::Bool=false)
     else
         return LaTeX ? "$(val_str)($(err_in_parens))×10^{$expo}" : "$(val_str)($(err_in_parens))e$expo"
     end
+end
+
+
+function get_err_from_ensID(a::uwreal, str::String, ws::ADerrors.wspace)
+
+    if (length(a.prop) == 0)
+        print(a.mean)
+        return
+    end
+
+    if (length(a.cfd) > 0) 
+
+        nids  = length(a.ids)
+        for i in 1:nids
+            idx  = ws.map_ids[a.ids[i]]
+            if ADerrors.get_name_from_id(a.ids[i], ws) == str
+                nd = ws.fluc[ws.map_ids[a.ids[i]]].nd
+                dt = zeros(Float64, nd)
+                for j in 1:length(a.prop)
+                    if (a.prop[j] && (ws.map_nob[j] == a.ids[i]))
+                        dt .= dt .+ a.der[j] .* ws.fluc[j].delta
+                    end
+                end
+                
+                err_percentage =  100.0 .* a.cfd[i].var ./ a.err^2
+                err_abs = 0.0
+                mean_val = 0.0
+                nc = 1
+                is = 1
+                for k in ADerrors.get_repnames_from_id(a.ids[i], ws)
+                    ie = is + ws.fluc[idx].ivrep[nc] - 1
+                    mean_val += a.mean + sum(@view dt[is:ie])/ws.fluc[idx].ivrep[nc]
+                    err_abs += sqrt(a.cfd[i].var*sum(ws.fluc[idx].ivrep)/ws.fluc[idx].ivrep[nc])
+                    nc = nc + 1
+                    is = ie + 1
+                end
+                return mean_val, err_abs, err_percentage
+            end
+        end
+    end
+
+    return 
 end

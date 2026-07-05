@@ -87,22 +87,24 @@ function get_mesons_data(path::String, ens::String, fl::String, g::String )
 end
 
 function get_rw(path::String, ens::String; v::String="1.2")
-    rep = filter(x->occursin(ens, x), readdir(path, join=true))
+    rep = filter(x->occursin(ens, x) && occursin("ms1.dat", x), readdir(path, join=true))
     if ens == "J500"
         return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4"), read_ms1(rep[3], v="2.0") ]
     end
     if ens == "J501"
         return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4"), read_ms1(rep[3], v="2.0") ]
     end
-    if ens == "D450"
-        return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0")]
-    end
+    #if ens in ["D450", "J306", "J307"]
+    #    return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0")]
+    #end
     if ens == "E300"
         return [read_ms1(rep[1], v="2.0"), read_ms1(rep[2], v="2.0"), read_ms1(rep[3], v="2.0")] 
     end
-    # if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
-    #     return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
-    # end
+
+
+    if ens == "N202" # TO USE ONLY IN B PHYSICS PROJECT!
+        return [read_ms1(rep[1]), read_ms1(rep[2], v="1.4")]
+    end
     if length(rep)!=0
         try
             length(rep) == 1 ? (return read_ms1(rep[1], v=v)) : (return read_ms1.(rep, v=v)) 
@@ -114,7 +116,7 @@ function get_rw(path::String, ens::String; v::String="1.2")
             end
         end
     else
-        error("ms1.dat file not found for ensemble ", ens, " in path ", p)
+        error("ms1.dat file not found for ensemble ", ens, " in path ", path)
     end
 end
 
@@ -147,7 +149,34 @@ function get_corr_disc(path::String, ens::EnsInfo, fl::String ; path_rw::Union{S
     cdata = get_data_disc(path, ens.id, fl)
     KEYS = collect(keys(cdata))
     rw = isnothing(path_rw) ? nothing : get_rw(path_rw, ens.id)
-    
+
+    if !isnothing(rw) # truncate data if there are more measurements than rwf
+        rw_vec = rw isa AbstractMatrix ? [rw] : rw
+        for kk in KEYS
+            cd = cdata[kk]
+            rep_names   = collect(keys(cd.rep_len))
+            replen      = collect(values(cd.rep_len))
+            reptot_keys = collect(keys(cd.replicatot))
+            valid_mask  = trues(length(cd.idm))
+            offset = 0
+            for (r, rep_name) in enumerate(rep_names)
+                j = findfirst(x -> x == rep_name, reptot_keys)
+                if !isnothing(j) && j <= length(rw_vec)
+                    n_rw = size(rw_vec[j], 2)
+                    excess = cd.idm[offset+1:offset+replen[r]] .> n_rw
+                    valid_mask[offset+1:offset+replen[r]] .= .!excess
+                    cd.rep_len[rep_name] -= count(excess)
+                end
+                offset += replen[r]
+            end
+            if !all(valid_mask)
+                cd.re_data = cd.re_data[valid_mask, :]
+                cd.im_data = cd.im_data[valid_mask, :]
+                cd.idm     = cd.idm[valid_mask]
+            end
+        end
+    end
+
     corr_dict  = OrderedDict{String,Corr}()
     for kk in KEYS
         corr = corr_obs(cdata[kk], real=true, rw=rw, L=L)
