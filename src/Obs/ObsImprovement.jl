@@ -110,7 +110,7 @@ end
 bv(beta::Float64)
 
 Given the coupling beta, this function returns the bv improvement coefficient for 
-the vector carrent based on the results of 1811.08209. 
+the vector current based on the results of 1811.08209. 
 """
 function bv(beta::Float64)
 
@@ -129,7 +129,7 @@ end
 bv_bar(beta::Float64)
 
 Given the coupling beta, this function returns the bv_bar improvement coefficient for 
-the vector carrent based on the results of 1811.08209. 
+the vector current based on the results of 1811.08209. 
 """
 function  bv_bar(beta::Float64)
 
